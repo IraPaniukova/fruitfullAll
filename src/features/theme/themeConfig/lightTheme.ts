@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material/styles";
+import { mainColour } from "../../../utils/constants";
 
 //light theme is a default mui theme, but also sets orange element for both - light and dark
 export const lightTheme = createTheme({
@@ -6,8 +7,8 @@ export const lightTheme = createTheme({
     MuiLink: {
       styleOverrides: {
         root: {
-          textDecorationColor: " #ff9800", //The colour used in Buttons
-          color: " #ff9800",
+          textDecorationColor: mainColour, //The colour used in Buttons
+          color: mainColour,
         },
       },
     },
@@ -21,7 +22,7 @@ export const lightTheme = createTheme({
           // border: "5px solid #1b5e20",
         },
         containedPrimary: {
-          backgroundColor: " #ff9800",
+          backgroundColor: mainColour,
           "&:hover": {
             backgroundColor: " #ff8c00",
             boxShadow: "0 4px 4px rgba(27, 94, 32, 1) !important", // #1b5e20
@@ -43,7 +44,7 @@ export const lightTheme = createTheme({
     //   styleOverrides: {
     //     root: {
     //       "&.Mui-checked": {
-    //         color: "#ff9800",
+    //         color: mainColour,
     //       },
     //     },
     //   },
@@ -52,7 +53,7 @@ export const lightTheme = createTheme({
     //   styleOverrides: {
     //     root: {
     //       "& .MuiInputLabel-root.Mui-focused": {
-    //         color: "#ff9800",
+    //         color: mainColour,
     //       },
     //     },
     //   },

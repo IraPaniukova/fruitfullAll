@@ -1,7 +1,7 @@
 
 import logo from './assets/fruitfull_logo.png'
 // import { useSelector } from 'react-redux';
-import { ThemeProvider } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 // import lightTheme from './muiTheme/lightTheme';
 // import darkTheme from './muiTheme/darkTheme';
 
@@ -10,19 +10,23 @@ import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import { lightTheme } from './features/theme/themeConfig/lightTheme';
 import { darkTheme } from './features/theme/themeConfig/darkTheme';
+import { useAppSelector } from './store/typeHooks';
+import ThemeToggleButton from './features/theme/components/themeToggleButton';
 // import type { RootState } from './store';
 
 function App() {
-  // const currentTheme = useSelector((state: RootState) => state.theme);
-  // const muiTheme = currentTheme === 'dark' ? darkTheme : lightTheme;
-
+  const mode = useAppSelector((state) => state.theme);
+  const theme = createTheme(mode === "light" ? lightTheme : darkTheme);
+  console.log("mode from Redux:", mode);
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={theme}>
       <>
         <CssBaseline />
         <div>
           Future app <img src={logo} alt='logo' height='100px' />
           <Button>try it</Button>
+          <ThemeToggleButton />
+
         </div>
       </>
     </ThemeProvider>
