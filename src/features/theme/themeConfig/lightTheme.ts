@@ -12,6 +12,19 @@ export const lightTheme = createTheme({
         },
       },
     },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          "&:focus": {
+            outline: "none",
+          },
+          "&:focusVisible": {
+            outline: "none",
+            boxShadow: "none",
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {

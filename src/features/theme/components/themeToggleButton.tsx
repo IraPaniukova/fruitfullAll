@@ -11,8 +11,8 @@ const ThemeToggleButton = () => {
     return (
         <IconButton onClick={() => dispatch(toggleTheme())} color="inherit">
             {mode === "dark" ?
-                <LightModeIcon sx={{ border: 'none' }} /> :
-                <DarkModeIcon sx={{ border: 'none' }} />}
+                <LightModeIcon aria-label="Switch to light mode" /> :
+                <DarkModeIcon aria-label="Switch to dark mode" />}
         </IconButton>
     );
 };
