@@ -5,10 +5,13 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { lightTheme } from './features/theme/themeConfig/lightTheme';
 import { darkTheme } from './features/theme/themeConfig/darkTheme';
 import { useAppSelector } from './store/typeHooks';
-import { LandingPage } from './pages/LandingPage';
 import { createBrowserRouter, Outlet, RouterProvider, ScrollRestoration } from 'react-router-dom'
 import { Stack } from '@mui/material';
-
+import { LandingPage } from './pages/LandingPage';
+import { AuthPage } from './pages/authPage/AuthPage';
+import { HomePage } from './pages/HomePage';
+import { Box } from '@mui/material';
+import { ThemeToggleButton } from './features/theme/components/ThemeToggleButton';
 
 function App() {
   const mode = useAppSelector((state) => state.theme);
@@ -25,6 +28,8 @@ function App() {
       ),
       children: [
         { path: '', element: <LandingPage /> },
+        { path: 'auth', element: <AuthPage /> },
+        { path: 'home', element: <HomePage /> }
         // { path: '*', element: <NotFoundPage /> },
       ],
     },
@@ -34,6 +39,7 @@ function App() {
       <>
         <CssBaseline />
         <RouterProvider router={router} />
+        <Box zIndex={1}> <ThemeToggleButton /></Box>
       </>
     </ThemeProvider>
   )
