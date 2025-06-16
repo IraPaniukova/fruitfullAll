@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../../store/typeHooks";
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 
-const ThemeToggleButton = () => {
+export const ThemeToggleButton = () => {
     const dispatch = useAppDispatch();
     const mode = useAppSelector((state) => state.theme);
 
@@ -16,5 +16,3 @@ const ThemeToggleButton = () => {
         </IconButton>
     );
 };
-
-export default ThemeToggleButton;

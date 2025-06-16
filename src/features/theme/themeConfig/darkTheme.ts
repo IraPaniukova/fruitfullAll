@@ -5,12 +5,9 @@ export const darkTheme = createTheme({
   ...lightTheme,
   palette: {
     mode: "dark",
-    // primary: {
-    //   main: "#90caf9", // light blue
-    // },
     background: {
-      default: "#121212",
-      paper: "#333333",
+      default: "#222222",
+      paper: "#121212",
     },
     text: {
       primary: "#E0E0E0", // light text

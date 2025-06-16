@@ -3,6 +3,11 @@ import { mainColour } from "../../../utils/constants";
 
 //light theme is a default mui theme, but also sets orange element for both - light and dark
 export const lightTheme = createTheme({
+  palette: {
+    background: {
+      paper: "#E5E5E5", //E0E0E0,E5E5E5,DCDCDC
+    },
+  },
   components: {
     MuiLink: {
       styleOverrides: {

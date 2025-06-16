@@ -1,36 +1,43 @@
 
-import logo from './assets/fruitfull_logo.png'
-// import { useSelector } from 'react-redux';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import lightTheme from './muiTheme/lightTheme';
-// import darkTheme from './muiTheme/darkTheme';
-
 import './App.css'
-import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import { lightTheme } from './features/theme/themeConfig/lightTheme';
 import { darkTheme } from './features/theme/themeConfig/darkTheme';
 import { useAppSelector } from './store/typeHooks';
-import ThemeToggleButton from './features/theme/components/themeToggleButton';
-// import type { RootState } from './store';
+import { LandingPage } from './pages/LandingPage';
+import { createBrowserRouter, Outlet, RouterProvider, ScrollRestoration } from 'react-router-dom'
+import { Stack } from '@mui/material';
+
 
 function App() {
   const mode = useAppSelector((state) => state.theme);
   const theme = createTheme(mode === "light" ? lightTheme : darkTheme);
-  console.log("mode from Redux:", mode);
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: (
+        <Stack  >
+          {/* all components that contain links to other pages mast be inside Router tag */}
+          <Outlet />
+          <ScrollRestoration />
+        </Stack>
+      ),
+      children: [
+        { path: '', element: <LandingPage /> },
+        // { path: '*', element: <NotFoundPage /> },
+      ],
+    },
+  ]);
   return (
     <ThemeProvider theme={theme}>
       <>
         <CssBaseline />
-        <div>
-          Future app <img src={logo} alt='logo' height='100px' />
-          <Button>try it</Button>
-          <ThemeToggleButton />
-
-        </div>
+        <RouterProvider router={router} />
       </>
     </ThemeProvider>
   )
 }
 
 export default App
+
