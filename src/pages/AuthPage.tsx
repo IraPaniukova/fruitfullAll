@@ -1,10 +1,10 @@
 import { Box, Button, Typography, type ButtonProps } from "@mui/material";
-import { GridBox } from '../components/GridBox';
-import { ChequeredTiles } from '../components/ChequeredTiles';
-import { ContentStack } from '../components/ContentStack';
-import { SignupForm } from "./SignupForm";
+import { GridBox } from './shared/GridBox';
+import { ChequeredTiles } from './shared/ChequeredTiles';
+import { ContentStack } from './shared/ContentStack';
+import { SignupForm } from "../features/auth/components/SignupForm";
 import { useState } from "react";
-import { LoginForm } from "./LoginForm";
+import { LoginForm } from "../features/auth/components/LoginForm";
 
 const TextButton = (props: ButtonProps) => (
     <Button

@@ -8,15 +8,20 @@ import { useAppSelector } from './store/typeHooks';
 import { createBrowserRouter, Outlet, RouterProvider, ScrollRestoration } from 'react-router-dom'
 import { Stack } from '@mui/material';
 import { LandingPage } from './pages/LandingPage';
-import { AuthPage } from './pages/authPage/AuthPage';
+import { AuthPage } from './pages/AuthPage';
 import { HomePage } from './pages/HomePage';
 import { Box } from '@mui/material';
 import { ThemeToggleButton } from './features/theme/components/ThemeToggleButton';
-import { loggedIn } from './features/TEMP-DATA/TEMP_DATA';
+import { INACTIVITY_TIME } from './utils/constants';
 
 function App() {
   const mode = useAppSelector((state) => state.theme);
   const theme = createTheme(mode === "light" ? lightTheme : darkTheme);
+  const loggedIn = useAppSelector(state => {
+    const user = state.auth.user;
+    const loginTime = state.auth.loginTime;
+    return user != null && loginTime != null && (Date.now() - loginTime < INACTIVITY_TIME);
+  });
   const router = createBrowserRouter([
     {
       path: '/',

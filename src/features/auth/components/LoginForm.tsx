@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Stack, TextField, Button, Typography, Box } from '@mui/material';
-import { userEmail, userPasssword } from '../../features/TEMP-DATA/TEMP_DATA';
+import { userEmail, userPasssword } from '../../TEMP-DATA/TEMP_DATA';
 
 export const LoginForm = () => {
     const [email, setEmail] = useState('');
