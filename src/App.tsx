@@ -12,6 +12,7 @@ import { AuthPage } from './pages/authPage/AuthPage';
 import { HomePage } from './pages/HomePage';
 import { Box } from '@mui/material';
 import { ThemeToggleButton } from './features/theme/components/ThemeToggleButton';
+import { loggedIn } from './features/TEMP-DATA/TEMP_DATA';
 
 function App() {
   const mode = useAppSelector((state) => state.theme);
@@ -27,9 +28,9 @@ function App() {
         </Stack>
       ),
       children: [
-        { path: '', element: <LandingPage /> },
+        { path: '', element: loggedIn ? <HomePage /> : <LandingPage /> },
         { path: 'auth', element: <AuthPage /> },
-        { path: 'home', element: <HomePage /> }
+        // { path: 'home', element: <HomePage /> }
         // { path: '*', element: <NotFoundPage /> },
       ],
     },

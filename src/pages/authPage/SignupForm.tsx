@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Stack, TextField, Button, Typography, Box } from '@mui/material';
 
-export const RegisterForm = () => {
+export const SignupForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({ email: '', password: '' });
@@ -26,8 +26,8 @@ export const RegisterForm = () => {
     };
 
     return (
-        <Stack spacing={3} >
-            <Typography variant="h6">Register</Typography>
+        <Stack spacing={3} justifyContent="center" height='100%' pb={2}>
+            <Typography variant="h6">Sign Up</Typography>
 
             <TextField
                 label="Email"
@@ -49,7 +49,7 @@ export const RegisterForm = () => {
             />
             <Box>
                 <Button onClick={handleSubmit}>
-                    Tri it
+                    Join
                 </Button>
             </Box>
         </Stack>

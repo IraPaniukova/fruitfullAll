@@ -35,8 +35,15 @@ export const lightTheme = createTheme({
         root: {
           borderRadius: "50%", // Round edges
           aspectRatio: "1 / 1",
-          minWidth: "50px",
+          minWidth: "80px",
           color: "white",
+          WebkitTapHighlightColor: "transparent",
+          userSelect: "none",
+          "&:focus, &:focus-visible, &:active": {
+            outline: "none",
+            boxShadow: "none",
+            border: "none",
+          },
           // border: "5px solid #1b5e20",
         },
         containedPrimary: {
@@ -45,16 +52,10 @@ export const lightTheme = createTheme({
             backgroundColor: " #ff8c00",
             boxShadow: "0 4px 4px rgba(27, 94, 32, 1) !important", // #1b5e20
           },
-          "&:focus": {
-            outline: "none",
-          },
-          "&:focusVisible": {
-            outline: "none",
-            boxShadow: "none",
-          },
         },
       },
       defaultProps: {
+        disableRipple: true,
         variant: "contained", // Default button style
       },
     },

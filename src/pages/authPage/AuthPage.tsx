@@ -1,24 +1,55 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography, type ButtonProps } from "@mui/material";
 import { GridBox } from '../components/GridBox';
 import { ChequeredTiles } from '../components/ChequeredTiles';
 import { ContentStack } from '../components/ContentStack';
-import { RegisterForm } from "./RegisterForm";
+import { SignupForm } from "./SignupForm";
+import { useState } from "react";
+import { LoginForm } from "./LoginForm";
+
+const TextButton = (props: ButtonProps) => (
+    <Button
+        variant="text"
+        sx={{
+            padding: 0,
+            minWidth: 0,
+            color: 'orange',
+            textTransform: 'none',
+            '&:hover': { backgroundColor: 'transparent' },
+        }}
+        {...props}
+    />
+);
 
 export const AuthPage = () => {
+    const [loginForm, setLoginForm] = useState(true);
+    const handleSwitchForm = () => {
+        setLoginForm(!loginForm);
+    }
     return (
         <GridBox >
             <ChequeredTiles />
             <ContentStack>
-                <Box width='500px' height='400px' p={2}
+                <Box minWidth={{ xs: '90vw', sm: '500px' }} p={2}  //I need to set it for xs
                     sx={{
                         backgroundColor: 'background.default',
-                        borderRadius: '15px', border: '2px solid orange'
+                        borderRadius: '15px', border: '2px solid orange',
+                        position: 'relative'
                     }}
                 >
-                    <Typography variant='button'>Login / Register</Typography>
-                    <RegisterForm />
+                    <Button variant="text" onClick={handleSwitchForm}
+                        sx={{
+                            position: { xs: 'relative', sm: 'absolute' },
+                            top: { xs: 'auto', sm: 0 },
+                            right: { xs: 'auto', sm: 0 },
+                            color: 'orange',
+                            minWidth: 0, background: 'none', boxShadow: 'none', minHeight: 0, aspectRatio: 'auto',
+                            fontSize: '0.8rem'
+                        }} >
+                        Go to {loginForm ? 'Sign Up' : 'Login'}
+                    </Button>
+                    {loginForm ? <LoginForm /> : <SignupForm />}
                 </Box>
             </ContentStack>
-        </GridBox>
+        </GridBox >
     );
 }
