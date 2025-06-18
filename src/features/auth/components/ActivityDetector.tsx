@@ -3,7 +3,7 @@ import { useAppDispatch } from '../../../store/typeHooks';
 import { updateLastActivity } from '../authSlice';
 import { debounce } from 'lodash';
 
-const ActivityDetector: React.FC = () => {
+export const ActivityDetector = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -45,5 +45,3 @@ const ActivityDetector: React.FC = () => {
 
     return null;
 };
-
-export default ActivityDetector;

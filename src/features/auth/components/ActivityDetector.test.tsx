@@ -3,7 +3,7 @@ import { render, fireEvent, cleanup } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer, { updateLastActivity } from '../authSlice';
-import ActivityDetector from './ActivityDetector';
+import { ActivityDetector } from './ActivityDetector';
 
 describe('ActivityDetector', () => {
     let store: ReturnType<typeof configureStore>;
