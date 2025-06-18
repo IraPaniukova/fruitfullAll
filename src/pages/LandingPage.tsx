@@ -3,14 +3,9 @@ import logo from '../assets/fruitfull_logo_name.png'
 import { GridBox } from './shared/GridBox';
 import { ChequeredTiles } from './shared/ChequeredTiles';
 import { ContentStack } from './shared/ContentStack';
-import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 export const LandingPage = () => {
-    const navigate = useNavigate();
-
-    const onTryItClick = () => {
-        navigate('auth');
-    };
     return (
         <GridBox >
             <ChequeredTiles />
@@ -24,7 +19,8 @@ export const LandingPage = () => {
                 <img src={logo} alt='logo' height='200px' width='auto' />
             </ContentStack>
             <ContentStack zIndex='1' pl={{ xs: 0, sm: '300px' }}>
-                <Button onClick={onTryItClick}>try it</Button>
+                <Button component={NavLink}
+                    to='/auth'>try it</Button>
             </ContentStack>
             <ContentStack pt='300px' px={3} spacing={1}>
                 <Typography variant='button'>Where career starts</Typography>

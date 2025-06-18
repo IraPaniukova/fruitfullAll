@@ -13,6 +13,7 @@ import { HomePage } from './pages/HomePage';
 import { Box } from '@mui/material';
 import { ThemeToggleButton } from './features/theme/components/ThemeToggleButton';
 import { INACTIVITY_TIME } from './utils/constants';
+import { ActivityDetector } from './features/auth/components/ActivityDetector';
 
 function App() {
   const mode = useAppSelector((state) => state.theme);
@@ -35,7 +36,7 @@ function App() {
       children: [
         { path: '', element: loggedIn ? <HomePage /> : <LandingPage /> },
         { path: 'auth', element: <AuthPage /> },
-        // { path: 'home', element: <HomePage /> }
+        // { path: 'user', element: <UserPage /> }
         // { path: '*', element: <NotFoundPage /> },
       ],
     },
@@ -44,6 +45,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <>
         <CssBaseline />
+        <ActivityDetector />
         <RouterProvider router={router} />
         <Box zIndex={1}> <ThemeToggleButton /></Box>
       </>

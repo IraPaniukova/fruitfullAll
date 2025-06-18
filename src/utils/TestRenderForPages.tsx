@@ -2,8 +2,9 @@ import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import themeReducer from "../features/theme/themeSlice";
+import { MemoryRouter } from "react-router-dom";
 
-export const renderWithStoreAndThemeTestUtil = (
+export const TestRenderForPages = (
   component: React.ReactNode,
   preloadedState = { theme: "light" }
 ) => {
@@ -14,7 +15,9 @@ export const renderWithStoreAndThemeTestUtil = (
 
   return render(
     <Provider store={store}>
-      {component}
+      <MemoryRouter>
+        {component}
+      </MemoryRouter>
     </Provider>
   );
 };

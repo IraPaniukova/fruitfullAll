@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useAppDispatch } from "../../../store/typeHooks";
 import { updateLastActivity } from "../authSlice";
 
-const ActivityDetector = () => {
+export const ActivityDetector = () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -13,15 +13,15 @@ const ActivityDetector = () => {
         window.addEventListener("pointerdown", updateActivity);
         window.addEventListener("keydown", updateActivity);
         window.addEventListener("scroll", updateActivity);
+        window.addEventListener("touchstart", updateActivity);
 
         return () => {
             window.removeEventListener("pointerdown", updateActivity);
             window.removeEventListener("keydown", updateActivity);
-            window.addEventListener("scroll", updateActivity);
+            window.removeEventListener("scroll", updateActivity);
+            window.removeEventListener("touchstart", updateActivity);
         };
     }, [dispatch]);
 
     return null;
 };
-
-export default ActivityDetector;
