@@ -6,7 +6,7 @@ import { lightTheme } from './features/theme/themeConfig/lightTheme';
 import { darkTheme } from './features/theme/themeConfig/darkTheme';
 import { useAppSelector } from './store/typeHooks';
 import { Box } from '@mui/material';
-import { ThemeToggleButton } from './features/theme/components/ThemeToggleButton';
+import { ToggleThemeButton } from './features/theme/components/ToggleThemeButton';
 import { ActivityDetector } from './features/auth/components/ActivityDetector';
 import { INACTIVITY_TIME } from './utils/constants';
 import { AppRouter } from './app/AppRouter';
@@ -27,7 +27,7 @@ function App() {
         <CssBaseline />
         <ActivityDetector />
         <AppRouter loggedIn={loggedIn} />
-        <Box zIndex={1}> <ThemeToggleButton /></Box>
+        <Box zIndex={1}> <ToggleThemeButton /></Box>
       </>
     </ThemeProvider>
   )

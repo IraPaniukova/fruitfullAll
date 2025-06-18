@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import themeReducer from '../themeSlice';
-import { ThemeToggleButton } from './ThemeToggleButton';
+import { ToggleThemeButton } from './ToggleThemeButton';
 
 const renderWithTheme = (initialTheme: string) => {
     const store = configureStore({
@@ -13,7 +13,7 @@ const renderWithTheme = (initialTheme: string) => {
     return {
         ...render(
             <Provider store={store}>
-                <ThemeToggleButton />
+                <ToggleThemeButton />
             </Provider>
         ),
         store,
