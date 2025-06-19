@@ -9,6 +9,13 @@ export const lightTheme = createTheme({
     },
   },
   components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#121212",
+        },
+      },
+    },
     MuiLink: {
       styleOverrides: {
         root: {

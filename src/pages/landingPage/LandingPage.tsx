@@ -1,8 +1,8 @@
 import { Button, Typography } from '@mui/material';
-import logo from '../assets/fruitfull_logo_name.png'
-import { GridBox } from './shared/GridBox';
-import { ChequeredTiles } from './shared/ChequeredTiles';
-import { ContentStack } from './shared/ContentStack';
+import logo from '../../assets/fruitfull_logo_name.png'
+import { GridBox } from '../../components/GridBox';
+import { ChequeredTiles } from '../../components/ChequeredTiles';
+import { ContentStack } from '../../components/ContentStack';
 import { NavLink } from 'react-router-dom';
 
 export const LandingPage = () => {

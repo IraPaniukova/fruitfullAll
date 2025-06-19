@@ -1,6 +1,6 @@
 import { cleanup, screen } from '@testing-library/react';
 import { LandingPage } from './LandingPage';
-import { TestRenderForPages } from '../utils/TestRenderForPages';
+import { TestRenderForPages } from '../../utils/TestRenderForPages';
 
 describe('LandingPage', () => {
     beforeEach(() => {
