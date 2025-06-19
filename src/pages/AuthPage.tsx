@@ -6,20 +6,6 @@ import { SignupForm } from "../features/auth/components/SignupForm";
 import { useState } from "react";
 import { LoginForm } from "../features/auth/components/LoginForm";
 
-const TextButton = (props: ButtonProps) => (
-    <Button
-        variant="text"
-        sx={{
-            padding: 0,
-            minWidth: 0,
-            color: 'orange',
-            textTransform: 'none',
-            '&:hover': { backgroundColor: 'transparent' },
-        }}
-        {...props}
-    />
-);
-
 export const AuthPage = () => {
     const [loginForm, setLoginForm] = useState(true);
     const handleSwitchForm = () => {
@@ -29,7 +15,7 @@ export const AuthPage = () => {
         <GridBox >
             <ChequeredTiles />
             <ContentStack>
-                <Box minWidth={{ xs: '90vw', sm: '500px' }} p={2}  //I need to set it for xs
+                <Box minWidth={{ xs: '90vw', sm: '500px' }} p={2}
                     sx={{
                         backgroundColor: 'background.default',
                         borderRadius: '15px', border: '2px solid orange',

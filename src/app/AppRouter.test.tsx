@@ -1,7 +1,8 @@
-// src/app/__tests__/AppRouter.test.tsx
 import { describe, test, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { AppRouter } from './AppRouter';
+
+window.scrollTo = vi.fn();
 
 describe('AppRouter', () => {
     test('renders LandingPage when loggedIn is false', () => {

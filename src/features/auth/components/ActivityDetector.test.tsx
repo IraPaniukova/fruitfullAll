@@ -8,7 +8,7 @@ import { ActivityDetector } from './ActivityDetector';
 describe('ActivityDetector', () => {
     let store: ReturnType<typeof configureStore>;
     let dispatchSpy: any;
-
+    const events = ['pointermove', 'pointerdown', 'pointerup', 'keydown', 'wheel', 'scroll', 'input', 'focus', 'visibilitychange', 'click', 'touchstart', 'touchmove'];
     beforeEach(() => {
         store = configureStore({ reducer: { auth: authReducer } });
         dispatchSpy = vi.spyOn(store, 'dispatch');
@@ -28,23 +28,11 @@ describe('ActivityDetector', () => {
             </Provider>
         );
 
-        const events = [
-            'pointermove',
-            'pointerdown',
-            'pointerup',
-            'keydown',
-            'wheel',
-            'scroll',
-            'input',
-            'focus',
-            'visibilitychange',
-        ];
-
         events.forEach((event) => {
             expect(addEventListenerSpy).toHaveBeenCalledWith(
                 event,
                 expect.any(Function),
-                { passive: true }
+                { passive: ['scroll', 'wheel', 'touchstart', 'touchmove'].includes(event) }
             );
         });
         expect(addEventListenerSpy).toHaveBeenCalledTimes(events.length);
@@ -60,18 +48,6 @@ describe('ActivityDetector', () => {
         );
 
         unmount();
-
-        const events = [
-            'pointermove',
-            'pointerdown',
-            'pointerup',
-            'keydown',
-            'wheel',
-            'scroll',
-            'input',
-            'focus',
-            'visibilitychange',
-        ];
 
         events.forEach((event) => {
             expect(removeEventListenerSpy).toHaveBeenCalledWith(
@@ -92,10 +68,7 @@ describe('ActivityDetector', () => {
         fireEvent.pointerDown(window);
 
         expect(dispatchSpy).toHaveBeenCalledWith(
-            updateLastActivity({
-                eventType: 'pointerdown',
-                timestamp: expect.any(Number),
-            })
+            updateLastActivity(expect.any(Number))
         );
     });
 
@@ -111,10 +84,7 @@ describe('ActivityDetector', () => {
         fireEvent.focus(window);
 
         expect(dispatchSpy).toHaveBeenCalledWith(
-            updateLastActivity({
-                eventType: 'focus',
-                timestamp: expect.any(Number),
-            })
+            updateLastActivity(expect.any(Number))
         );
 
         document.body.removeChild(input);

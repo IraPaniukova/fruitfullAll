@@ -1,10 +1,13 @@
-import { screen } from '@testing-library/react';
+import { cleanup, screen } from '@testing-library/react';
 import { LandingPage } from './LandingPage';
 import { TestRenderForPages } from '../utils/TestRenderForPages';
 
 describe('LandingPage', () => {
     beforeEach(() => {
         TestRenderForPages(<LandingPage />, { theme: 'light' });
+    });
+    afterEach(() => {
+        cleanup();
     });
 
     it('renders logo image with correct alt text', () => {

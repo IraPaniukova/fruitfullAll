@@ -1,45 +1,24 @@
-import { useEffect } from 'react';
-import { useAppDispatch } from '../../../store/typeHooks';
-import { updateLastActivity } from '../authSlice';
-import { debounce } from 'lodash';
+import { useEffect } from "react";
+import { useAppDispatch } from "../../../store/typeHooks";
+import { updateLastActivity } from "../authSlice";
 
 export const ActivityDetector = () => {
     const dispatch = useAppDispatch();
+    const events = ['pointermove', 'pointerdown', 'pointerup', 'keydown', 'wheel', 'scroll', 'input', 'focus', 'visibilitychange', 'click', 'touchstart', 'touchmove'];
 
     useEffect(() => {
-        const events = [
-            'pointermove',
-            'pointerdown',
-            'pointerup',
-            'keydown',
-            'wheel',
-            'scroll',
-            'input',
-            'focus',
-            'visibilitychange',
-        ];
-
-        const debouncedHandleActivity = debounce((event: Event) => {
-            dispatch(updateLastActivity({ eventType: event.type, timestamp: Date.now() }));
-        }, 100);
-
-        const handleActivity = (event: Event) => {
-            if (['pointermove', 'wheel', 'scroll'].includes(event.type)) {
-                debouncedHandleActivity(event);
-            } else {
-                dispatch(updateLastActivity({ eventType: event.type, timestamp: Date.now() }));
-            }
+        const updateActivity = () => {
+            dispatch(updateLastActivity(Date.now()));
         };
 
         events.forEach((event) => {
-            window.addEventListener(event, handleActivity, { passive: true });
+            window.addEventListener(event, updateActivity, { passive: ['scroll', 'wheel', 'touchstart', 'touchmove'].includes(event) });
         });
 
         return () => {
             events.forEach((event) => {
-                window.removeEventListener(event, handleActivity);
+                window.removeEventListener(event, updateActivity);
             });
-            debouncedHandleActivity.cancel();
         };
     }, [dispatch]);
 
