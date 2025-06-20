@@ -1,13 +1,18 @@
-import { alpha, AppBar, Avatar, Box, InputBase, Stack, styled, Toolbar } from "@mui/material";
+import { alpha, AppBar, Avatar, Box, InputBase, styled, Toolbar } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
 import SearchIcon from '@mui/icons-material/Search';
-import logo from '../assets/fruitfull_logo.png';
-import { UserMenu } from "./UserMenu";
+import logo from '../../assets/fruitfull_logo.png';
+import { UserMenu } from "../UserMenu";
+import { CreatePostButton } from "./CreatePostButton";
 
 interface HeaderProps {
     loggedIn: boolean;
 }
 export const Header: React.FC<HeaderProps> = ({ loggedIn }) => {
+    const StyledAppBar = styled(AppBar)(({ theme }) => ({
+        backgroundColor:
+            theme.palette.mode === "light" ? "#E5E5E5" : "#121212",
+    }));
     const Search = styled('div')(({ theme }) => ({
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
@@ -60,10 +65,9 @@ export const Header: React.FC<HeaderProps> = ({ loggedIn }) => {
 
     return (
 
-        <AppBar position="static"
+        <StyledAppBar position="static"
             sx={{ display: hideHeader ? 'none' : 'flex', mb: 2 }}>
             <Toolbar variant="dense" >
-
                 <Box pt={1}>
                     <img src={logo} alt="logo" height='50' />
                 </Box>
@@ -77,12 +81,14 @@ export const Header: React.FC<HeaderProps> = ({ loggedIn }) => {
                         inputProps={{ 'aria-label': 'Search' }}
                     />
                 </Search>
-                <Box sx={{ flexGrow: 1 }} />
+                <Box sx={{ flexGrow: 1, ml: 1 }} >
+                    <CreatePostButton />
+                </Box>
                 <Link to="/profile" style={{ textDecoration: 'none' }}>
                     <Avatar alt="User Name" src="/path/to/avatar.jpg" sx={{ ml: 1 }} />
                 </Link>
                 <UserMenu />
             </Toolbar>
-        </AppBar >
+        </StyledAppBar >
     );
 }
