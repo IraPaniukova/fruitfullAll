@@ -8,6 +8,7 @@ import { Header } from '../components/header/Header';
 import { Navigate } from 'react-router-dom';
 import { PostPage } from '../pages/postPage/PostPage';
 import { CreatePostPage } from '../pages/createPostPage/CreatePostPage';
+import { NotFoundPage } from '../pages/notFoundPage/NotFoundPage';
 
 
 type Props = {
@@ -15,7 +16,12 @@ type Props = {
 };
 
 export const AppRouter = ({ loggedIn }: Props) => {
-
+    type PrivateRouteProps = {
+        component: React.ComponentType;
+    };
+    const PrivateRoute = ({ component: Component }: PrivateRouteProps) => {
+        return loggedIn ? <Component /> : <Navigate to="/" replace />;
+    };
     const router = createBrowserRouter([
         {
             path: '/',
@@ -28,20 +34,11 @@ export const AppRouter = ({ loggedIn }: Props) => {
             ),
             children: [
                 { path: '', element: loggedIn ? <DashboardPage /> : <LandingPage /> },
-                { path: 'auth', element: <AuthPage /> },
-                {
-                    path: 'profile', element: loggedIn ?
-                        <ProfilePage /> : < Navigate to="/" replace />
-                },
-                {
-                    path: '/create', element: loggedIn ?
-                        <CreatePostPage /> : < Navigate to="/" replace />
-                },
-                {
-                    path: '/posts/:id', element: loggedIn ?
-                        <PostPage /> : < Navigate to="/" replace />
-                }
-
+                { path: 'auth', element: !loggedIn ? <AuthPage /> : < Navigate to="/" replace /> },
+                { path: 'profile', element: <PrivateRoute component={ProfilePage} /> },
+                { path: 'create', element: <PrivateRoute component={CreatePostPage} /> },
+                { path: 'posts/:id', element: <PrivateRoute component={PostPage} /> },
+                { path: '*', element: <NotFoundPage /> }
             ],
         },
     ]);
