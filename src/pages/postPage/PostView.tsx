@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Chip, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 type Post = {
     company?: string;
@@ -9,7 +10,8 @@ type Post = {
     stress: number;
     questionType: string;
     questions: string;
-    tips?: string;
+    opinion?: string;
+    tags?: string[];
 };
 
 type Props = {
@@ -33,7 +35,8 @@ export const PostView = ({ postId }: Props) => {
                 stress: 3,
                 questionType: 'Technical',
                 questions: 'Describe a time you solved a tough bug.',
-                tips: 'Stay calm and explain your thought process clearly.',
+                opinion: 'Stay calm and explain your thought process clearly.',
+                tags: ['bugfix', 'problem solving', 'technical'],
             };
             setPost(fetchedPost);
         }
@@ -67,14 +70,34 @@ export const PostView = ({ postId }: Props) => {
             </Typography>
             <Typography>{post.questions}</Typography>
 
-            {post.tips && (
+            {post.opinion && (
                 <>
                     <Typography variant="subtitle1" fontWeight={600} mt={2}>
                         Opinion:
                     </Typography>
-                    <Typography>{post.tips}</Typography>
+                    <Typography>{post.opinion}</Typography>
                 </>
             )}
+            {post.tags && post.tags.length > 0 && (
+                <>
+                    <Typography variant="subtitle1" fontWeight={600} mt={2}>
+                        Tags:
+                    </Typography>
+                    <Box mt={1} display="flex" gap={1} flexWrap="wrap">
+                        {post.tags.map(tag => (
+                            <Chip
+                                key={tag}
+                                label={tag}
+                                component={Link}
+                                to={`/tags/${tag}`}//TODO: decide where i place the results of this search
+                                clickable
+                                size="small"
+                            />
+                        ))}
+                    </Box>
+                </>
+            )}
+
         </Box>
 
     );

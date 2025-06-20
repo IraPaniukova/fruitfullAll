@@ -1,4 +1,4 @@
-import { Box, Button, Typography, type ButtonProps } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { GridBox } from '../../components/GridBox';
 import { ChequeredTiles } from '../../components/ChequeredTiles';
 import { ContentStack } from '../../components/ContentStack';

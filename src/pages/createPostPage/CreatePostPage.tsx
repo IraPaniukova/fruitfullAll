@@ -82,6 +82,16 @@ export const CreatePostPage = () => {
         console.log('Submitting post:', form);
         // send to backend here
     };
+    const [tagsInput, setTagsInput] = useState('');
+
+    const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTagsInput(e.target.value);
+        const tagsArray = e.target.value
+            .split(',')
+            .map(t => t.trim())
+            .filter(t => t.length > 0);
+        setForm(prev => ({ ...prev, tags: tagsArray }));
+    };
 
     return (
         <Box p={2}>
@@ -124,6 +134,16 @@ export const CreatePostPage = () => {
                         rows={3}
                         value={form.opinion}
                         onChange={handleChange}
+                    />
+                </Grid>
+                <Grid size={12}>
+                    <TextField
+                        label="Tags (comma separated)"
+                        name="tagsInput"
+                        fullWidth
+                        value={tagsInput}
+                        onChange={handleTagsChange}
+                        helperText="Add tags separated by commas"
                     />
                 </Grid>
                 <Grid size={6}>
