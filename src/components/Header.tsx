@@ -3,8 +3,10 @@ import { useLocation } from "react-router-dom";
 import SearchIcon from '@mui/icons-material/Search';
 import logo from '../assets/fruitfull_logo.png';
 
-
-export const Header = () => {
+interface HeaderProps {
+    loggedIn: boolean;
+}
+export const Header: React.FC<HeaderProps> = ({ loggedIn }) => {
     const Search = styled('div')(({ theme }) => ({
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
@@ -29,7 +31,6 @@ export const Header = () => {
         alignItems: 'center',
         justifyContent: 'center',
     }));
-    const location = useLocation().pathname;
 
     const StyledInputBase = styled(InputBase)(({ theme }) => ({
         color: 'inherit',
@@ -47,9 +48,14 @@ export const Header = () => {
             },
         },
     }));
+    const location = useLocation().pathname;
+    const hideHeader = location === '/auth' || (location === '/' && !loggedIn);
 
     return (
-        <AppBar position="static" >
+
+        <AppBar position="static"
+            sx={{ display: hideHeader ? 'none' : 'flex' }
+            }>
             <Toolbar variant="dense" >
 
                 <Box pt={1}>
@@ -68,6 +74,6 @@ export const Header = () => {
                 <Box sx={{ flexGrow: 1 }} />
                 <Avatar alt="User Name" src="/path/to/avatar.jpg" />
             </Toolbar>
-        </AppBar>
+        </AppBar >
     );
 }
