@@ -1,8 +1,8 @@
 import { createTheme } from "@mui/material/styles";
-import { lightTheme } from "./lightTheme";
+import { sharedTheme } from "./sharedTheme";
 
 export const darkTheme = createTheme({
-  ...lightTheme,
+  ...sharedTheme,
   palette: {
     mode: "dark",
     background: {
@@ -12,6 +12,15 @@ export const darkTheme = createTheme({
     text: {
       primary: "#E0E0E0", // light text
       secondary: "#bdbdbd",
+    },
+  },
+  components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#121212",
+        },
+      },
     },
   },
 });

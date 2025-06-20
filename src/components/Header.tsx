@@ -1,7 +1,8 @@
 import { alpha, AppBar, Avatar, Box, InputBase, Stack, styled, Toolbar } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import SearchIcon from '@mui/icons-material/Search';
 import logo from '../assets/fruitfull_logo.png';
+import { UserMenu } from "./UserMenu";
 
 interface HeaderProps {
     loggedIn: boolean;
@@ -10,9 +11,15 @@ export const Header: React.FC<HeaderProps> = ({ loggedIn }) => {
     const Search = styled('div')(({ theme }) => ({
         position: 'relative',
         borderRadius: theme.shape.borderRadius,
-        backgroundColor: alpha(theme.palette.common.white, 0.15),
+        color: theme.palette.mode === 'light'
+            ? theme.palette.grey[900] : 'inherit',
+        backgroundColor: theme.palette.mode === 'light'
+            ? alpha(theme.palette.grey[800], 0.08)
+            : alpha(theme.palette.common.white, 0.15),
         '&:hover': {
-            backgroundColor: alpha(theme.palette.common.white, 0.25),
+            backgroundColor: theme.palette.mode === 'dark'
+                ? alpha(theme.palette.grey[800], 0.15)
+                : alpha(theme.palette.common.white, 0.25),
         },
         marginLeft: 0,
         width: '100%',
@@ -54,8 +61,7 @@ export const Header: React.FC<HeaderProps> = ({ loggedIn }) => {
     return (
 
         <AppBar position="static"
-            sx={{ display: hideHeader ? 'none' : 'flex' }
-            }>
+            sx={{ display: hideHeader ? 'none' : 'flex', mb: 2 }}>
             <Toolbar variant="dense" >
 
                 <Box pt={1}>
@@ -72,7 +78,10 @@ export const Header: React.FC<HeaderProps> = ({ loggedIn }) => {
                     />
                 </Search>
                 <Box sx={{ flexGrow: 1 }} />
-                <Avatar alt="User Name" src="/path/to/avatar.jpg" />
+                <Link to="/profile" style={{ textDecoration: 'none' }}>
+                    <Avatar alt="User Name" src="/path/to/avatar.jpg" sx={{ ml: 1 }} />
+                </Link>
+                <UserMenu />
             </Toolbar>
         </AppBar >
     );

@@ -1,3 +1,14 @@
 #root {
   text-align: center;
 }
+a {
+  color: #ff9100; /* bright orange */
+  text-decoration: underline;
+  text-decoration-color: #ff9100;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #c76b00; /* darker orange for hover */
+  text-decoration-color: #c76b00;
+}

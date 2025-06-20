@@ -1,6 +1,6 @@
 import { createBrowserRouter, Outlet, ScrollRestoration, RouterProvider } from 'react-router-dom';
 import { Stack } from '@mui/material';
-import { HomePage } from '../pages/homePage/HomePage';
+import { DashboardPage } from '../pages/dashboardPage/DashboardPage';
 import { AuthPage } from '../pages/authPage/AuthPage';
 import { LandingPage } from '../pages/landingPage/LandingPage';
 import { ProfilePage } from '../pages/profilePage/ProfilePage';
@@ -25,7 +25,7 @@ export const AppRouter = ({ loggedIn }: Props) => {
                 </Stack>
             ),
             children: [
-                { path: '', element: loggedIn ? <HomePage /> : <LandingPage /> },
+                { path: '', element: loggedIn ? <DashboardPage /> : <LandingPage /> },
                 { path: 'auth', element: <AuthPage /> },
                 {
                     path: 'profile', element: loggedIn ?

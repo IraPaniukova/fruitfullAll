@@ -44,6 +44,7 @@ export const ProfilePage = ({ username = 'Anonymous' }: Props) => {
                         {username}
                     </Typography>
                     <Typography>Member Since: Jan 2025</Typography>
+                    <Typography>Country: NewZealand</Typography>
                     <Stack direction='row' spacing={1} height='40px' alignItems='center'>
                         <Typography>Theme:</Typography>
                         {editIt ?
