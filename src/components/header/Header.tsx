@@ -69,7 +69,11 @@ export const Header: React.FC<HeaderProps> = ({ loggedIn }) => {
             sx={{ display: hideHeader ? 'none' : 'flex', mb: 2 }}>
             <Toolbar variant="dense" >
                 <Box pt={1}>
-                    <img src={logo} alt="logo" height='50' />
+                    <Link to="/"
+                        style={{ cursor: location === '/' ? 'default' : 'pointer' }}
+                    >
+                        <img src={logo} alt="logo" height='50' />
+                    </Link>
                 </Box>
 
                 <Search>

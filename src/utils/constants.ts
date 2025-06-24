@@ -27,6 +27,15 @@ export const questionTypeOptions = [
   "Situational",
   "Case Study",
 ];
+export const interviewFormatOptions = [
+  "Face to face with one",
+  "Face to face with group",
+  "Video call with one",
+  "Video call with group",
+  "Video recording",
+  "Timed online test",
+  "Take home task",
+];
 
 export const stressLevelOptions = [
   { value: "0", label: "0 - No Stress" },

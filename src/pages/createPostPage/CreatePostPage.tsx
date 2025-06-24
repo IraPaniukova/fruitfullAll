@@ -1,53 +1,27 @@
 import { useState } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
-import {
-    Box,
-    TextField,
-    Button,
-    Typography,
-    Grid,
-    MenuItem,
-    Select,
-    FormControl,
-    InputLabel,
-    FormHelperText,
-} from '@mui/material';
-
-import {
-    industryOptions,
-    countryOptions,
-    questionTypeOptions,
-    stressLevelOptions,
-} from '../../utils/constants';
-
-type PostFormData = {
-    title: string;
-    questions: string;
-    industry: string;
-    year: number | '';
-    country: string;
-    stressLevel: string;
-    questionType: string;
-    opinion?: string;
-};
+import { Box, TextField, Button, Typography, Grid, MenuItem, Select, FormControl, InputLabel, FormHelperText } from '@mui/material';
+import { industryOptions, countryOptions, questionTypeOptions, stressLevelOptions, interviewFormatOptions } from '../../utils/constants';
+import { TagInput } from './TagInput';
+import type { PostFormData } from '../../utils/types';
 
 export const CreatePostPage = () => {
     const currentYear = new Date().getFullYear();
-
     const [form, setForm] = useState<PostFormData>({
-        title: '',
         questions: '',
+        company: '',
         industry: '',
         year: '',
         country: '',
         stressLevel: '',
         questionType: '',
+        interviewFormat: '',
         opinion: '',
+        tags: [],
     });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
-
-    const handleChange = (
+    const handleSelectChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
     ) => {
         const { name, value } = e.target;
@@ -61,56 +35,41 @@ export const CreatePostPage = () => {
                     : value,
         }));
     };
-
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+    const validTags = form.tags?.every(tag => /^[a-zA-Z]+$/.test(tag));
     const validate = () => {
         const newErrors: Record<string, string> = {};
-        if (!form.title.trim()) newErrors.title = 'Title is required';
         if (!form.questions.trim()) newErrors.questions = 'Questions are required';
+        if (!form.company) newErrors.company = 'Company name or type (e.g. BNZ or bank) is required';
         if (!form.industry) newErrors.industry = 'Industry is required';
         if (form.year === '' || form.year < currentYear - 1 || form.year > currentYear)
             newErrors.year = `Year must be between last year and ${currentYear}`;
         if (!form.country) newErrors.country = 'Country is required';
         if (!form.stressLevel) newErrors.stressLevel = 'Stress Level is required';
         if (!form.questionType) newErrors.questionType = 'Question Type is required';
-
+        if (!validTags) newErrors.tag = 'error';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = () => {
-        if (!validate()) return;
+        if (!validate() || !validTags) return;
         console.log('Submitting post:', form);
         // send to backend here
     };
-    const [tagsInput, setTagsInput] = useState('');
-
-    const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTagsInput(e.target.value);
-        const tagsArray = e.target.value
-            .split(',')
-            .map(t => t.trim())
-            .filter(t => t.length > 0);
-        setForm(prev => ({ ...prev, tags: tagsArray }));
-    };
 
     return (
-        <Box p={2}>
+        <Box p={2} width={{ xs: 'auto', sm: '90%', md: '80%' }} mx='auto'>
             <Typography variant="h6" mb={2}>
                 Create a New Post
             </Typography>
             <Grid container spacing={2}>
-                <Grid size={12}>
-                    <TextField
-                        label="Title"
-                        name="title"
-                        fullWidth
-                        required
-                        value={form.title}
-                        onChange={handleChange}
-                        error={!!errors.title}
-                        helperText={errors.title}
-                    />
-                </Grid>
                 <Grid size={12}>
                     <TextField
                         label="Questions"
@@ -120,7 +79,7 @@ export const CreatePostPage = () => {
                         multiline
                         rows={4}
                         value={form.questions}
-                        onChange={handleChange}
+                        onChange={handleSelectChange}
                         error={!!errors.questions}
                         helperText={errors.questions}
                     />
@@ -133,20 +92,25 @@ export const CreatePostPage = () => {
                         multiline
                         rows={3}
                         value={form.opinion}
-                        onChange={handleChange}
+                        onChange={handleSelectChange}
                     />
                 </Grid>
                 <Grid size={12}>
-                    <TextField
-                        label="Tags (comma separated)"
-                        name="tagsInput"
-                        fullWidth
-                        value={tagsInput}
-                        onChange={handleTagsChange}
-                        helperText="Add tags separated by commas"
-                    />
+                    <TagInput setForm={setForm} error_tag={errors.tag} />
                 </Grid>
-                <Grid size={6}>
+                <Grid size={{ xs: 12, sm: 5 }}>
+                    <FormControl fullWidth required error={!!errors.industry}>
+                        <TextField
+                            sx={{ '& .MuiInputBase-input': { textAlign: 'center', }, }}
+                            name="company"
+                            value={form.company}
+                            label="Company name or type*"
+                            onChange={handleInputChange}
+                        />
+                        <FormHelperText>{errors.company}</FormHelperText>
+                    </FormControl>
+                </Grid>
+                <Grid size={{ xs: 6, sm: 4 }}>
                     <FormControl fullWidth required error={!!errors.industry}>
                         <InputLabel id="industry-label">Industry</InputLabel>
                         <Select
@@ -154,7 +118,7 @@ export const CreatePostPage = () => {
                             name="industry"
                             value={form.industry}
                             label="Industry"
-                            onChange={handleChange}
+                            onChange={handleSelectChange}
                         >
                             {industryOptions.map((opt) => (
                                 <MenuItem key={opt} value={opt}>
@@ -165,21 +129,7 @@ export const CreatePostPage = () => {
                         <FormHelperText>{errors.industry}</FormHelperText>
                     </FormControl>
                 </Grid>
-                <Grid size={6}>
-                    <TextField
-                        label="Year"
-                        name="year"
-                        type="number"
-                        fullWidth
-                        required
-                        value={form.year}
-                        onChange={handleChange}
-                        error={!!errors.year}
-                        helperText={errors.year}
-                        inputProps={{ min: currentYear - 1, max: currentYear }}
-                    />
-                </Grid>
-                <Grid size={6}>
+                <Grid size={{ xs: 6, sm: 3 }}>
                     <FormControl fullWidth required error={!!errors.country}>
                         <InputLabel id="country-label">Country</InputLabel>
                         <Select
@@ -187,7 +137,7 @@ export const CreatePostPage = () => {
                             name="country"
                             value={form.country}
                             label="Country"
-                            onChange={handleChange}
+                            onChange={handleSelectChange}
                         >
                             {countryOptions.map((opt) => (
                                 <MenuItem key={opt} value={opt}>
@@ -198,7 +148,26 @@ export const CreatePostPage = () => {
                         <FormHelperText>{errors.country}</FormHelperText>
                     </FormControl>
                 </Grid>
-                <Grid size={6}>
+                <Grid size={{ xs: 6, sm: 2 }}>
+                    <TextField
+                        sx={{ '& .MuiInputBase-input': { textAlign: 'center', }, }}
+                        label="Year"
+                        name="year"
+                        type="number"
+                        fullWidth
+                        required
+                        value={form.year}
+                        onChange={handleSelectChange}
+                        error={!!errors.year}
+                        helperText={errors.year}
+                        slotProps={{
+                            input: {
+                                inputProps: { min: currentYear - 1, max: currentYear }
+                            }
+                        }}
+                    />
+                </Grid>
+                <Grid size={{ xs: 6, sm: 3 }}>
                     <FormControl fullWidth required error={!!errors.stressLevel}>
                         <InputLabel id="stress-label">Stress Level</InputLabel>
                         <Select
@@ -206,7 +175,7 @@ export const CreatePostPage = () => {
                             name="stressLevel"
                             value={form.stressLevel}
                             label="Stress Level"
-                            onChange={handleChange}
+                            onChange={handleSelectChange}
                         >
                             {stressLevelOptions.map(({ value, label }) => (
                                 <MenuItem key={value} value={value}>
@@ -217,7 +186,7 @@ export const CreatePostPage = () => {
                         <FormHelperText>{errors.stressLevel}</FormHelperText>
                     </FormControl>
                 </Grid>
-                <Grid size={12}>
+                <Grid size={{ xs: 6, sm: 3 }}>
                     <FormControl fullWidth required error={!!errors.questionType}>
                         <InputLabel id="question-type-label">Question Type</InputLabel>
                         <Select
@@ -225,9 +194,29 @@ export const CreatePostPage = () => {
                             name="questionType"
                             value={form.questionType}
                             label="Question Type"
-                            onChange={handleChange}
+                            onChange={handleSelectChange}
                         >
                             {questionTypeOptions.map((opt) => (
+                                <MenuItem key={opt} value={opt}>
+                                    {opt}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        <FormHelperText>{errors.questionType}</FormHelperText>
+                    </FormControl>
+                </Grid>
+                <Grid size={{ xs: 6, sm: 4 }}>
+                    <FormControl fullWidth required error={!!errors.interviewFormat
+                    }>
+                        <InputLabel id="interview-format-label">Interview Format</InputLabel>
+                        <Select
+                            labelId="interview-format-label"
+                            name="interviewFormat"
+                            value={form.interviewFormat}
+                            label="Interview Format"
+                            onChange={handleSelectChange}
+                        >
+                            {interviewFormatOptions.map((opt) => (
                                 <MenuItem key={opt} value={opt}>
                                     {opt}
                                 </MenuItem>
