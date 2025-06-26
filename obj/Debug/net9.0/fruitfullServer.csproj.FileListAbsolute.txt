@@ -164,3 +164,6 @@ C:\Users\I\source\repos\fruitfullServer\obj\Debug\net9.0\refint\fruitfullServer.
 C:\Users\I\source\repos\fruitfullServer\obj\Debug\net9.0\fruitfullServer.pdb
 C:\Users\I\source\repos\fruitfullServer\obj\Debug\net9.0\fruitfullServer.genruntimeconfig.cache
 C:\Users\I\source\repos\fruitfullServer\obj\Debug\net9.0\ref\fruitfullServer.dll
+C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll

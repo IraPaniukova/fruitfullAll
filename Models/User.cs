@@ -9,11 +9,11 @@ public partial class User
 
     public string Email { get; set; } = null!;
 
-    public string? PasswordHash { get; set; }
+    public string PasswordHash { get; set; }= null!;
 
-    public string? Country { get; set; }
+    public string Country { get; set; } = null!;
 
-    public string? Theme { get; set; }
+    public string Theme { get; set; }= null!;
 
     public string? Nickname { get; set; }
 
@@ -23,7 +23,7 @@ public partial class User
 
     public string? GoogleId { get; set; }
 
-    public bool? IsAdmin { get; set; }
+    public bool IsAdmin { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
