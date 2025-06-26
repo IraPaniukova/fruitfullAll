@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("fruitfullServer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3d8234fedc4435fbf5ee0083be3543578b7887d4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+55fb9bef2937afc9a3284640e45af63c692e6de8")]
 [assembly: System.Reflection.AssemblyProductAttribute("fruitfullServer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("fruitfullServer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
