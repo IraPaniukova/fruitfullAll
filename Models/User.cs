@@ -9,11 +9,11 @@ public partial class User
 
     public string Email { get; set; } = null!;
 
-    public string PasswordHash { get; set; }= null!;
+    public string PasswordHash { get; set; } = null!;
 
     public string Country { get; set; } = null!;
 
-    public string Theme { get; set; }= null!;
+    public string Theme { get; set; } = null!;
 
     public string? Nickname { get; set; }
 
@@ -22,8 +22,6 @@ public partial class User
     public string? AuthProvider { get; set; }
 
     public string? GoogleId { get; set; }
-
-    public bool IsAdmin { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 
@@ -36,4 +34,6 @@ public partial class User
     public virtual ICollection<Comment> CommentsNavigation { get; set; } = new List<Comment>();
 
     public virtual ICollection<Post> PostsNavigation { get; set; } = new List<Post>();
+
+    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 }

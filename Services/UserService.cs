@@ -13,7 +13,6 @@ public class UserServices
         _passwordHasher = passwordHasher;
     }
 
-
     public async Task<UserOutputDto> CreateUserAsync(UserInputDto dto)
     {
         var user = new User

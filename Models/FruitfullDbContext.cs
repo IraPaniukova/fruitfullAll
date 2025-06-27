@@ -21,6 +21,8 @@ public partial class FruitfullDbContext : DbContext
 
     public virtual DbSet<Report> Reports { get; set; }
 
+    public virtual DbSet<Role> Roles { get; set; }
+
     public virtual DbSet<Tag> Tags { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -127,6 +129,17 @@ public partial class FruitfullDbContext : DbContext
                 .HasConstraintName("FK_Reports_Users");
         });
 
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE1AF2B6C2D8");
+
+            entity.HasIndex(e => e.RoleName, "UQ__Roles__8A2B61605AAC1DCC").IsUnique();
+
+            entity.Property(e => e.RoleName)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<Tag>(entity =>
         {
             entity.HasKey(e => e.TagId).HasName("PK__Tags__657CF9ACAFE45167");
@@ -160,7 +173,6 @@ public partial class FruitfullDbContext : DbContext
             entity.Property(e => e.GoogleId)
                 .HasMaxLength(255)
                 .IsUnicode(false);
-            entity.Property(e => e.IsAdmin).HasDefaultValue(false);
             entity.Property(e => e.Nickname)
                 .HasMaxLength(100)
                 .IsUnicode(false);
@@ -207,6 +219,23 @@ public partial class FruitfullDbContext : DbContext
                     {
                         j.HasKey("UserId", "PostId").HasName("PK__PostLike__8D29EA4D5B7DC5F9");
                         j.ToTable("PostLikes");
+                    });
+
+            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "UserRole",
+                    r => r.HasOne<Role>().WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_UserRoles_Roles"),
+                    l => l.HasOne<User>().WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_UserRoles_Users"),
+                    j =>
+                    {
+                        j.HasKey("UserId", "RoleId").HasName("PK__UserRole__AF2760AD1DF0115D");
+                        j.ToTable("UserRoles");
                     });
         });
 
