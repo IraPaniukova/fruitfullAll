@@ -13,7 +13,7 @@ builder.Services.AddDbContext<FruitfullDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-builder.Services.AddScoped<UserServices>(); // Registers UserServices for dependency injection
+builder.Services.AddScoped<UserService>(); // Registers UserServices for dependency injection
 
 builder.Services.AddCors(options =>
 {
@@ -40,11 +40,6 @@ app.UseCors();
 app.UseHttpsRedirection();
 app.UseRouting(); // Enables routing to match HTTP requests to controllers
 app.MapControllers(); // Maps attribute-routed controllers to endpoints
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
 app.Run();
 

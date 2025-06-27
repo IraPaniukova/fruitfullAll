@@ -13,7 +13,7 @@ public partial class User
 
     public string Country { get; set; } = null!;
 
-    public string Theme { get; set; } = null!;
+    public string? Theme { get; set; } 
 
     public string? Nickname { get; set; }
 

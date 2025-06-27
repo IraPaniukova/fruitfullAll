@@ -9,66 +9,42 @@ namespace fruitfullServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly FruitfullDbContext _context;
-        private readonly UserServices _userService;
-        public UserController(FruitfullDbContext context, UserServices userService)
+        private readonly UserService _userService;
+        public UsersController(FruitfullDbContext context, UserService userService)
         {
             _context = context;
             _userService = userService;
         }
 
-        // GET: api/User
+        // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserOutputDto>>> GetUsers()
         { 
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users.ToListAsync();
+            var result = users.Select(user => user.ToOutputDto());
+            return Ok(result);
         }
 
-        // GET: api/User/5
+        // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<UserOutputDto>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var users = await _context.Users.FindAsync(id);           
 
-            if (user == null)
+            if (users == null)
             {
                 return NotFound();
             }
-
-            return user;
+            var result = users.ToOutputDto();
+            return Ok(result);
         }
 
-        // PUT: api/User/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, [FromBody] User user)
-        {
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-
-        // POST: api/User
+        // POST: api/Users
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(UserInputDto user)
+        public async Task<ActionResult<UserOutputDto>> PostUser(UserInputDto user)
         {
             try
             {
@@ -85,7 +61,26 @@ namespace fruitfullServer.Controllers
             }
         }
 
-        // DELETE: api/User/5
+
+        // PUT: api/Users/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutUser(int id, [FromBody] UserUpdateDto user)
+        {
+            try
+            {
+                await _userService.UpdateUserAsync(id, user);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+
+        }
+
+
+        
+        // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
