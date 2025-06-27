@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using fruitfullServer.Models;
+using fruitfullServer.DTO;
 
 namespace fruitfullServer.Controllers
 
@@ -11,10 +12,11 @@ namespace fruitfullServer.Controllers
     public class UserController : ControllerBase
     {
         private readonly FruitfullDbContext _context;
-
-        public UserController(FruitfullDbContext context)
+        private readonly UserServices _userService;
+        public UserController(FruitfullDbContext context, UserServices userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         // GET: api/User
@@ -66,13 +68,12 @@ namespace fruitfullServer.Controllers
 
         // POST: api/User
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser(UserInputDto user)
         {
             try
             {
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
+                 var _user = await _userService.CreateUserAsync(user);
+                return CreatedAtAction(nameof(GetUser), new { id = _user.UserId }, _user);
             }
             catch (DbUpdateException ex)
             {

@@ -1,4 +1,5 @@
 using fruitfullServer.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,7 @@ builder.Services.AddDbContext<FruitfullDbContext>(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 builder.Services.AddOpenApi();
 
