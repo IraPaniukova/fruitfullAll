@@ -24,7 +24,6 @@ public class UserServices
             ProfileImage = dto.ProfileImage,
             AuthProvider = dto.AuthProvider,
             GoogleId = dto.GoogleId,
-            IsAdmin=false,
             CreatedAt=DateTime.UtcNow,
         };
         user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);

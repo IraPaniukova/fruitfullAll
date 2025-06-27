@@ -13,6 +13,17 @@ builder.Services.AddDbContext<FruitfullDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<UserServices>(); // Registers UserServices for dependency injection
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddOpenApi();
 
@@ -24,8 +35,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors();
 
 app.UseHttpsRedirection();
+app.UseRouting(); // Enables routing to match HTTP requests to controllers
+app.MapControllers(); // Maps attribute-routed controllers to endpoints
 
 var summaries = new[]
 {
