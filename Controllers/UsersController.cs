@@ -5,7 +5,6 @@ using fruitfullServer.DTO;
 
 namespace fruitfullServer.Controllers
 
-
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -61,7 +60,6 @@ namespace fruitfullServer.Controllers
             }
         }
 
-
         // PUT: api/Users/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, [FromBody] UserUpdateDto user)
@@ -78,8 +76,6 @@ namespace fruitfullServer.Controllers
 
         }
 
-
-        
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
@@ -98,11 +94,6 @@ namespace fruitfullServer.Controllers
             {
                 return StatusCode(500, new { message = "Internal server error" });
             }
-        }
-
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.UserId == id);
         }
     }
 }
