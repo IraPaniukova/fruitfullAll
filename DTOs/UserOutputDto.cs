@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-
 namespace fruitfullServer.DTO;
-
 public class UserOutputDto
 {
     public int UserId { get; set; }

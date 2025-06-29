@@ -23,7 +23,7 @@ public partial class User
 
     public string? GoogleId { get; set; }
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; } //it set not to nullable in the DB and applies GETDATE()
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 

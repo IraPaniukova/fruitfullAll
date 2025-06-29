@@ -63,6 +63,7 @@ public partial class FruitfullDbContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.Content).HasColumnType("text");
+            entity.Property(e => e.Opinion).HasColumnType("text");
             entity.Property(e => e.Country)
                 .HasMaxLength(100)
                 .IsUnicode(false);

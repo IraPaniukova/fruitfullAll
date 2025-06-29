@@ -15,7 +15,7 @@ public partial class Report
 
     public string Reason { get; set; } = null!;
 
-    public DateTime? CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }  //it set not to nullable in the DB and applies GETDATE()
 
     public virtual Comment? Comment { get; set; }
 

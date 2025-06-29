@@ -167,3 +167,4 @@ C:\Users\I\source\repos\fruitfullServer\obj\Debug\net9.0\ref\fruitfullServer.dll
 C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
