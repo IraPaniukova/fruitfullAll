@@ -2,11 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using fruitfullServer.Models;
 using fruitfullServer.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace fruitfullServer.Controllers
 
 
-{
+{   [Authorize(Roles = "SuperAdmin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserRoleController : ControllerBase

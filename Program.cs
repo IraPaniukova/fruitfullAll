@@ -1,6 +1,10 @@
 using fruitfullServer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +31,26 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddOpenApi();
 
+var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+if (string.IsNullOrEmpty(jwtKey))  throw new Exception("JWT secret key is not set!");
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            // ValidateIssuer = false,
+            // ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey =  new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
+builder.Services.AddAuthorization();
+
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,7 +60,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors();
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseHttpsRedirection();
 app.UseRouting(); // Enables routing to match HTTP requests to controllers
 app.MapControllers(); // Maps attribute-routed controllers to endpoints
