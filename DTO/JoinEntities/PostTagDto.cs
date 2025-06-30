@@ -1,4 +1,4 @@
-namespace fruitfullServer.DTO;
+namespace fruitfullServer.DTO.JoinEntities;
 public class PostTagDto
 {
     public int PostId { get; set; }

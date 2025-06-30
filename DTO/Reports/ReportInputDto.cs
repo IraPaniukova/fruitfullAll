@@ -1,4 +1,4 @@
-namespace fruitfullServer.DTO;
+namespace fruitfullServer.DTO.Reports;
 
 public class ReportInputDto
 {

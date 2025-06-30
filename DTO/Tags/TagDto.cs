@@ -1,4 +1,4 @@
-namespace fruitfullServer.DTO;
+namespace fruitfullServer.DTO.Tags;
 public class TagDto
 {
     public int? TagId { get; set; }

@@ -1,4 +1,4 @@
-namespace fruitfullServer.DTO;
+namespace fruitfullServer.DTO.Posts;
 public class PostOutputDto
 {
     public int PostId { get; set; }   

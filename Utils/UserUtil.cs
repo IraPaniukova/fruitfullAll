@@ -1,4 +1,4 @@
-using fruitfullServer.DTO;
+using fruitfullServer.DTO.Users;
 using fruitfullServer.Models;
 
 namespace fruitfullServer.Utils;

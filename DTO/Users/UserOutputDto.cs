@@ -1,4 +1,4 @@
-namespace fruitfullServer.DTO;
+namespace fruitfullServer.DTO.Users;
 public class UserOutputDto
 {
     public int UserId { get; set; }

@@ -1,8 +1,9 @@
 using fruitfullServer.Models;
-using fruitfullServer.DTO;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using fruitfullServer.Utils;
+using fruitfullServer.DTO.Users;
+
 namespace fruitfullServer.Services;
 public class UserService
 {
@@ -29,7 +30,6 @@ public class UserService
             ProfileImage = dto.ProfileImage,
             AuthProvider = dto.AuthProvider,
             GoogleId = dto.GoogleId,
-            CreatedAt = DateTime.UtcNow,
         };
         user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
         try

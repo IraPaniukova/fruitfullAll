@@ -1,4 +1,4 @@
-namespace fruitfullServer.DTO;
+namespace fruitfullServer.DTO.Posts;
 public class PostUpdateDto
 {
     public string? Content { get; set; } = null!;

@@ -1,4 +1,4 @@
-namespace fruitfullServer.DTO;
+namespace fruitfullServer.DTO.Roles;
 public class RoleOutputDto
 {
     public int RoleId { get; set; }

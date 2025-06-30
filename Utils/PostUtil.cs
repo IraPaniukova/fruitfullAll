@@ -1,4 +1,4 @@
-using fruitfullServer.DTO;
+using fruitfullServer.DTO.Posts;
 using fruitfullServer.Models;
 
 namespace fruitfullServer.Utils;

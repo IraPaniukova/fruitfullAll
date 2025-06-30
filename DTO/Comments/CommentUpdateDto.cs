@@ -1,4 +1,4 @@
-namespace fruitfullServer.DTO;
+namespace fruitfullServer.DTO.Comments;
 
 public class CommentUpdateDto
 {

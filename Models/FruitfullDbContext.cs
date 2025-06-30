@@ -15,6 +15,8 @@ public partial class FruitfullDbContext : DbContext
     {
     }
 
+    public virtual DbSet<AuthToken> AuthTokens { get; set; }
+
     public virtual DbSet<Comment> Comments { get; set; }
 
     public virtual DbSet<Post> Posts { get; set; }
@@ -238,6 +240,13 @@ public partial class FruitfullDbContext : DbContext
                         j.HasKey("UserId", "RoleId").HasName("PK__UserRole__AF2760AD1DF0115D");
                         j.ToTable("UserRoles");
                     });
+        });
+        modelBuilder.Entity<AuthToken>(entity =>
+        {
+            entity.HasKey(e => e.AuthTokenId).HasName("PK__AuthToke__3214EC070C270BF0");
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
+            entity.Property(e => e.RefreshToken).HasMaxLength(200);
         });
 
         OnModelCreatingPartial(modelBuilder);

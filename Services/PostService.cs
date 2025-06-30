@@ -1,4 +1,4 @@
-using fruitfullServer.DTO;
+using fruitfullServer.DTO.Posts;
 using fruitfullServer.Models;
 using fruitfullServer.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -40,8 +40,6 @@ public class PostService
             QuestionType = dto.QuestionType,
             InterviewFormat = dto.InterviewFormat,
             UserId = dto.UserId,
-            CreatedAt = DateTime.UtcNow,
-            LikesCount = 0
         };
 
         try

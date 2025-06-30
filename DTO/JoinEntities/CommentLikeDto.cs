@@ -1,4 +1,4 @@
-namespace fruitfullServer.DTO;
+namespace fruitfullServer.DTO.JoinEntities;
 public class CommentLikeDto
 {
     public int UserId { get; set; }

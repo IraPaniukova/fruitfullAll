@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using fruitfullServer.Models;
 using fruitfullServer.DTO;
 using Microsoft.AspNetCore.Authorization;
+using fruitfullServer.DTO.Roles;
 
 namespace fruitfullServer.Controllers;
 
