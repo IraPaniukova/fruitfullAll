@@ -1,6 +1,6 @@
 namespace fruitfullServer.DTO;
 
-public class CommentDto
+public class CommentOutputDto
 {
      public int? CommentId { get; set; }
     public int PostId { get; set; }

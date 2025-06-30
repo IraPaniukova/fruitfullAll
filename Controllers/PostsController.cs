@@ -2,118 +2,114 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using fruitfullServer.Models;
 using fruitfullServer.DTO;
+using fruitfullServer.Services;
+
+namespace fruitfullServer.Controllers;
+
 
 [Route("api/[controller]")]
 [ApiController]
 public class PostsController : ControllerBase
 {
     private readonly FruitfullDbContext _context;
-
-    public PostsController(FruitfullDbContext context)
+    private readonly PostService _postService;
+    public PostsController(FruitfullDbContext context, PostService postService)
     {
         _context = context;
+        _postService = postService;
     }
-    
-    [HttpGet]
-    public async Task<ActionResult<List<PostSummaryDto>>> GetPosts(int page = 1, int size = 10)
+
+    // POST: api/Posts
+    [HttpPost]
+    public async Task<ActionResult<PostOutputDto>> CreatePost(PostInputDto post)
     {
         try
         {
-            var posts = await _context.Posts
-                .OrderByDescending(p => p.CreatedAt)
-                .Skip((page - 1) * size)
-                .Take(size)
-                .Select(p => new PostSummaryDto
-                {
-                    PostId = p.PostId,
-                    Content = p.Content,
-                    Industry = p.Industry,
-                    StressLevel = p.StressLevel,
-                    CreatedAt = p.CreatedAt
-                })
-                .ToListAsync();
+            var _post = await _postService.CreatePostAsync(post);
+            return CreatedAtAction(nameof(GetPost), new { id = _post.PostId }, _post);
+        }
+        catch (DbUpdateException ex)
+        {
+            return BadRequest(new { message = "Unable to save user: " + ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Server error: " + ex.Message });
+        }
+    }
 
+    // GET: api/Posts/{id}
+    [HttpGet("{id}")]
+    public async Task<ActionResult<PostOutputDto>> GetPost(int id)
+    {
+        var post = await _postService.GetPostByIdAsync(id);
+        if (post == null) return NotFound();
+        return post;
+    }
+
+    // PUT: api/Posts/{id}
+    [HttpPut("{id}")]
+    public async Task<ActionResult<PostOutputDto>> UpdatePost(int id, PostUpdateDto dto)
+    {
+        try
+        {
+            var updated = await _postService.UpdatePostAsync(id, dto);
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Update error: " + ex.Message });
+        }
+    }
+
+    // DELETE: api/Posts/{id}
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeletePost(int id)
+    {
+        try
+        {
+            await _postService.DeletePostAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Delete error: " + ex.Message });
+        }
+    }
+
+    // GET: api/Posts/recent?page=1&pageSize=10
+    [HttpGet("recent")]
+    public async Task<ActionResult<List<PostSummaryDto>>> GetRecentPosts(int page = 1, int pageSize = 10)
+    {
+        return await _postService.GetRecentPostsAsync(page, pageSize);
+    }
+
+    // GET: api/Posts/by-tag?tagName=example
+    [HttpGet("by-tag")]
+    public async Task<ActionResult<List<PostSummaryDto>>> GetPostsByTag([FromQuery] string tagName)
+    {
+        return await _postService.GetPostsByTagAsync(tagName);
+    }
+    // GET: api/Posts/User/5?page=1&pageSize=10
+    [HttpGet("User/{userId}")]
+    public async Task<ActionResult<List<PostSummaryDto>>> GetPostsByUserId(int userId, int page = 1, int pageSize = 10)
+    {
+        try
+        {
+            var posts = await _postService.GetPostsByUserIdAsync(userId, page, pageSize);
             return Ok(posts);
         }
-        catch
-        {
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<PostDto>> GetPost(int id)
-    {
-        try
-        {
-            var post = await _context.Posts.FindAsync(id);
-            if (post == null) return NotFound();
-
-            var dto = new PostDto
-            {
-                PostId = post.PostId,
-                Content = post.Content,
-                Opinion = post.Opinion,
-                Company = post.Company,
-                Industry = post.Industry,
-                Year = post.Year,
-                Country = post.Country,
-                StressLevel = post.StressLevel,
-                QuestionType = post.QuestionType,
-                InterviewFormat = post.InterviewFormat,
-                UserId = post.UserId,
-                CreatedAt = post.CreatedAt,
-                UpdatedAt = post.UpdatedAt,
-                IsDeleted = post.IsDeleted,
-                LikesCount = post.LikesCount
-            };
-
-            return Ok(dto);
-        }
         catch (Exception ex)
         {
-            // log ex if you have logging
-            return StatusCode(500, "Internal server error");
+            return StatusCode(500, new { message = "Server error: " + ex.Message });
         }
     }
-
-    [HttpPost]
-    public async Task<ActionResult<PostDto>> CreatePost(PostDto postDto)
-    {
-        try
-        {
-            var post = new Post
-            {
-                Content = postDto.Content,
-                Opinion = postDto.Opinion,
-                Company = postDto.Company,
-                Industry = postDto.Industry,
-                Year = postDto.Year,
-                Country = postDto.Country,
-                StressLevel = postDto.StressLevel,
-                QuestionType = postDto.QuestionType,
-                InterviewFormat = postDto.InterviewFormat,
-                UserId = postDto.UserId,
-                CreatedAt = DateTime.Now,
-                IsDeleted = false,
-                LikesCount = 0
-            };
-
-            _context.Posts.Add(post);
-            await _context.SaveChangesAsync();
-
-            postDto.PostId = post.PostId;
-            postDto.CreatedAt = post.CreatedAt;
-
-            return CreatedAtAction(nameof(GetPost), new { id = post.PostId }, postDto);
-        }
-        catch (Exception ex)
-        {
-            // log ex
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    // Add Update, Delete similarly with try-catch
-
 }

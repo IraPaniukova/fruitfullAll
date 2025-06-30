@@ -1,9 +1,11 @@
 using fruitfullServer.Models;
+using fruitfullServer.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,8 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<UserService>(); // Registers UserServices for dependency injection
+builder.Services.AddScoped<PostService>();  // Registers PostServices for dependency injection
+
 
 builder.Services.AddCors(options =>
 {

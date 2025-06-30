@@ -2,9 +2,8 @@ using fruitfullServer.Models;
 using fruitfullServer.DTO;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-
-
+using fruitfullServer.Utils;
+namespace fruitfullServer.Services;
 public class UserService
 {
     private readonly FruitfullDbContext _context;
@@ -48,7 +47,7 @@ public class UserService
             _logger.LogError(ex, "Unexpected error.");
             throw;
         }
-        return user.ToOutputDto();  //from utils
+        return user.ToUserOutputDto();  //from utils
     }
     
     public async Task<UserOutputDto> UpdateUserAsync(int id, UserUpdateDto dto)
@@ -77,6 +76,6 @@ public class UserService
             _logger.LogError(ex, "Unexpected error.");
             throw;
         }
-        return user.ToOutputDto();  //from utils
+        return user.ToUserOutputDto();  //from utils
     }
 }

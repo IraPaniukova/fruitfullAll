@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using fruitfullServer.Models;
 using fruitfullServer.DTO;
+using fruitfullServer.Services;
+using fruitfullServer.Utils;
+
 
 namespace fruitfullServer.Controllers;
 
@@ -22,7 +25,7 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<IEnumerable<UserOutputDto>>> GetUsers()
     { 
         var users = await _context.Users.ToListAsync();
-        var result = users.Select(user => user.ToOutputDto());
+        var result = users.Select(user => user.ToUserOutputDto());
         return Ok(result);
     }
 
@@ -36,7 +39,7 @@ public class UsersController : ControllerBase
         {
             return NotFound();
         }
-        var result = users.ToOutputDto();
+        var result = users.ToUserOutputDto();
         return Ok(result);
     }
 
