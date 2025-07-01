@@ -4,10 +4,12 @@ using fruitfullServer.Models;
 using fruitfullServer.Services;
 using fruitfullServer.Utils;
 using fruitfullServer.DTO.Users;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace fruitfullServer.Controllers;
 
+// [Authorize(Policy = "LoginPolicy")]
 [Route("api/[controller]")]
 [ApiController]
 public class UsersController : ControllerBase

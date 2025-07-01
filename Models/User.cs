@@ -11,9 +11,9 @@ public partial class User
 
     public string PasswordHash { get; set; } = null!;
 
-    public string Country { get; set; } = null!;
+    public string? Country { get; set; } 
 
-    public string? Theme { get; set; } 
+    public string Theme { get; set; } = null!;
 
     public string? Nickname { get; set; }
 
@@ -24,6 +24,8 @@ public partial class User
     public string? GoogleId { get; set; }
 
     public DateTime? CreatedAt { get; set; } //it set not to nullable in the DB and applies GETDATE()
+
+    public virtual ICollection<AuthToken> AuthTokens { get; set; } = new List<AuthToken>();
 
     public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
 

@@ -9,9 +9,7 @@ public class UserInputDto
     public string Email { get; set; } = null!;
     [Required]
     public string Password { get; set; }= null!;  //the field is not in my DB
-
-    [Required]
-    public string Country { get; set; } = null!;
+    public string? Country { get; set; }
     public string? Theme { get; set; } 
 
     public string? Nickname { get; set; }

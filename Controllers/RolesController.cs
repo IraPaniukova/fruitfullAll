@@ -7,7 +7,7 @@ using fruitfullServer.DTO.Roles;
 
 namespace fruitfullServer.Controllers;
 
-[Authorize(Roles = "SuperAdmin")]
+// [Authorize(Policy = "LoginPolicy", Roles = "SuperAdmin")]
 [Route("api/[controller]")]
 [ApiController]
 public class RolesController : ControllerBase

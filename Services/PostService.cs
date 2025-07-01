@@ -2,6 +2,7 @@ using fruitfullServer.DTO.Posts;
 using fruitfullServer.Models;
 using fruitfullServer.Utils;
 using Microsoft.EntityFrameworkCore;
+
 namespace fruitfullServer.Services;
 
 public class PostService
@@ -127,7 +128,8 @@ public class PostService
                 CreatedAt = p.CreatedAt,
                 Content = p.Content,
                 Industry = p.Industry,
-                StressLevel = (int)p.StressLevel
+                Country=p.Country,
+                StressLevel = p.StressLevel
             })
             .ToListAsync();
     }
@@ -139,10 +141,11 @@ public class PostService
             .OrderByDescending(p => p.CreatedAt)
             .Select(p => new PostSummaryDto
             {
-                PostId = p.PostId,
+               PostId = p.PostId,
                 CreatedAt = p.CreatedAt,
                 Content = p.Content,
                 Industry = p.Industry,
+                Country=p.Country,
                 StressLevel = p.StressLevel
             })
             .ToListAsync();
@@ -157,10 +160,11 @@ public class PostService
         .Select(p => new PostSummaryDto
         {
             PostId = p.PostId,
-            CreatedAt = p.CreatedAt,
-            Content = p.Content,
-            Industry = p.Industry,
-            StressLevel = p.StressLevel
+                CreatedAt = p.CreatedAt,
+                Content = p.Content,
+                Industry = p.Industry,
+                Country=p.Country,
+                StressLevel = p.StressLevel
         })
         .ToListAsync();
     }

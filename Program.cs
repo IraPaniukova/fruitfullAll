@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 
 
@@ -16,11 +17,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<FruitfullDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// This sets authorization policy:
+// Endpoints with [Authorize(Policy = "LoginPolicy")] require authentication.
+//TODO: uncomment the next piece
+// builder.Services.AddAuthorizationBuilder()
+//     .AddPolicy("LoginPolicy", policy => { policy.RequireAuthenticatedUser();  }
+// );
+
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<UserService>(); // Registers UserServices for dependency injection
 builder.Services.AddScoped<PostService>();  // Registers PostServices for dependency injection
+builder.Services.AddScoped<AuthService>(); // Registers AuthService for dependency injection
 
 
 builder.Services.AddCors(options =>
@@ -35,7 +44,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddOpenApi();
 
-var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+string? jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
 if (string.IsNullOrEmpty(jwtKey))  throw new Exception("JWT secret key is not set!");
 
 builder.Services.AddAuthentication("Bearer")
@@ -64,8 +73,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseHttpsRedirection();
 app.UseRouting(); // Enables routing to match HTTP requests to controllers
 app.MapControllers(); // Maps attribute-routed controllers to endpoints

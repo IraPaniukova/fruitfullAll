@@ -13,4 +13,6 @@ public partial class AuthToken
     public DateTime CreatedAt { get; set; }
 
     public DateTime? RevokedAt { get; set; }
+
+    public virtual User User { get; set; } = null!;
 }

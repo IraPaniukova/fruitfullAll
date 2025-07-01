@@ -35,6 +35,19 @@ public partial class FruitfullDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AuthToken>(entity =>
+        {
+            entity.HasKey(e => e.AuthTokenId).HasName("PK__AuthToke__3214EC070C270BF0");
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
+            entity.Property(e => e.RefreshToken).HasMaxLength(200);
+
+            entity.HasOne(d => d.User).WithMany(p => p.AuthTokens)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_AuthTokens_Users");
+        });
+
         modelBuilder.Entity<Comment>(entity =>
         {
             entity.HasKey(e => e.CommentId).HasName("PK__Comments__C3B4DFCA5899591B");
@@ -54,6 +67,7 @@ public partial class FruitfullDbContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.Comments)
                 .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Comments_Users_User");
         });
 
@@ -65,7 +79,6 @@ public partial class FruitfullDbContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.Content).HasColumnType("text");
-            entity.Property(e => e.Opinion).HasColumnType("text");
             entity.Property(e => e.Country)
                 .HasMaxLength(100)
                 .IsUnicode(false);
@@ -80,6 +93,7 @@ public partial class FruitfullDbContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.LikesCount).HasDefaultValue(0);
+            entity.Property(e => e.Opinion).HasColumnType("text");
             entity.Property(e => e.QuestionType)
                 .HasMaxLength(100)
                 .IsUnicode(false);
@@ -87,6 +101,7 @@ public partial class FruitfullDbContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.Posts)
                 .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Posts_Users");
 
             entity.HasMany(d => d.Tags).WithMany(p => p.Posts)
@@ -120,15 +135,16 @@ public partial class FruitfullDbContext : DbContext
 
             entity.HasOne(d => d.Comment).WithMany(p => p.Reports)
                 .HasForeignKey(d => d.CommentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Reports_Comments");
 
             entity.HasOne(d => d.Post).WithMany(p => p.Reports)
                 .HasForeignKey(d => d.PostId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Reports_Posts");
 
             entity.HasOne(d => d.User).WithMany(p => p.Reports)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Reports_Users");
         });
 
@@ -240,13 +256,6 @@ public partial class FruitfullDbContext : DbContext
                         j.HasKey("UserId", "RoleId").HasName("PK__UserRole__AF2760AD1DF0115D");
                         j.ToTable("UserRoles");
                     });
-        });
-        modelBuilder.Entity<AuthToken>(entity =>
-        {
-            entity.HasKey(e => e.AuthTokenId).HasName("PK__AuthToke__3214EC070C270BF0");
-
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())");
-            entity.Property(e => e.RefreshToken).HasMaxLength(200);
         });
 
         OnModelCreatingPartial(modelBuilder);

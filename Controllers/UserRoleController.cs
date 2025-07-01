@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using fruitfullServer.DTO.JoinEntities;
 
 namespace fruitfullServer.Controllers;
-
-[Authorize(Roles = "SuperAdmin")]
+// [Authorize(Policy = "LoginPolicy", Roles = "SuperAdmin")]
 [Route("api/[controller]")]
 [ApiController]
 public class UserRoleController : ControllerBase
