@@ -37,7 +37,7 @@ public class PostsController : ControllerBase
         }
         catch (DbUpdateException ex)
         {
-            return BadRequest(new { message = "Unable to save user: " + ex.Message });
+            return BadRequest(new { message = "Unable to save post: " + ex.Message });
         }
         catch (Exception ex)
         {

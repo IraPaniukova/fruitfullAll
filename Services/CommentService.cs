@@ -52,17 +52,19 @@ public class CommentService
 
     public async Task<CommentOutputDto> UpdateCommentAsync(int id, CommentUpdateDto dto)
     {
-        var comment = await _context.Comments.FindAsync(id) ?? throw new KeyNotFoundException();
+        var comment = await _context.Comments.FindAsync(id) ?? throw new KeyNotFoundException($"Comment with ID {id} not found.");
+
         if ( dto.Text != comment.Text)  comment.Text = dto.Text;     
         comment.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-        return await GetCommentByIdAsync(id) ?? throw new Exception("Comment not found after update");
+        return comment.ToCommentOutputDto();
     }
 
     public async Task DeleteCommentAsync(int id)
     {
-        var comment = await _context.Comments.FindAsync(id) ?? throw new KeyNotFoundException();
+        var comment = await _context.Comments.FindAsync(id) ?? throw new KeyNotFoundException($"Comment with ID {id} not found.");
+
         comment.IsDeleted = true;
         await _context.SaveChangesAsync();
     }

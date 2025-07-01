@@ -27,9 +27,10 @@ builder.Services.AddDbContext<FruitfullDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-builder.Services.AddScoped<UserService>(); // Registers UserServices for dependency injection
-builder.Services.AddScoped<PostService>();  // Registers PostServices for dependency injection
-builder.Services.AddScoped<AuthService>(); // Registers AuthService for dependency injection
+builder.Services.AddScoped<UserService>(); // Registers Services for dependency injections
+builder.Services.AddScoped<PostService>();  
+builder.Services.AddScoped<AuthService>(); 
+builder.Services.AddScoped<CommentService>();
 
 
 builder.Services.AddCors(options =>
