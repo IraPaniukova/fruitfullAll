@@ -55,7 +55,6 @@ public partial class FruitfullDbContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.EditCount).HasDefaultValue(0);
             entity.Property(e => e.IsDeleted).HasDefaultValue(false);
             entity.Property(e => e.LikesCount).HasDefaultValue(0);
             entity.Property(e => e.Text).HasColumnType("text");

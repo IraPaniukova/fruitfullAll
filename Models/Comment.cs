@@ -17,9 +17,7 @@ public partial class Comment
 
     public DateTime? UpdatedAt { get; set; }
 
-    public bool? IsDeleted { get; set; }
-
-    public int? EditCount { get; set; }
+    public bool IsDeleted { get; set; }
 
     public int? LikesCount { get; set; }
 
