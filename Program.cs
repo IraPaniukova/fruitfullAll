@@ -29,8 +29,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<UserService>(); // Registers Services for dependency injections
 builder.Services.AddScoped<PostService>();  
-builder.Services.AddScoped<AuthService>(); 
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CommentService>();
+builder.Services.AddScoped<TagService>();
+
 
 
 builder.Services.AddCors(options =>

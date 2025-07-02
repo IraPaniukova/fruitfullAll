@@ -21,19 +21,22 @@ public class UserService
 
     public async Task<UserOutputDto> CreateUserAsync(UserInputDto dto)
     {
-        var user = new User
-        {
-            Email = dto.Email,
-            Country = dto.Country,
-            Theme = dto.Theme ?? "light",
-            Nickname = dto.Nickname,
-            ProfileImage = dto.ProfileImage,
-            AuthProvider = dto.AuthProvider,
-            GoogleId = dto.GoogleId,
-        };
-        user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
+        bool nicknameExists = _context.Users.Any(u => u.Nickname == dto.Nickname); 
+        if (nicknameExists)  throw new Exception("Nickname already in use. Please choose another.");
+        User user;
         try
         {
+             user = new User
+            {
+                Email = dto.Email,
+                Country = dto.Country,
+                Theme = dto.Theme ?? "light",
+                Nickname = dto.Nickname,
+                ProfileImage = dto.ProfileImage,
+                AuthProvider = dto.AuthProvider,
+                GoogleId = dto.GoogleId,
+            };
+            user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
         }

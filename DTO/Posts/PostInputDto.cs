@@ -1,4 +1,5 @@
 namespace fruitfullServer.DTO.Posts;
+
 public class PostInputDto
 {
     public string Content { get; set; } = null!;
@@ -11,4 +12,5 @@ public class PostInputDto
     public string QuestionType { get; set; } = null!;
     public string InterviewFormat { get; set; } = null!;
     public int UserId { get; set; }           
+     public List<string>? Tags { get; set; }
 }
