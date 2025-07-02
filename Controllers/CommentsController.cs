@@ -4,6 +4,7 @@ using fruitfullServer.Models;
 using fruitfullServer.Services;
 using fruitfullServer.DTO.Comments;
 using Microsoft.AspNetCore.Authorization;
+using fruitfullServer.DTO.JoinEntities;
 
 namespace fruitfullServer.Controllers;
 
@@ -19,7 +20,7 @@ public class CommentsController : ControllerBase
         _context = context;
         _commentService = commentService;
     }
-    
+
     // POST: api/Comments
     [HttpPost]
     public async Task<ActionResult<CommentOutputDto>> CreateComment(CommentInputDto comment)
@@ -81,8 +82,8 @@ public class CommentsController : ControllerBase
             return StatusCode(500, new { message = "Server error: " + ex.Message });
         }
     }
-    
-     // DELETE: api/Comments/{id}
+
+    // DELETE: api/Comments/{id}
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteComment(int id)
     {
@@ -98,6 +99,24 @@ public class CommentsController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, new { message = "Delete error: " + ex.Message });
+        }
+    }
+    // PATCH: api/Comments/{commentId}/{userId}
+    [HttpPatch("{commentId}/{userId}")]
+    public async Task<ActionResult<CommentLikeDto>> UpdateLikes(int commentId, int userId)
+    {
+        try
+        {
+            var updated = await _commentService.ToggleLikeCommentAsync(commentId, userId);
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Update error: " + ex.Message });
         }
     }
 }

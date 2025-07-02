@@ -1,3 +1,4 @@
+using fruitfullServer.DTO.JoinEntities;
 using fruitfullServer.DTO.Posts;
 using fruitfullServer.Models;
 using fruitfullServer.Utils;
@@ -61,11 +62,18 @@ public class PostService
         return post.ToPostOutputDto();
     }
     public async Task<PostOutputDto?> GetPostByIdAsync(int id)
+{
+    try
     {
         var post = await _context.Posts.FindAsync(id);
         if (post == null) return null;
-
         return post.ToPostOutputDto();
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error getting post by ID {PostId}", id);
+        throw;
+    }
     }
 
     public async Task<PostOutputDto> UpdatePostAsync(int id, PostUpdateDto dto)
@@ -100,72 +108,163 @@ public class PostService
         if (!string.IsNullOrWhiteSpace(dto.InterviewFormat) && dto.InterviewFormat != post.InterviewFormat)
             post.InterviewFormat = dto.InterviewFormat;
         post.UpdatedAt = DateTime.UtcNow;
-
-        await _context.SaveChangesAsync();
-
-        return await GetPostByIdAsync(id) ?? throw new Exception("Post not found after update");
+        try
+        {
+            await _context.SaveChangesAsync();
+            return await GetPostByIdAsync(id) ?? throw new Exception("Post not found after update");
+        }
+         catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Failed to update post in DB.");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error updating post ID {PostId}", id);
+            throw;
+        }
     }
 
     public async Task DeletePostAsync(int id)
     {
-        var post = await _context.Posts.FindAsync(id);
-        if (post == null) throw new KeyNotFoundException();
+    var post = await _context.Posts.FindAsync(id) ?? throw new KeyNotFoundException();
+    post.IsDeleted = true;
 
-        post.IsDeleted = true;
+    try
+    {
         await _context.SaveChangesAsync();
+    }
+    catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Failed to delete post in DB.");
+            throw;
+        }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Unexpected error deleting post ID {PostId}", id);
+        throw;
+    }
     }
 
     public async Task<List<PostSummaryDto>> GetRecentPostsAsync(int page, int pageSize)
     {
-        return await _context.Posts
-            .Where(p => !p.IsDeleted)
-            .OrderByDescending(p => p.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(p => new PostSummaryDto
-            {
-                PostId = p.PostId,
-                CreatedAt = p.CreatedAt,
-                Content = p.Content,
-                Industry = p.Industry,
-                Country=p.Country,
-                StressLevel = p.StressLevel
-            })
-            .ToListAsync();
+        try
+        {
+            return await _context.Posts
+                .Where(p => !p.IsDeleted)
+                .OrderByDescending(p => p.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new PostSummaryDto
+                {
+                    PostId = p.PostId,
+                    CreatedAt = p.CreatedAt,
+                    Content = p.Content,
+                    Industry = p.Industry,
+                    Country = p.Country,
+                    StressLevel = p.StressLevel
+                })
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching recent posts");
+            throw;
+        }
     }
 
     public async Task<List<PostSummaryDto>> GetPostsByTagAsync(string tagName)
     {
-        return await _context.Posts
-            .Where(p => !p.IsDeleted && p.Tags.Any(t => t.Name == tagName))
-            .OrderByDescending(p => p.CreatedAt)
-            .Select(p => new PostSummaryDto
-            {
-               PostId = p.PostId,
-                CreatedAt = p.CreatedAt,
-                Content = p.Content,
-                Industry = p.Industry,
-                Country=p.Country,
-                StressLevel = p.StressLevel
-            })
-            .ToListAsync();
+        try
+        {
+            return await _context.Posts
+                .Where(p => !p.IsDeleted && p.Tags.Any(t => t.Name == tagName))
+                .OrderByDescending(p => p.CreatedAt)
+                .Select(p => new PostSummaryDto
+                {
+                    PostId = p.PostId,
+                    CreatedAt = p.CreatedAt,
+                    Content = p.Content,
+                    Industry = p.Industry,
+                    Country = p.Country,
+                    StressLevel = p.StressLevel
+                })
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching posts by tag {TagName}", tagName);
+            throw;
+        }
     }
     public async Task<List<PostSummaryDto>> GetPostsByUserIdAsync(int userId, int page, int pageSize)
-        {   
-    return await _context.Posts
-        .Where(p => !p.IsDeleted && p.UserId == userId)
-        .OrderByDescending(p => p.CreatedAt)
-        .Skip((page - 1) * pageSize)
-        .Take(pageSize)
-        .Select(p => new PostSummaryDto
+    {
+         try
         {
-            PostId = p.PostId,
-                CreatedAt = p.CreatedAt,
-                Content = p.Content,
-                Industry = p.Industry,
-                Country=p.Country,
-                StressLevel = p.StressLevel
-        })
-        .ToListAsync();
+            return await _context.Posts
+                .Where(p => !p.IsDeleted && p.UserId == userId)
+                .OrderByDescending(p => p.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new PostSummaryDto
+                {
+                    PostId = p.PostId,
+                    CreatedAt = p.CreatedAt,
+                    Content = p.Content,
+                    Industry = p.Industry,
+                    Country = p.Country,
+                    StressLevel = p.StressLevel
+                })
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching posts by user ID {UserId}", userId);
+            throw;
+        }
+    }
+    public async Task<PostLikeDto> ToggleLikePostAsync(int postId, int userId)
+    {
+        var post = await _context.Posts.FindAsync(postId)
+            ?? throw new KeyNotFoundException($"Post with ID {postId} not found.");
+        var user = await _context.Users.FindAsync(userId)
+            ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
+        var postLikes = _context.Set<Dictionary<string, object>>("PostLikes");
+
+        try
+        {
+            var likeEntry = await postLikes
+                .FirstOrDefaultAsync(cl => (int)cl["UserId"] == userId && (int)cl["PostId"] == postId);
+
+            if (likeEntry == null)
+            {
+                post.LikesCount += 1;
+                postLikes.Add(new Dictionary<string, object>
+                {
+                    ["UserId"] = userId,
+                    ["PostId"] = postId
+                });
+            }
+            else
+            {
+                post.LikesCount -= 1;
+                postLikes.Remove(likeEntry);
+            }
+
+            await _context.SaveChangesAsync();
+
+            // to clarify: post.UserId - user who wrote the post and userId - user who liked the post
+            return new PostLikeDto
+            {
+                UserId = userId,
+                PostId = post.PostId,
+                LikesCount = post.LikesCount
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error toggling like for post {PostId} by user {UserId}", postId, userId);
+            throw;
+        }
     }
 }

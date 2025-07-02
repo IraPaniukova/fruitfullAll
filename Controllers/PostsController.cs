@@ -4,6 +4,7 @@ using fruitfullServer.Models;
 using fruitfullServer.Services;
 using fruitfullServer.DTO.Posts;
 using Microsoft.AspNetCore.Authorization;
+using fruitfullServer.DTO.JoinEntities;
 
 namespace fruitfullServer.Controllers;
 
@@ -93,8 +94,8 @@ public class PostsController : ControllerBase
             return StatusCode(500, new { message = "Server error: " + ex.Message });
         }
     }
-    
-     // DELETE: api/Posts/{id}
+
+    // DELETE: api/Posts/{id}
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePost(int id)
     {
@@ -110,6 +111,24 @@ public class PostsController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, new { message = "Delete error: " + ex.Message });
+        }
+    }
+     // PATCH: api/Posts/{postId}/{userId}
+    [HttpPatch("{postId}/{userId}")]
+    public async Task<ActionResult<PostLikeDto>> UpdateLikes(int postId, int userId)
+    {
+        try
+        {
+            var updated = await _postService.ToggleLikePostAsync(postId, userId);
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Update error: " + ex.Message });
         }
     }
 }

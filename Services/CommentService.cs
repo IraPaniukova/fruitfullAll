@@ -1,4 +1,5 @@
 using fruitfullServer.DTO.Comments;
+using fruitfullServer.DTO.JoinEntities;
 using fruitfullServer.Models;
 using fruitfullServer.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -10,15 +11,14 @@ public class CommentService
     private readonly FruitfullDbContext _context;
     private readonly ILogger<CommentService> _logger;
 
-    public CommentService
-    (FruitfullDbContext context, ILogger<CommentService> logger)
+    public CommentService(FruitfullDbContext context, ILogger<CommentService> logger)
     {
         _context = context;
         _logger = logger;
     }
 
     public async Task<CommentOutputDto> CreateCommentAsync(CommentInputDto dto)
-    {      
+    {
         var comment = new Comment
         {
             PostId = dto.PostId,
@@ -42,49 +42,129 @@ public class CommentService
         }
         return comment.ToCommentOutputDto();
     }
+
     public async Task<CommentOutputDto?> GetCommentByIdAsync(int id)
     {
-        var comment = await _context.Comments.FindAsync(id);
-        if (comment == null) return null;
-
-        return comment.ToCommentOutputDto();
+        try
+        {
+            var comment = await _context.Comments.FindAsync(id);
+            if (comment == null) return null;
+            return comment.ToCommentOutputDto();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting comment by ID {CommentId}", id);
+            throw;
+        }
     }
 
     public async Task<CommentOutputDto> UpdateCommentAsync(int id, CommentUpdateDto dto)
     {
-        var comment = await _context.Comments.FindAsync(id) ?? throw new KeyNotFoundException($"Comment with ID {id} not found.");
+        var comment = await _context.Comments.FindAsync(id)
+            ?? throw new KeyNotFoundException($"Comment with ID {id} not found.");
 
-        if ( dto.Text != comment.Text)  comment.Text = dto.Text;     
+        if (dto.Text != comment.Text) comment.Text = dto.Text;
         comment.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
-        return comment.ToCommentOutputDto();
+        try
+        {
+            await _context.SaveChangesAsync();
+            return comment.ToCommentOutputDto();
+        }
+         catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Failed to update comment in DB.");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating comment ID {CommentId}", id);
+            throw;
+        }
     }
 
     public async Task DeleteCommentAsync(int id)
     {
-        var comment = await _context.Comments.FindAsync(id) ?? throw new KeyNotFoundException($"Comment with ID {id} not found.");
+        var comment = await _context.Comments.FindAsync(id)
+            ?? throw new KeyNotFoundException($"Comment with ID {id} not found.");
 
         comment.IsDeleted = true;
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+         catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Failed to delet post from DB.");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting comment ID {CommentId}", id);
+            throw;
+        }
     }
 
-   //Get all comments for a PostID
     public async Task<List<CommentOutputDto>> GetCommentsByPostIdAsync(int postId)
-        {   
-    return await _context.Comments
-        .Where(c => !c.IsDeleted && c.PostId == postId)
-        .Select(c => new CommentOutputDto
+    {
+        return await _context.Comments
+            .Where(c => !c.IsDeleted && c.PostId == postId)
+            .Select(c => new CommentOutputDto
+            {
+                CommentId = c.CommentId,
+                UserId = c.UserId,
+                PostId = c.PostId,
+                Text = c.Text,
+                CreatedAt = c.CreatedAt,
+                UpdatedAt = c.UpdatedAt,
+                IsDeleted = c.IsDeleted,
+                LikesCount = c.LikesCount,
+            })
+            .ToListAsync();
+    }
+
+    public async Task<CommentLikeDto> ToggleLikeCommentAsync(int commentId, int userId)
+    {
+        var comment = await _context.Comments.FindAsync(commentId)
+            ?? throw new KeyNotFoundException($"Comment with ID {commentId} not found.");
+        var user = await _context.Users.FindAsync(userId)
+            ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
+        var commentLikes = _context.Set<Dictionary<string, object>>("CommentLikes");
+
+        try
         {
-            CommentId = c.CommentId,
-            UserId = c.UserId,
-            PostId = c.PostId,
-            Text = c.Text,
-            CreatedAt = c.CreatedAt,
-            UpdatedAt = c.UpdatedAt,
-            IsDeleted = c.IsDeleted,
-            LikesCount = c.LikesCount,
-        })
-        .ToListAsync();
+            var likeEntry = await commentLikes
+                .FirstOrDefaultAsync(cl => (int)cl["UserId"] == userId && (int)cl["CommentId"] == commentId);
+
+            if (likeEntry == null)
+            {
+                comment.LikesCount += 1;
+                commentLikes.Add(new Dictionary<string, object>
+                {
+                    ["UserId"] = userId,
+                    ["CommentId"] = commentId
+                });
+            }
+            else
+            {
+                comment.LikesCount -= 1;
+                commentLikes.Remove(likeEntry);
+            }
+
+            await _context.SaveChangesAsync();
+
+            // to clarify: comment.UserId - user who wrote the comment and userId - user who liked the comment
+            return new CommentLikeDto
+            {
+                UserId = userId,
+                CommentId = comment.CommentId,
+                LikesCount = comment.LikesCount
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error toggling like for comment {CommentId} by user {UserId}", commentId, userId);
+            throw;
+        }
     }
 }
