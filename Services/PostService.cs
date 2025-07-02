@@ -229,7 +229,7 @@ public class PostService
             ?? throw new KeyNotFoundException($"Post with ID {postId} not found.");
         var user = await _context.Users.FindAsync(userId)
             ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
-        var postLikes = _context.Set<Dictionary<string, object>>("PostLikes");
+        var postLikes = _context.Set<Dictionary<string, object>>("PostLike");
 
         try
         {

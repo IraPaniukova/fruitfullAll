@@ -129,7 +129,7 @@ public class CommentService
             ?? throw new KeyNotFoundException($"Comment with ID {commentId} not found.");
         var user = await _context.Users.FindAsync(userId)
             ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
-        var commentLikes = _context.Set<Dictionary<string, object>>("CommentLikes");
+        var commentLikes = _context.Set<Dictionary<string, object>>("CommentLike");
 
         try
         {
