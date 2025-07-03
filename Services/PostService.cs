@@ -10,14 +10,17 @@ public class PostService
 {
     private readonly FruitfullDbContext _context;
     private readonly ILogger<PostService> _logger;
+    private readonly TagService _tagService;
 
     public PostService
-    (FruitfullDbContext context, ILogger<PostService> logger)
+    (FruitfullDbContext context, ILogger<PostService> logger, TagService tagService)
     {
         _context = context;
         _logger = logger;
+        _tagService = tagService;
     }
 
+    // Post creation uses TagService to add tags; tag updates are handled separately in their own controller.
     public async Task<PostOutputDto> CreatePostAsync(PostInputDto dto)
     {
         int year;
@@ -48,6 +51,7 @@ public class PostService
         {
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
+            await _tagService.AssignTagsToPostAsync(post.PostId, dto.Tags);
         }
         catch (DbUpdateException ex)
         {
@@ -62,10 +66,12 @@ public class PostService
         return post.ToPostOutputDto();
     }
     public async Task<PostOutputDto?> GetPostByIdAsync(int id)
-{
+    {
     try
     {
-        var post = await _context.Posts.FindAsync(id);
+        var post = await _context.Posts
+            .Include(p => p.Tags)
+            .FirstOrDefaultAsync(p => p.PostId == id);
         if (post == null) return null;
         return post.ToPostOutputDto();
     }
@@ -78,8 +84,7 @@ public class PostService
 
     public async Task<PostOutputDto> UpdatePostAsync(int id, PostUpdateDto dto)
     {
-        var post = await _context.Posts.FindAsync(id);
-        if (post == null) throw new KeyNotFoundException();
+        var post = await _context.Posts.FindAsync(id) ?? throw new KeyNotFoundException();
 
         if (!string.IsNullOrWhiteSpace(dto.Content) && dto.Content != post.Content)
             post.Content = dto.Content;
@@ -162,7 +167,8 @@ public class PostService
                     Content = p.Content,
                     Industry = p.Industry,
                     Country = p.Country,
-                    StressLevel = p.StressLevel
+                    StressLevel = p.StressLevel,                    
+                    Tags = p.Tags.Select(t => t.Name).ToList()                 
                 })
                 .ToListAsync();
         }
@@ -200,7 +206,7 @@ public class PostService
     public async Task<List<PostSummaryDto>> GetPostsByUserIdAsync(int userId, int page, int pageSize)
     {
          try
-        {
+        { 
             return await _context.Posts
                 .Where(p => !p.IsDeleted && p.UserId == userId)
                 .OrderByDescending(p => p.CreatedAt)
@@ -213,7 +219,8 @@ public class PostService
                     Content = p.Content,
                     Industry = p.Industry,
                     Country = p.Country,
-                    StressLevel = p.StressLevel
+                    StressLevel = p.StressLevel,
+                    Tags = p.Tags.Select(t => t.Name).ToList()
                 })
                 .ToListAsync();
         }
