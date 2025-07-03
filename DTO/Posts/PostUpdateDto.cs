@@ -11,4 +11,5 @@ public class PostUpdateDto
     public int? StressLevel { get; set; }
     public string? QuestionType { get; set; }
     public string? InterviewFormat { get; set; }    
+    public List<string>? Tags { get; set; }
 }

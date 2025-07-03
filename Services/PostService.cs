@@ -82,9 +82,11 @@ public class PostService
     }
     }
 
-    public async Task<PostOutputDto> UpdatePostAsync(int id, PostUpdateDto dto)
+    public async Task<PostOutputDto> UpdatePostAsync(int postId, PostUpdateDto dto)
     {
-        var post = await _context.Posts.FindAsync(id) ?? throw new KeyNotFoundException();
+        var post = await _context.Posts.Include(p => p.Tags)
+                .FirstOrDefaultAsync(p => p.PostId == postId)
+                ?? throw new KeyNotFoundException();
 
         if (!string.IsNullOrWhiteSpace(dto.Content) && dto.Content != post.Content)
             post.Content = dto.Content;
@@ -113,21 +115,35 @@ public class PostService
         if (!string.IsNullOrWhiteSpace(dto.InterviewFormat) && dto.InterviewFormat != post.InterviewFormat)
             post.InterviewFormat = dto.InterviewFormat;
         post.UpdatedAt = DateTime.UtcNow;
+       
+        if (dto.Tags == null || dto.Tags.Count == 0)
+            throw new ArgumentException("At least one tag is required.");
+        var existingTags = post.Tags.Select(t => t.Name).ToList();
+        var incomingTags = dto.Tags;
+
+        bool changed = !existingTags.OrderBy(x => x).SequenceEqual(incomingTags.OrderBy(x => x));
+
+        if (changed)
+        {
+            await _tagService.DeleteAllTagsFromPostAsync(postId);
+            await _tagService.AssignTagsToPostAsync(postId, incomingTags);
+        }
+      
         try
-        {
-            await _context.SaveChangesAsync();
-            return await GetPostByIdAsync(id) ?? throw new Exception("Post not found after update");
-        }
-         catch (DbUpdateException ex)
-        {
-            _logger.LogError(ex, "Failed to update post in DB.");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Unexpected error updating post ID {PostId}", id);
-            throw;
-        }
+            {
+                await _context.SaveChangesAsync();
+                return await GetPostByIdAsync(postId) ?? throw new Exception("Post not found after update");
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Failed to update post in DB.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error updating post ID {PostId}", postId);
+                throw;
+            }  
     }
 
     public async Task DeletePostAsync(int id)

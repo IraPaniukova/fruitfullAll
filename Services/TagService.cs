@@ -53,7 +53,7 @@ public class TagService
             Name = newTag.Name
         };
     }
-    public async Task<List<TagOutputDto>> CreateTagsAsync (List<string> tags)
+    public async Task<List<TagOutputDto>> CreateTagsAsync(List<string> tags)
     {
         if (tags == null || tags.Count == 0) throw new ArgumentException("At least one tag is required.");
         try
@@ -109,7 +109,7 @@ public class TagService
         }
     }
 
-    public async Task ConnectTagToPostAsync (int postId, string tag)
+    public async Task ConnectTagToPostAsync(int postId, string tag)
     // Adds the tag to the post's navigation property without saving changes to the database.
     {
         try
@@ -127,7 +127,7 @@ public class TagService
                 ?? throw new ArgumentException($"Tag with ID {newTag.TagId} not found in DB.");
             post.Tags.Add(tagEntity);
 
-           //attention! this function doesnt save to DB
+            //attention! this function doesnt save to DB
         }
         catch (Exception ex)
         {
@@ -137,16 +137,16 @@ public class TagService
     }
     public async Task AssignTagsToPostAsync(int postId, List<string> tags)
     {
-    if (tags == null || tags.Count == 0) throw new ArgumentException("There were no tags.");
+        if (tags == null || tags.Count == 0) throw new ArgumentException("There were no tags.");
         try
         {
             foreach (var t in tags)
             {
                 if (string.IsNullOrWhiteSpace(t))
                     throw new ArgumentException("Tag name cannot be null or empty.");
-                await ConnectTagToPostAsync (postId, t);
-            }       
-             await _context.SaveChangesAsync();
+                await ConnectTagToPostAsync(postId, t);
+            }
+            await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
@@ -155,25 +155,22 @@ public class TagService
         }
     }
 
-    public async Task DeletePostTag(PostTagDto dto)
-    //I use soft delet for posts, so this method wil be for editing purposes
+    public async Task DeleteAllTagsFromPostAsync(int postId)
+{
+    try
     {
-        try
-        {
-            var post = await _context.Posts.Include(u => u.Tags)
-            .FirstOrDefaultAsync(u => u.PostId == dto.PostId)
-            ?? throw new ArgumentException($"There is no post '{dto.PostId}' in DB");
+        var post = await _context.Posts.Include(p => p.Tags)
+            .FirstOrDefaultAsync(p => p.PostId == postId)
+            ?? throw new ArgumentException($"There is no post '{postId}' in DB");
 
-            var tagToRemove = post.Tags.FirstOrDefault(t => t.TagId == dto.TagId)
-             ?? throw new ArgumentException($"There is no tag with ID '{dto.TagId}' linked to post.");
+        post.Tags.Clear(); // removes all tags from the post
 
-            post.Tags.Remove(tagToRemove);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error deleting tag {TagId} from post {PostId}", dto.TagId, dto.PostId);
-            throw;
-        }
+        await _context.SaveChangesAsync();
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error removing all tags from post {PostId}", postId);
+        throw;
+    }
+}
 }
