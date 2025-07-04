@@ -1,8 +1,5 @@
-using fruitfullServer.DTO.JoinEntities;
 using fruitfullServer.DTO.Tags;
 using fruitfullServer.Models;
-using fruitfullServer.Utils;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace fruitfullServer.Services;

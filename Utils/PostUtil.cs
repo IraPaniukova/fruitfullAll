@@ -5,8 +5,8 @@ namespace fruitfullServer.Utils;
 
 public static class PostUtil
 {
-    public static PostOutputDto ToPostOutputDto(this Post post) => new PostOutputDto
-{
+    public static PostOutputDto ToPostOutputDto(this Post post) => new()
+    {
     PostId = post.PostId,
     Content = post.Content,
     Opinion = post.Opinion,

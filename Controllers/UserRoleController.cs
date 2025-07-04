@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using fruitfullServer.Models;
-using fruitfullServer.DTO;
 using Microsoft.AspNetCore.Authorization;
 using fruitfullServer.DTO.JoinEntities;
 

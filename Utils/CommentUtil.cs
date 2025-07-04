@@ -5,7 +5,7 @@ namespace fruitfullServer.Utils;
 
 public static class CommentUtil
 {
-    public static CommentOutputDto ToCommentOutputDto(this Comment comment) => new CommentOutputDto
+    public static CommentOutputDto ToCommentOutputDto(this Comment comment) => new()
     {
         CommentId = comment.CommentId,
         UserId = comment.UserId,

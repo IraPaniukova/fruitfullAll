@@ -51,7 +51,7 @@ public class UsersController : ControllerBase
     {
         try
         {
-                var _user = await _userService.CreateUserAsync(user);
+            var _user = await _userService.CreateUserAsync(user);
             return CreatedAtAction(nameof(GetUser), new { id = _user.UserId }, _user);
         }
         catch (DbUpdateException ex)

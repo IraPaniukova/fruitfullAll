@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using fruitfullServer.Models;
-using fruitfullServer.DTO;
-using Microsoft.AspNetCore.Authorization;
 using fruitfullServer.DTO.Roles;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace fruitfullServer.Controllers;
 

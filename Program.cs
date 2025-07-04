@@ -32,6 +32,7 @@ builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<CommentService>();
 builder.Services.AddScoped<TagService>();
+builder.Services.AddScoped<ReportService>();
 
 
 
