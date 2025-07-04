@@ -168,3 +168,9 @@ C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Swashbuckle.AspNetCore.
 C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Google.Apis.dll
+C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Google.Apis.Auth.dll
+C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Google.Apis.Core.dll
+C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\Newtonsoft.Json.dll
+C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\System.Management.dll
+C:\Users\I\source\repos\fruitfullServer\bin\Debug\net9.0\runtimes\win\lib\net7.0\System.Management.dll

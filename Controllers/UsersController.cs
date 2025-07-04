@@ -79,6 +79,29 @@ public class UsersController : ControllerBase
         }
 
     }
+    // PUT: api/Users/5/login  for local users, not Google users
+    [HttpPut("{id}/login")]
+    public async Task<IActionResult> PutUserLoginData(int id, [FromBody] UserUpdateLoginDto dto)
+    {
+        try
+        {
+            var updated = await _userService.UpdateUserLoginAsync(id, dto);
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch
+        {
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
 
     // DELETE: api/Users/5
     [HttpDelete("{id}")]

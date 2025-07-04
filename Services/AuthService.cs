@@ -7,6 +7,7 @@ using System.Security.Claims;
 using fruitfullServer.Models;
 using fruitfullServer.DTO.Auth;
 using fruitfullServer.DTO.Users;
+using Google.Apis.Auth;
 
 namespace fruitfullServer.Services;
 
@@ -28,8 +29,31 @@ public class AuthService
         _logger = logger;
         _config = config;
     }
+    public async Task<AuthResponseDto> LoginWithGoogleAsync(string idToken)
+    {
+        try
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+            var email = payload.Email;
+            var googleId = payload.Subject;
 
-    public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email && u.GoogleId == googleId && u.AuthProvider == "Google") ?? throw new UnauthorizedAccessException("Google user not registered.");
+            return await GenerateTokensAsync(user);
+        }
+        catch (InvalidJwtException ex)
+        {
+            _logger.LogError(ex, "Invalid Google token");
+            throw new UnauthorizedAccessException("Invalid Google token");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Google login failed");
+            throw;
+        }
+    }
+
+    public async Task<AuthResponseDto> LoginWithEmailAsync(LoginDto dto)
     {
         try
         {

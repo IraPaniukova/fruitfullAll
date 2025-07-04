@@ -16,13 +16,33 @@ namespace fruitfullServer.Controllers
             _authService = authService;
         }
 
+        // POST: api/Auth/login/google
+        [HttpPost("login/google")]
+        public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginDto dto)
+        {
+            try
+            {
+                var authResponse = await _authService.LoginWithGoogleAsync(dto.IdToken);
+                return Ok(authResponse);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized("Invalid Google token or user not registered.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+
         // POST: api/Auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             try
             {
-                var authResponse = await _authService.LoginAsync(dto);
+                var authResponse = await _authService.LoginWithEmailAsync(dto);
                 return Ok(authResponse);
             }
             catch (UnauthorizedAccessException)
