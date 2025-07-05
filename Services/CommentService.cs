@@ -17,12 +17,12 @@ public class CommentService
         _logger = logger;
     }
 
-    public async Task<CommentOutputDto> CreateCommentAsync(CommentInputDto dto)
+    public async Task<CommentOutputDto> CreateCommentAsync(CommentInputDto dto, int currentUserId)
     {
         var comment = new Comment
         {
             PostId = dto.PostId,
-            UserId = dto.UserId,
+            UserId = currentUserId,
             Text = dto.Text,
         };
         try
@@ -58,11 +58,12 @@ public class CommentService
         }
     }
 
-    public async Task<CommentOutputDto> UpdateCommentAsync(int id, CommentUpdateDto dto)
+    public async Task<CommentOutputDto> UpdateCommentAsync(int id, CommentUpdateDto dto, int currentUserId)
     {
         var comment = await _context.Comments.FindAsync(id)
             ?? throw new KeyNotFoundException($"Comment with ID {id} not found.");
-
+        if (comment.UserId != currentUserId)
+            throw new UnauthorizedAccessException("You do not have permission.");  
         if (dto.Text != comment.Text) comment.Text = dto.Text;
         comment.UpdatedAt = DateTime.UtcNow;
 
@@ -83,11 +84,12 @@ public class CommentService
         }
     }
 
-    public async Task DeleteCommentAsync(int id)
+    public async Task DeleteCommentAsync(int id, int currentUserId)
     {
         var comment = await _context.Comments.FindAsync(id)
             ?? throw new KeyNotFoundException($"Comment with ID {id} not found.");
-
+        if (comment.UserId != currentUserId)
+            throw new UnauthorizedAccessException("You do not have permission.");
         comment.IsDeleted = true;
         try
         {

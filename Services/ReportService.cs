@@ -31,14 +31,14 @@ public class ReportService
         throw;
     }
     }
-    public async Task<ReportOutputDto> CreateReportAsync(ReportInputDto dto)
+    public async Task<ReportOutputDto> CreateReportAsync(ReportInputDto dto,int currentUserId)
     {
 
         var report = new Report
         {
-            UserId = dto.UserId,
-            PostId = dto.PostId ?? null,
-            CommentId = dto.CommentId ?? null,
+            UserId = currentUserId,
+            PostId = dto.PostId,
+            CommentId = dto.CommentId,
             Reason = dto.Reason
         };
         try

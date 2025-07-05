@@ -11,7 +11,7 @@ namespace fruitfullServer.Controllers;
 // [Authorize(Policy = "LoginPolicy")]
 [Route("api/[controller]")]
 [ApiController]
-public class PostsController : ControllerBase
+public class PostsController : BaseController
 {
     private readonly FruitfullDbContext _context;
     private readonly PostService _postService;
@@ -33,7 +33,8 @@ public class PostsController : ControllerBase
     {
         try
         {
-            var _post = await _postService.CreatePostAsync(post);
+            var currentUserId = GetLoggedInUserId();
+            var _post = await _postService.CreatePostAsync(post,currentUserId);
             return CreatedAtAction(nameof(GetPost), new { id = _post.PostId }, _post);
         }
         catch (DbUpdateException ex)
@@ -52,7 +53,8 @@ public class PostsController : ControllerBase
     {
         try
         {
-            var updated = await _postService.UpdatePostAsync(id, dto);
+            var currentUserId = GetLoggedInUserId();
+            var updated = await _postService.UpdatePostAsync(id, dto, currentUserId);
             return Ok(updated);
         }
         catch (KeyNotFoundException)
@@ -101,7 +103,8 @@ public class PostsController : ControllerBase
     {
         try
         {
-            await _postService.DeletePostAsync(id);
+             var currentUserId = GetLoggedInUserId();
+            await _postService.DeletePostAsync(id,currentUserId);
             return NoContent();
         }
         catch (KeyNotFoundException)
@@ -113,13 +116,14 @@ public class PostsController : ControllerBase
             return StatusCode(500, new { message = "Delete error: " + ex.Message });
         }
     }
-     // PATCH: api/Posts/{postId}/{userId}
-    [HttpPatch("{postId}/{userId}")]
-    public async Task<ActionResult<PostLikeDto>> UpdateLikes(int postId, int userId)
+     // PATCH: api/Posts/{postId}
+    [HttpPatch("{postId}")]
+    public async Task<ActionResult<PostLikeDto>> UpdateLikes(int postId)
     {
         try
         {
-            var updated = await _postService.ToggleLikePostAsync(postId, userId);
+            var currentUserId = GetLoggedInUserId();
+            var updated = await _postService.ToggleLikePostAsync(postId, currentUserId);
             return Ok(updated);
         }
         catch (KeyNotFoundException)

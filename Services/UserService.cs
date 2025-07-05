@@ -61,11 +61,15 @@ public class UserService
         }
     }
     
-     public async Task<UserOutputLoginDto> UpdateUserLoginAsync(int id, UserUpdateLoginDto dto)
+     public async Task<UserOutputLoginDto> UpdateUserLoginAsync(int id, UserUpdateLoginDto dto, int currentUserId) 
     {
+        if (id != currentUserId)
+            throw new UnauthorizedAccessException("You do not have permission.");
+        
         var user = await _context.Users.FindAsync(id) ?? throw new KeyNotFoundException("User not found");
         if (user.AuthProvider != "local")
-            throw new InvalidOperationException("Cannot update login info for non-local users.");
+        throw new InvalidOperationException("Cannot update login info for non-local users.");
+
         if (dto.Email != null && user.Email != dto.Email) user.Email = dto.Email;
         if (!string.IsNullOrWhiteSpace(dto.Password)) user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
         try
@@ -88,8 +92,11 @@ public class UserService
             Email=user.Email 
         };  
     }
-    public async Task<UserOutputDto> UpdateUserAsync(int id, UserUpdateDto dto)
+    public async Task<UserOutputDto> UpdateUserAsync(int id, UserUpdateDto dto, int currentUserId) 
     {
+        if (id != currentUserId)
+        throw new UnauthorizedAccessException("You do not have permission.");
+        
         bool nicknameExists = _context.Users.Any(u => u.Nickname == dto.Nickname&&u.Nickname!=null); 
         if (nicknameExists)  throw new Exception("Nickname already in use. Please choose another.");
 

@@ -21,8 +21,8 @@ public class PostService
     }
 
     // Post creation uses TagService to add tags; tag updates are handled separately in their own controller.
-    public async Task<PostOutputDto> CreatePostAsync(PostInputDto dto)
-    {
+    public async Task<PostOutputDto> CreatePostAsync(PostInputDto dto, int currentUserId)
+    {    
         int year;
         int stress;
         if (dto.Year == DateTime.UtcNow.Year || dto.Year == DateTime.UtcNow.Year - 1)
@@ -44,7 +44,7 @@ public class PostService
             StressLevel = stress,
             QuestionType = dto.QuestionType,
             InterviewFormat = dto.InterviewFormat,
-            UserId = dto.UserId,
+            UserId = currentUserId,
         };
 
         try
@@ -82,11 +82,15 @@ public class PostService
     }
     }
 
-    public async Task<PostOutputDto> UpdatePostAsync(int postId, PostUpdateDto dto)
+    public async Task<PostOutputDto> UpdatePostAsync(int postId, PostUpdateDto dto, int currentUserId)
     {
+        
         var post = await _context.Posts.Include(p => p.Tags)
                 .FirstOrDefaultAsync(p => p.PostId == postId)
                 ?? throw new KeyNotFoundException();
+
+         if (post.UserId != currentUserId)
+            throw new UnauthorizedAccessException("You do not have permission.");        
 
         if (!string.IsNullOrWhiteSpace(dto.Content) && dto.Content != post.Content)
             post.Content = dto.Content;
@@ -146,25 +150,29 @@ public class PostService
             }  
     }
 
-    public async Task DeletePostAsync(int id)
+    public async Task DeletePostAsync(int postId, int currentUserId)
     {
-    var post = await _context.Posts.FindAsync(id) ?? throw new KeyNotFoundException();
+        
+    var post = await _context.Posts.FindAsync(postId) ?? throw new KeyNotFoundException();
     post.IsDeleted = true;
+     if (post.UserId != currentUserId)
+            throw new UnauthorizedAccessException("You do not have permission.");        
+
 
     try
-    {
-        await _context.SaveChangesAsync();
-    }
-    catch (DbUpdateException ex)
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Failed to delete post in DB.");
             throw;
         }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Unexpected error deleting post ID {PostId}", id);
-        throw;
-    }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error deleting post ID {PostId}", postId);
+            throw;
+        }
     }
 
     public async Task<List<PostSummaryDto>> GetRecentPostsAsync(int page, int pageSize)
@@ -252,6 +260,7 @@ public class PostService
             ?? throw new KeyNotFoundException($"Post with ID {postId} not found.");
         var user = await _context.Users.FindAsync(userId)
             ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
+            
         var postLikes = _context.Set<Dictionary<string, object>>("PostLike");
 
         try

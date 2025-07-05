@@ -10,7 +10,7 @@ namespace fruitfullServer.Controllers;
 // [Authorize(Policy = "LoginPolicy")]
 [Route("api/[controller]")]
 [ApiController]
-public class ReportsController : ControllerBase
+public class ReportsController : BaseController
 {
     private readonly FruitfullDbContext _context;
     private readonly ReportService _reportService;
@@ -21,6 +21,7 @@ public class ReportsController : ControllerBase
     }
 
     // GET: api/Reports/{id}
+     [Authorize(Roles = "Admin,Superadmin")]
     [HttpGet("{id}")]
     public async Task<ActionResult<ReportOutputDto>> GetReport(int id)
     {
@@ -35,7 +36,8 @@ public class ReportsController : ControllerBase
     {
         try
         {
-            var _report = await _reportService.CreateReportAsync(report);
+            var currentUserId = GetLoggedInUserId();
+            var _report = await _reportService.CreateReportAsync(report,currentUserId);
             return CreatedAtAction(nameof(GetReport), new { id = _report.ReportId }, _report);
             
         }

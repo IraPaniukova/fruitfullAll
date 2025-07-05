@@ -11,7 +11,7 @@ namespace fruitfullServer.Controllers;
 // [Authorize(Policy = "LoginPolicy")]
 [Route("api/[controller]")]
 [ApiController]
-public class CommentsController : ControllerBase
+public class CommentsController : BaseController
 {
     private readonly FruitfullDbContext _context;
     private readonly CommentService _commentService;
@@ -27,7 +27,8 @@ public class CommentsController : ControllerBase
     {
         try
         {
-            var _comment = await _commentService.CreateCommentAsync(comment);
+            var currentUserId = GetLoggedInUserId();
+            var _comment = await _commentService.CreateCommentAsync(comment,currentUserId);
             return CreatedAtAction(nameof(GetComment), new { id = _comment.CommentId }, _comment);
         }
         catch (DbUpdateException ex)
@@ -46,7 +47,8 @@ public class CommentsController : ControllerBase
     {
         try
         {
-            var updated = await _commentService.UpdateCommentAsync(id, dto);
+            var currentUserId = GetLoggedInUserId();
+            var updated = await _commentService.UpdateCommentAsync(id, dto,currentUserId);
             return Ok(updated);
         }
         catch (KeyNotFoundException)
@@ -89,7 +91,8 @@ public class CommentsController : ControllerBase
     {
         try
         {
-            await _commentService.DeleteCommentAsync(id);
+            var currentUserId = GetLoggedInUserId();
+            await _commentService.DeleteCommentAsync(id,currentUserId);
             return NoContent();
         }
         catch (KeyNotFoundException)
@@ -102,12 +105,13 @@ public class CommentsController : ControllerBase
         }
     }
     // PATCH: api/Comments/{commentId}/{userId}
-    [HttpPatch("{commentId}/{userId}")]
-    public async Task<ActionResult<CommentLikeDto>> UpdateLikes(int commentId, int userId)
+    [HttpPatch("{commentId}")]
+    public async Task<ActionResult<CommentLikeDto>> UpdateLikes(int commentId)
     {
         try
         {
-            var updated = await _commentService.ToggleLikeCommentAsync(commentId, userId);
+            var currentUserId = GetLoggedInUserId();
+            var updated = await _commentService.ToggleLikeCommentAsync(commentId, currentUserId);
             return Ok(updated);
         }
         catch (KeyNotFoundException)

@@ -12,7 +12,7 @@ namespace fruitfullServer.Controllers;
 // [Authorize(Policy = "LoginPolicy")]
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController : ControllerBase
+public class UsersController : BaseController
 {
     private readonly FruitfullDbContext _context;
     private readonly UserService _userService;
@@ -23,6 +23,7 @@ public class UsersController : ControllerBase
     }
 
     // GET: api/Users
+    [Authorize(Roles = "Admin,SuperAdmin")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserOutputDto>>> GetUsers()
     { 
@@ -46,6 +47,7 @@ public class UsersController : ControllerBase
     }
 
     // POST: api/Users
+    [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<UserOutputDto>> PostUser(UserInputDto user)
     {
@@ -70,7 +72,8 @@ public class UsersController : ControllerBase
     {
         try
         {
-            await _userService.UpdateUserAsync(id, user);
+            var currentUserId = GetLoggedInUserId();
+            await _userService.UpdateUserAsync(id, user, currentUserId);
             return NoContent();
         }
         catch (KeyNotFoundException)
@@ -85,7 +88,8 @@ public class UsersController : ControllerBase
     {
         try
         {
-            var updated = await _userService.UpdateUserLoginAsync(id, dto);
+            var currentUserId = GetLoggedInUserId();
+            var updated = await _userService.UpdateUserLoginAsync(id, dto,currentUserId);
             return Ok(updated);
         }
         catch (KeyNotFoundException)
@@ -109,6 +113,12 @@ public class UsersController : ControllerBase
     {
         try
         {
+            var currentUserId = GetLoggedInUserId();
+            var isSuperAdmin = User.IsInRole("SuperAdmin");
+
+            if (!isSuperAdmin && id != currentUserId)
+                return Forbid();
+
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
 

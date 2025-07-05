@@ -22,8 +22,6 @@ public class PostInputDto
     public string QuestionType { get; set; } = null!;
      [Required]
     public string InterviewFormat { get; set; } = null!;
-     [Required]
-    public int UserId { get; set; }
     [Required]      
      public List<string> Tags { get; set; } = null!;
 }
