@@ -36,7 +36,7 @@ public class UserService
                 AuthProvider = googleId != null ? "Google" : null,
                 GoogleId = googleId
             };
-            if (dto.AuthProvider == "Google")
+            if (googleId!=null)
             {
                 user.PasswordHash = null; // Google users don't use password
             }
@@ -96,8 +96,9 @@ public class UserService
     {
         if (id != currentUserId)
         throw new UnauthorizedAccessException("You do not have permission.");
-        
-        bool nicknameExists = _context.Users.Any(u => u.Nickname == dto.Nickname&&u.Nickname!=null); 
+
+        bool nicknameExists = _context.Users.Any(u => u.Nickname == dto.Nickname && u.UserId != id && u.Nickname != null);
+ 
         if (nicknameExists)  throw new Exception("Nickname already in use. Please choose another.");
 
         var user = await _context.Users.FindAsync(id) ?? throw new KeyNotFoundException("User not found");
