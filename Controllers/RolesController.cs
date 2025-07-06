@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace fruitfullServer.Controllers;
 
-// [Authorize(Policy = "LoginPolicy", Roles = "SuperAdmin")]
+[Authorize(Policy = "LoginPolicy", Roles = "SuperAdmin")]
 [Route("api/[controller]")]
 [ApiController]
 public class RolesController : ControllerBase

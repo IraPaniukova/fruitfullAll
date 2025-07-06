@@ -80,7 +80,7 @@ public class AuthService
     }
     private async Task<AuthResponseDto> GenerateTokensAsync(User user)
     {
-        var token = CreateJwtToken(user);
+        var token = await CreateJwtTokenAsync(user);
         var refreshToken = GenerateRefreshToken();
 
         var authToken = new AuthToken
@@ -103,22 +103,35 @@ public class AuthService
         };
     }
 
-    private static string CreateJwtToken(User user)
+    private async Task<string> CreateJwtTokenAsync(User user)
     {
         var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
         var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
-        
+
         if (string.IsNullOrEmpty(jwtKey)) throw new Exception("JWT Key is not configured.");
         if (string.IsNullOrEmpty(jwtIssuer)) throw new Exception("JWT Issuer is not configured.");
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
+        // Reload user with Roles included (to ensure Roles collection is loaded)
+        var userWithRoles = await _context.Users
+            .Include(u => u.Roles)
+            .FirstOrDefaultAsync(u => u.UserId == user.UserId);
+
+        var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+
+        if (userWithRoles?.Roles != null)
+        {
+            foreach (var role in userWithRoles.Roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+            }
+        }
 
         var token = new JwtSecurityToken(
             issuer: jwtIssuer,
@@ -129,6 +142,7 @@ public class AuthService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
 
     public async Task<UserIdDto> CancelTokenAsync(RefreshTokenRequest request)
     {

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.OpenApi.Models;
 
 
 
@@ -19,13 +20,39 @@ builder.Services.AddDbContext<FruitfullDbContext>(options =>
 
 // This sets authorization policy:
 // Endpoints with [Authorize(Policy = "LoginPolicy")] require authentication.
-//TODO: uncomment the next piece
-// builder.Services.AddAuthorizationBuilder()
-//     .AddPolicy("LoginPolicy", policy => { policy.RequireAuthenticatedUser();  }
-// );
-
+//TODO: comment/uncomment the next piece
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("LoginPolicy", policy => policy.RequireAuthenticatedUser());
+    
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+// builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' [space] and then your token"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<UserService>(); // Registers Services for dependency injections
 builder.Services.AddScoped<PostService>();  
@@ -34,7 +61,7 @@ builder.Services.AddScoped<CommentService>();
 builder.Services.AddScoped<TagService>();
 builder.Services.AddScoped<ReportService>();
 
-
+builder.Services.AddScoped<IGoogleValidator, GoogleValidator>(); //added for testing pruposes
 
 builder.Services.AddCors(options =>
 {
@@ -63,9 +90,6 @@ builder.Services.AddAuthentication("Bearer")
             IssuerSigningKey =  new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
         };
     });
-builder.Services.AddAuthorization();
-
-
 
 
 var app = builder.Build();
@@ -76,13 +100,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseRouting(); // Enables routing to match HTTP requests to controllers
+
 app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseHttpsRedirection();
-app.UseRouting(); // Enables routing to match HTTP requests to controllers
 app.MapControllers(); // Maps attribute-routed controllers to endpoints
 
 app.Run();

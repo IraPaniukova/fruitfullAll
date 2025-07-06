@@ -11,13 +11,16 @@ public class UserService
     private readonly FruitfullDbContext _context;
     private readonly IPasswordHasher<User> _passwordHasher;
     private readonly ILogger<UserService> _logger;
+    private readonly IGoogleValidator _googleValidator;
+
 
     public UserService
-    (FruitfullDbContext context, IPasswordHasher<User> passwordHasher, ILogger<UserService> logger)
+    (FruitfullDbContext context, IPasswordHasher<User> passwordHasher, ILogger<UserService> logger, IGoogleValidator googleValidator)
     {
         _context = context;
         _passwordHasher = passwordHasher;
         _logger = logger;
+        _googleValidator = googleValidator;
     }
 
     public async Task<UserOutputDto> CreateUserAsync(UserInputDto dto)
@@ -25,8 +28,8 @@ public class UserService
         
         try
         {
-            var payload = !string.IsNullOrEmpty(dto.IdToken) 
-                ? await GoogleJsonWebSignature.ValidateAsync(dto.IdToken) : null;
+            var payload = !string.IsNullOrEmpty(dto.IdToken) ?
+                 await _googleValidator.ValidateAsync(dto.IdToken) : null;
             var email = payload?.Email;
             var googleId = payload?.Subject;
 
@@ -71,7 +74,20 @@ public class UserService
         throw new InvalidOperationException("Cannot update login info for non-local users.");
 
         if (dto.Email != null && user.Email != dto.Email) user.Email = dto.Email;
-        if (!string.IsNullOrWhiteSpace(dto.Password)) user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
+        
+        if (!string.IsNullOrWhiteSpace(dto.NewPassword))
+        {
+            if (string.IsNullOrEmpty(dto.Password))
+                    throw new ArgumentException("Current password must be provided.");
+            var verification = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash!, dto.Password);
+            if (verification == PasswordVerificationResult.Failed)
+                throw new UnauthorizedAccessException("Old password is incorrect.");
+            
+            if (dto.NewPassword == dto.Password)
+                throw new ArgumentException("New password cannot be the same as old password.");
+
+            user.PasswordHash = _passwordHasher.HashPassword(user, dto.NewPassword);
+        }
         try
         {
             await _context.SaveChangesAsync();

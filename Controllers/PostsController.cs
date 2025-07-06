@@ -8,7 +8,7 @@ using fruitfullServer.DTO.JoinEntities;
 
 namespace fruitfullServer.Controllers;
 
-// [Authorize(Policy = "LoginPolicy")]
+[Authorize(Policy = "LoginPolicy")]
 [Route("api/[controller]")]
 [ApiController]
 public class PostsController : BaseController

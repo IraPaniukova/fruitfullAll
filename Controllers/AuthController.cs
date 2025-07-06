@@ -2,6 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using fruitfullServer.DTO.Auth;
 using fruitfullServer.Services;
 using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Collections.Generic;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 
 namespace fruitfullServer.Controllers
 {
@@ -34,7 +40,6 @@ namespace fruitfullServer.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
-
 
         // POST: api/Auth/login
         [HttpPost("login")]

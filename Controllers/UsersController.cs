@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace fruitfullServer.Controllers;
 
-// [Authorize(Policy = "LoginPolicy")]
+[Authorize(Policy = "LoginPolicy")]
 [Route("api/[controller]")]
 [ApiController]
 public class UsersController : BaseController
@@ -47,7 +47,7 @@ public class UsersController : BaseController
     }
 
     // POST: api/Users
-    [AllowAnonymous]
+   [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<UserOutputDto>> PostUser(UserInputDto user)
     {
