@@ -5179,8 +5179,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "c:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj": {
-              "projectPath": "c:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj"
+            "C:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj": {
+              "projectPath": "C:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj"
             }
           }
         }

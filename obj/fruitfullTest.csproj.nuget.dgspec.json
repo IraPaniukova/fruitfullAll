@@ -4,14 +4,14 @@
     "C:\\Users\\I\\source\\repos\\fruitfullTest\\fruitfullTest.csproj": {}
   },
   "projects": {
-    "c:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj": {
+    "C:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj",
+        "projectUniqueName": "C:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj",
         "projectName": "fruitfullServer",
-        "projectPath": "c:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj",
+        "projectPath": "C:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj",
         "packagesPath": "C:\\Users\\I\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\I\\source\\repos\\fruitfullServer\\obj\\",
+        "outputPath": "C:\\Users\\I\\source\\repos\\fruitfullServer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -132,8 +132,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "c:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj": {
-                "projectPath": "c:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj"
+              "C:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj": {
+                "projectPath": "C:\\Users\\I\\source\\repos\\fruitfullServer\\fruitfullServer.csproj"
               }
             }
           }

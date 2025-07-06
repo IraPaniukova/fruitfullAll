@@ -171,3 +171,4 @@ C:\Users\I\source\repos\fruitfullTest\obj\Debug\net9.0\refint\fruitfullTest.dll
 C:\Users\I\source\repos\fruitfullTest\obj\Debug\net9.0\fruitfullTest.pdb
 C:\Users\I\source\repos\fruitfullTest\obj\Debug\net9.0\fruitfullTest.genruntimeconfig.cache
 C:\Users\I\source\repos\fruitfullTest\obj\Debug\net9.0\ref\fruitfullTest.dll
+C:\Users\I\source\repos\fruitfullTest\obj\Debug\net9.0\fruitfullTest.sourcelink.json

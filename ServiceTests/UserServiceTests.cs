@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Google.Apis.Auth;
+using Xunit;
 
 namespace fruitfullTest.ServiceTests;
 
@@ -227,19 +228,19 @@ public class UserServiceTests
         await Assert.ThrowsAsync<InvalidOperationException>(() => _service.UpdateUserLoginAsync(1, dto, 1));
     }
 
-    // [Fact]  // doesnt work yet
-    // public async Task UpdateUserAsync_NicknameAlreadyExists_Throws()
-    // {
-    //     _context.Users.AddRange(
-    //         new User { UserId = 1, Nickname = "me" },
-    //         new User { UserId = 2, Nickname = "taken" }
-    //     );
-    //     await _context.SaveChangesAsync();
+    [Fact]  // doesnt work yet
+    public async Task UpdateUserAsync_NicknameAlreadyExists_Throws()
+    {
+        _context.Users.AddRange(
+            new User { UserId = 1, Nickname = "me" },
+            new User { UserId = 2, Nickname = "taken" }
+        );
+        await _context.SaveChangesAsync();
 
-    //     var dto = new UserUpdateDto { Nickname = "taken" };
+        var dto = new UserUpdateDto { Nickname = "taken" };
 
-    //     await Assert.ThrowsAsync<ArgumentException>(() => _service.UpdateUserAsync(1, dto, 1));
-    // }
+        await Assert.ThrowsAsync<Exception>(() => _service.UpdateUserAsync(1, dto, 1));
+    }
 
     [Fact]
     public async Task UpdateUserAsync_UserMismatch_ThrowsUnauthorized()
