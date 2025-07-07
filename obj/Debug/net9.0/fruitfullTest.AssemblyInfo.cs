@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("fruitfullTest")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e66bdaa524da0cd44e1a6a49a0be3c81dbc71a28")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+556ddf6d41851b522c067bc77758ecd6d53c94b2")]
 [assembly: System.Reflection.AssemblyProductAttribute("fruitfullTest")]
 [assembly: System.Reflection.AssemblyTitleAttribute("fruitfullTest")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
