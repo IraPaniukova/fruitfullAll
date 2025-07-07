@@ -87,24 +87,6 @@ public class TagService
             throw;
         }
     }
-    public async Task<List<TagOutputDto>> GetTagsByPostIdAsync(int postId)
-    {
-        try
-        {
-            var tags = await _context.Tags.Where(t => t.Posts.Any(p => p.PostId == postId)).ToListAsync();
-            var result = tags.Select(t => new TagOutputDto
-            {
-                TagId = t.TagId,
-                Name = t.Name
-            }).ToList();
-            return result;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while fetching tag list.");
-            throw;
-        }
-    }
 
     public async Task ConnectTagToPostAsync(int postId, string tag)
     // Adds the tag to the post's navigation property without saving changes to the database.
@@ -132,7 +114,7 @@ public class TagService
             throw;
         }
     }
-    public async Task AssignTagsToPostAsync(int postId, List<string> tags)
+    public virtual async Task AssignTagsToPostAsync(int postId, List<string> tags)
     {
         if (tags == null || tags.Count == 0) throw new ArgumentException("There were no tags.");
         try
@@ -152,8 +134,8 @@ public class TagService
         }
     }
 
-    public async Task DeleteAllTagsFromPostAsync(int postId)
-{
+    public virtual async Task DeleteAllTagsFromPostAsync(int postId)
+    {
     try
     {
         var post = await _context.Posts.Include(p => p.Tags)
@@ -169,5 +151,5 @@ public class TagService
         _logger.LogError(ex, "Error removing all tags from post {PostId}", postId);
         throw;
     }
-}
+    }
 }
