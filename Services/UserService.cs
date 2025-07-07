@@ -63,7 +63,7 @@ public class UserService
         }
     }
     
-     public async Task<UserOutputLoginDto> UpdateUserLoginAsync(int id, UserUpdateLoginDto dto, int currentUserId) 
+     public virtual async Task<UserOutputLoginDto> UpdateUserLoginAsync(int id, UserUpdateLoginDto dto, int currentUserId) 
     {
         if (id != currentUserId)
             throw new UnauthorizedAccessException("You do not have permission.");
