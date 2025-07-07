@@ -33,7 +33,7 @@ public class ReportService
     }
     public async Task<ReportOutputDto> CreateReportAsync(ReportInputDto dto,int currentUserId)
     {
-
+        if (string.IsNullOrWhiteSpace(dto.Reason))  throw new ArgumentException("Reason is required.");
         var report = new Report
         {
             UserId = currentUserId,

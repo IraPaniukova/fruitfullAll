@@ -17,25 +17,28 @@ public class AuthService
     private readonly IPasswordHasher<User> _passwordHasher;
     private readonly ILogger<AuthService> _logger;
     private readonly IConfiguration _config;
+    private readonly IGoogleValidator _googleValidator;
+
 
     public AuthService(
         FruitfullDbContext context,
         IPasswordHasher<User> passwordHasher,
         ILogger<AuthService> logger,
-        IConfiguration config)
+        IConfiguration config, IGoogleValidator googleValidator)
     {
         _context = context;
         _passwordHasher = passwordHasher;
         _logger = logger;
         _config = config;
+        _googleValidator = googleValidator;
     }
     public async Task<AuthResponseDto> LoginWithGoogleAsync(string idToken)
     {
         try
         {
-            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
-            var email = payload.Email;
-            var googleId = payload.Subject;
+            var payload = await _googleValidator.ValidateAsync(idToken);
+            var email = payload?.Email;
+            var googleId = payload?.Subject;
 
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email && u.GoogleId == googleId && u.AuthProvider == "Google") ?? throw new UnauthorizedAccessException("Google user not registered.");
