@@ -10,6 +10,7 @@ import { PostPage } from '../pages/postPage/PostPage';
 import { CreatePostPage } from '../pages/createPostPage/CreatePostPage';
 import { NotFoundPage } from '../pages/notFoundPage/NotFoundPage';
 import { useAppSelector } from '../store/typeHooks';
+import { useEffect, useState } from 'react';
 
 
 
@@ -21,6 +22,13 @@ export const AppRouter = () => {
     const loggedIn = useAppSelector(state => !!state.auth.accessToken);
 
     const PrivateRoute = ({ component: Component }: PrivateRouteProps) => {
+        const [isReady, setIsReady] = useState(false);
+
+        useEffect(() => {
+            setIsReady(true); // Delays rendering for Redux to ensure loading of accurate state
+        }, []);
+
+        if (!isReady) return null;
         return loggedIn ? <Component /> : <Navigate to="/" replace />;
     };
     const router = createBrowserRouter([

@@ -1,20 +1,38 @@
 import { Box, Avatar, Typography, Paper, Stack, Grid, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ToggleThemeButton } from '../../features/theme/components/ToggleThemeButton';
 import { ConfirmChangesButton } from './ConfirmChangesButton';
-type Props = {
-    username?: string;
-};
+import { getUserMe } from '../../api/userApi';
+import type { UserOutputDto } from '../../utils/interfaces';
 
-export const ProfilePage = ({ username = 'Anonymous' }: Props) => {
+export const ProfilePage = () => {
     const [editIt, setEditIt] = useState(false);
+    const [data, setData] = useState<UserOutputDto | null>(null);
+
+    useEffect(() => {
+        async function fetchUser() {
+            const data = await getUserMe();
+            setData(data);
+        }
+        fetchUser();
+    }, []);
+
     const onEditIconClick = () => {
         setEditIt(true);
     }
     const onConfirmClick = () => {
         setEditIt(false);
     }
+    const createdAt = data?.createdAt
+        ? new Date(data.createdAt).toLocaleString('en-US', {
+            month: 'short',
+            year: 'numeric',
+        })
+        : '';
+    const nickname = data?.nickname ?? 'Anonymus';
+    const country = data?.country;
+    const theme = data?.theme;
     return (
         <Stack minHeight='100vh' justifyContent='center' alignItems='center'>
             <Paper
@@ -36,15 +54,15 @@ export const ProfilePage = ({ username = 'Anonymous' }: Props) => {
                     <Avatar
                         sx={{ width: 100, height: 100, bgcolor: 'orange', fontSize: 40 }}
                     >
-                        {username === 'Anonymous' ?
+                        {nickname === 'Anonymus' ?
                             'ツ' :
-                            username[0]?.toUpperCase() || 'ツ'}
+                            nickname[0]?.toUpperCase() || 'ツ'}
                     </Avatar>
                     <Typography variant="h5" fontWeight="bold">
-                        {username}
+                        {nickname}
                     </Typography>
-                    <Typography>Member Since: Jan 2025</Typography>
-                    <Typography>Country: NewZealand</Typography>
+                    <Typography>Member Since: {createdAt}</Typography>
+                    {country && <Typography>Country: {country}</Typography>}
                     <Stack direction='row' spacing={1} height='40px' alignItems='center'>
                         <Typography>Theme:</Typography>
                         {editIt ?
@@ -52,7 +70,7 @@ export const ProfilePage = ({ username = 'Anonymous' }: Props) => {
                                 <ToggleThemeButton />
                                 <ConfirmChangesButton onConfirmClick={onConfirmClick} />
                             </Stack> :
-                            <Typography>fetched theme</Typography>
+                            <Typography>{theme}</Typography>
                         }
                     </Stack>
 

@@ -9,15 +9,51 @@ import { Box } from '@mui/material';
 import { ToggleThemeButton } from './features/theme/components/ToggleThemeButton';
 import { AppRouter } from './app/AppRouter';
 import { refreshTokenThunk } from "./features/auth/authThunks";
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { login } from "./features/auth/authSlice";
+
 
 function App() {
   const mode = useAppSelector((state) => state.theme);
   const theme = createTheme(mode === "light" ? lightTheme : darkTheme);
   const dispatch = useAppDispatch();
-  const refreshToken = useAppSelector((state) => state.auth.refreshToken);
-  const refreshTokenRef = useRef(refreshToken);
+
+  // const dispatch = useAppDispatch();
+  // const mode = useAppSelector((state) => state.theme);
+
+  // useEffect(() => {
+  //   async function fetchTheme() {
+  //     try {
+  //       const userData = await getUserMe(); // e.g. returns "light" or "dark"
+  //       dispatch(setTheme(userData?.theme));
+  //     } catch (error) {
+  //       console.error("Failed to fetch theme:", error);
+  //     }
+  //   }
+  //   fetchTheme();
+  // }, [dispatch]);
+
+  // // now mode has DB value or default if fetch fails
+  // // use mode as usual:
+  // const theme = createTheme(mode === "light" ? lightTheme : darkTheme);
+
+  // // const dispatch = useAppDispatch();
+  // // const mode = useAppSelector((state) => state.theme);
+
+  // // useEffect(() => {
+  // //   async function loadTheme() {
+  // //     try {
+  // //       const userData = await getUserMe();
+  // //       if (userData?.theme) {
+  // //         dispatch(setTheme(userData.theme)); // update Redux state with theme from DB
+  // //       }
+  // //     } catch {
+  // //       // handle error or ignore
+  // //     }
+  // //   }
+  // //   loadTheme();
+  // // }, [dispatch]);
+
 
 
 
@@ -32,11 +68,9 @@ function App() {
           refreshToken: refreshToken,
         })
       );
-
-      // Optional: refresh token after loading
-      // dispatch(refreshTokenThunk(refreshToken));
     }
   }, [dispatch]);
+
 
   //Sets request to refresh token every 25 minutes, because the token set to 30 min in the backend
   useEffect(() => {
