@@ -108,20 +108,19 @@ public class UsersController : BaseController
     }
 
 
-    // DELETE: api/Users/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUser(int id)
+   // DELETE api/Users/me — current user deletes own profile
+    [HttpDelete("me")]
+    public async Task<IActionResult> DeleteMe()
     {
         try
         {
             var currentUserId = GetLoggedInUserId();
-            var isSuperAdmin = User.IsInRole("SuperAdmin");
 
-            if (!isSuperAdmin && id != currentUserId)
-                return Forbid();
-
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(currentUserId);
             if (user == null) return NotFound();
+
+            var tokens = _context.AuthTokens.Where(t => t.UserId == currentUserId);
+            _context.AuthTokens.RemoveRange(tokens);
 
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
@@ -133,5 +132,32 @@ public class UsersController : BaseController
             return StatusCode(500, new { message = "Internal server error" });
         }
     }
+
+    // DELETE api/Users/{id} — admin deletes any user by ID
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        try
+        {
+            var isSuperAdmin = User.IsInRole("SuperAdmin");
+            if (!isSuperAdmin) return Forbid();
+
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            var tokens = _context.AuthTokens.Where(t => t.UserId == id);
+            _context.AuthTokens.RemoveRange(tokens);
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, new { message = "Internal server error" });
+        }
+    }
+
 }
 
