@@ -85,14 +85,6 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task UpdateUserLoginAsync_UserMismatch_ThrowsUnauthorized()
-    {
-        var dto = new UserUpdateLoginDto { Email = "user@example.com", Password = "123" };
-
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _service.UpdateUserLoginAsync(2, dto, 1));
-        // UpdateUserLoginAsync(updatedUserId, dto, currentUserId) – mismatched IDs trigger UnauthorizedAccessException
-    }
-    [Fact]
     public async Task UpdateUserLoginAsync_UpdatesUserEmail()
     {
         var user = new User
@@ -106,7 +98,7 @@ public class UserServiceTests
         await _context.SaveChangesAsync();
         var dto = new UserUpdateLoginDto { Email = "newUser@example.com", Password = "123" };
 
-        var result = await _service.UpdateUserLoginAsync(1, dto, 1);
+        var result = await _service.UpdateUserLoginAsync(dto, 1);
         Assert.Equal( "newUser@example.com",result.Email);
     }
 
@@ -142,7 +134,7 @@ public class UserServiceTests
             .Returns("hashed-new");
 
         // Act
-        var result = await _service.UpdateUserLoginAsync(1, dto, 1);
+        var result = await _service.UpdateUserLoginAsync(dto, 1);
 
         // Assert
         Assert.Equal("user@example.com", result.Email);
@@ -183,7 +175,7 @@ public class UserServiceTests
         _mockPasswordHasher.Setup(h => h.HashPassword(user, dto.NewPassword))
             .Returns("hashed-old");
 
-        await Assert.ThrowsAsync<ArgumentException>(() => _service.UpdateUserLoginAsync(1, dto, 1));
+        await Assert.ThrowsAsync<ArgumentException>(() => _service.UpdateUserLoginAsync(dto, 1));
 
         _mockPasswordHasher.Verify(h => h.VerifyHashedPassword(user, user.PasswordHash!, dto.Password), Times.Once);
     }
@@ -211,7 +203,7 @@ public class UserServiceTests
         _mockPasswordHasher.Setup(h => h.VerifyHashedPassword(user, user.PasswordHash!, dto.Password))
             .Returns(PasswordVerificationResult.Failed);
 
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _service.UpdateUserLoginAsync(1, dto, 1));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _service.UpdateUserLoginAsync(dto, 1));
 
         _mockPasswordHasher.Verify(h => h.VerifyHashedPassword(user, user.PasswordHash!, dto.Password), Times.Once);
     }
@@ -225,7 +217,7 @@ public class UserServiceTests
 
         var dto = new UserUpdateLoginDto { Email = "new@x.com", Password = "pw" };
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => _service.UpdateUserLoginAsync(1, dto, 1));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _service.UpdateUserLoginAsync(dto, 1));
     }
 
     [Fact]  // doesnt work yet
@@ -239,14 +231,7 @@ public class UserServiceTests
 
         var dto = new UserUpdateDto { Nickname = "taken" };
 
-        await Assert.ThrowsAsync<Exception>(() => _service.UpdateUserAsync(1, dto, 1));
+        await Assert.ThrowsAsync<Exception>(() => _service.UpdateUserAsync(dto, 1));
     }
 
-    [Fact]
-    public async Task UpdateUserAsync_UserMismatch_ThrowsUnauthorized()
-    {
-        var dto = new UserUpdateDto { Nickname = "any" };
-
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _service.UpdateUserAsync(2, dto, 1));
-    }
 }
