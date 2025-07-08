@@ -32,11 +32,12 @@ public class UsersController : BaseController
         return Ok(result);
     }
 
-    // GET: api/Users/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<UserOutputDto>> GetUser(int id)
+    // GET: api/Users/me
+    [HttpGet("me")]
+    public async Task<ActionResult<UserOutputDto>> GetUser()
     {
-        var users = await _context.Users.FindAsync(id);           
+        var currentUserId = GetLoggedInUserId();
+        var users = await _context.Users.FindAsync(currentUserId);           
 
         if (users == null)
         {
