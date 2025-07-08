@@ -63,12 +63,9 @@ public class UserService
         }
     }
     
-     public virtual async Task<UserOutputLoginDto> UpdateUserLoginAsync(int id, UserUpdateLoginDto dto, int currentUserId) 
-    {
-        if (id != currentUserId)
-            throw new UnauthorizedAccessException("You do not have permission.");
-        
-        var user = await _context.Users.FindAsync(id) ?? throw new KeyNotFoundException("User not found");
+     public virtual async Task<UserOutputLoginDto> UpdateUserLoginAsync( UserUpdateLoginDto dto, int currentUserId) 
+    {       
+        var user = await _context.Users.FindAsync(currentUserId) ?? throw new KeyNotFoundException("User not found");
         if (user.AuthProvider != "local")
         throw new InvalidOperationException("Cannot update login info for non-local users.");
 
@@ -107,16 +104,13 @@ public class UserService
             Email=user.Email 
         };  
     }
-    public async Task<UserOutputDto> UpdateUserAsync(int id, UserUpdateDto dto, int currentUserId) 
+    public async Task<UserOutputDto> UpdateUserAsync( UserUpdateDto dto, int currentUserId) 
     {
-        if (id != currentUserId)
-        throw new UnauthorizedAccessException("You do not have permission.");
-
-        bool nicknameExists = _context.Users.Any(u => u.Nickname == dto.Nickname && u.UserId != id && u.Nickname != null);
+        bool nicknameExists = _context.Users.Any(u => u.Nickname == dto.Nickname && u.UserId != currentUserId && u.Nickname != null);
  
         if (nicknameExists)  throw new Exception("Nickname already in use. Please choose another.");
 
-        var user = await _context.Users.FindAsync(id) ?? throw new KeyNotFoundException("User not found");
+        var user = await _context.Users.FindAsync(currentUserId) ?? throw new KeyNotFoundException("User not found");
         if (dto.Country != null && user.Country != dto.Country) user.Country = dto.Country;
         if (dto.Theme != null && user.Theme != dto.Theme) user.Theme = dto.Theme;
         if (dto.Nickname != null && user.Nickname != dto.Nickname) user.Nickname = dto.Nickname;

@@ -67,14 +67,14 @@ public class UsersController : BaseController
         }
     }
 
-    // PUT: api/Users/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutUser(int id, [FromBody] UserUpdateDto user)
+    // PUT: api/Users/me
+    [HttpPut("me")]
+    public async Task<IActionResult> PutUser([FromBody] UserUpdateDto user)
     {
         try
         {
             var currentUserId = GetLoggedInUserId();
-            await _userService.UpdateUserAsync(id, user, currentUserId);
+            await _userService.UpdateUserAsync( user, currentUserId);
             return NoContent();
         }
         catch (KeyNotFoundException)
@@ -83,14 +83,15 @@ public class UsersController : BaseController
         }
 
     }
-    // PUT: api/Users/5/login  for local users, not Google users
-    [HttpPut("{id}/login")]
-    public async Task<IActionResult> PutUserLoginData(int id, [FromBody] UserUpdateLoginDto dto)
+    
+    // PUT: api/Users/me/login   for local users, not Google users
+    [HttpPut("me/login")]
+    public async Task<IActionResult> PutUserLoginData( [FromBody] UserUpdateLoginDto dto)
     {
         try
         {
             var currentUserId = GetLoggedInUserId();
-            var updated = await _userService.UpdateUserLoginAsync(id, dto,currentUserId);
+            var updated = await _userService.UpdateUserLoginAsync( dto,currentUserId);
             return Ok(updated);
         }
         catch (KeyNotFoundException)
