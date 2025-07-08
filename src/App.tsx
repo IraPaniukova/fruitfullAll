@@ -6,55 +6,35 @@ import { lightTheme } from './features/theme/themeConfig/lightTheme';
 import { darkTheme } from './features/theme/themeConfig/darkTheme';
 import { useAppDispatch, useAppSelector } from './store/typeHooks';
 import { Box } from '@mui/material';
-import { ToggleThemeButton } from './features/theme/components/ToggleThemeButton';
 import { AppRouter } from './app/AppRouter';
 import { refreshTokenThunk } from "./features/auth/authThunks";
 import { useEffect } from 'react';
 import { login } from "./features/auth/authSlice";
+import { getUserMe } from './api/userApi';
+import { setTheme } from './features/theme/themeSlice';
 
 
 function App() {
   const mode = useAppSelector((state) => state.theme);
   const theme = createTheme(mode === "light" ? lightTheme : darkTheme);
   const dispatch = useAppDispatch();
+  const accessToken = useAppSelector(state => state.auth.accessToken);
 
-  // const dispatch = useAppDispatch();
-  // const mode = useAppSelector((state) => state.theme);
-
-  // useEffect(() => {
-  //   async function fetchTheme() {
-  //     try {
-  //       const userData = await getUserMe(); // e.g. returns "light" or "dark"
-  //       dispatch(setTheme(userData?.theme));
-  //     } catch (error) {
-  //       console.error("Failed to fetch theme:", error);
-  //     }
-  //   }
-  //   fetchTheme();
-  // }, [dispatch]);
-
-  // // now mode has DB value or default if fetch fails
-  // // use mode as usual:
-  // const theme = createTheme(mode === "light" ? lightTheme : darkTheme);
-
-  // // const dispatch = useAppDispatch();
-  // // const mode = useAppSelector((state) => state.theme);
-
-  // // useEffect(() => {
-  // //   async function loadTheme() {
-  // //     try {
-  // //       const userData = await getUserMe();
-  // //       if (userData?.theme) {
-  // //         dispatch(setTheme(userData.theme)); // update Redux state with theme from DB
-  // //       }
-  // //     } catch {
-  // //       // handle error or ignore
-  // //     }
-  // //   }
-  // //   loadTheme();
-  // // }, [dispatch]);
-
-
+  useEffect(() => {
+    async function fetchTheme() {
+      try {
+        const userData = await getUserMe();
+        if (userData?.theme) {
+          dispatch(setTheme(userData.theme));
+        } else {
+          dispatch(setTheme("light")); // fallback if no theme in user data
+        }
+      } catch (error) {
+        dispatch(setTheme("light")); // fallback on error
+      }
+    }
+    fetchTheme();
+  }, [accessToken, dispatch]);
 
 
   useEffect(() => {
@@ -90,7 +70,6 @@ function App() {
       <>
         <CssBaseline />
         <AppRouter />
-        <Box zIndex={1}> <ToggleThemeButton /></Box>
       </>
     </ThemeProvider>
   )

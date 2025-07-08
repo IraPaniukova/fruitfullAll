@@ -1,9 +1,10 @@
-import { Button, Typography } from '@mui/material';
+import { Button, Typography, Box } from '@mui/material';
 import logo from '../../assets/fruitfull_logo_name.png'
 import { GridBox } from '../../components/GridBox';
 import { ChequeredTiles } from '../../components/ChequeredTiles';
 import { ContentStack } from '../../components/ContentStack';
 import { NavLink } from 'react-router-dom';
+import { ToggleThemeButton } from '../../features/theme/components/ToggleThemeButton';
 
 export const LandingPage = () => {
     return (
@@ -26,6 +27,8 @@ export const LandingPage = () => {
                 <Typography variant='button'>Where career starts</Typography>
                 <Typography variant='button'>Share and discuss real interview questions and tips</Typography>
             </ContentStack>
+            <Box zIndex={1} position='absolute' top={0} left={0}> <ToggleThemeButton /></Box>
+
         </GridBox>
     );
 }

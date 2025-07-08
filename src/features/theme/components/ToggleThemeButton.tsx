@@ -8,12 +8,13 @@ import { updateUser } from "../../../api/userApi";
 export const ToggleThemeButton = () => {
     const dispatch = useAppDispatch();
     const mode = useAppSelector((state) => state.theme);
+    const accessToken = useAppSelector(state => state.auth.accessToken);
 
     const handleToggle = async () => {
         dispatch(toggleTheme());
         const newMode = mode === "dark" ? "light" : "dark";
         try {
-            await updateUser({ theme: newMode });
+            if (accessToken) await updateUser({ theme: newMode });  //saves user's theme to DB
         } catch (error) {
             console.error("Failed to update theme:", error);
         }

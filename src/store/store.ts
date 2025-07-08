@@ -10,6 +10,5 @@ export const store = configureStore({
 });
 
 export type RootState = ReturnType<typeof store.getState>;
-export const selectUser = (state: RootState) => state.auth.user;
-
+export const accessToken = (state: RootState) => state.auth.accessToken;
 export type AppDispatch = typeof store.dispatch;
