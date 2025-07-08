@@ -9,16 +9,17 @@ import { Navigate } from 'react-router-dom';
 import { PostPage } from '../pages/postPage/PostPage';
 import { CreatePostPage } from '../pages/createPostPage/CreatePostPage';
 import { NotFoundPage } from '../pages/notFoundPage/NotFoundPage';
+import { useAppSelector } from '../store/typeHooks';
 
 
-type Props = {
-    loggedIn: boolean;
-};
 
-export const AppRouter = ({ loggedIn }: Props) => {
+export const AppRouter = () => {
     type PrivateRouteProps = {
         component: React.ComponentType;
     };
+
+    const loggedIn = useAppSelector(state => !!state.auth.accessToken);
+
     const PrivateRoute = ({ component: Component }: PrivateRouteProps) => {
         return loggedIn ? <Component /> : <Navigate to="/" replace />;
     };

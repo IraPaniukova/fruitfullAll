@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { Stack, TextField, Button, Typography, Box } from '@mui/material';
-import { userEmail, userPasssword } from '../../TEMP-DATA/TEMP_DATA';
+import { loginThunk } from "../authThunks";
+import { useAppDispatch } from "../../../store/typeHooks";
+
 
 export const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const dispatch = useAppDispatch();
 
-    const handleSubmit = (email: string) => {
-        if (userEmail === email && userPasssword === password) {
-            // submit logic here
-        }
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        dispatch(loginThunk(email, password));
     };
 
     return (
@@ -31,7 +33,7 @@ export const LoginForm = () => {
                 fullWidth
             />
             <Box>
-                <Button onClick={() => handleSubmit(email)}>
+                <Button onClick={(e) => handleSubmit(e)}>
                     Login
                 </Button>
             </Box>

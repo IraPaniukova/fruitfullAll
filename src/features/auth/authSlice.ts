@@ -1,30 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { userEmail, userTimeStamp } from "../TEMP-DATA/TEMP_DATA";
 
 interface AuthState {
-  user: string | null;
-  loginTime: number | null;
+  accessToken: string | null;
+  refreshToken: string | null;
 }
+
 const initialState: AuthState = {
-  //from DB
-  user: userEmail,
-  loginTime: userTimeStamp,
+  accessToken: null,
+  refreshToken: null,
 };
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
     login: (state, action) => {
-      state.user = action.payload;
+      state.accessToken = action.payload.token;
+      state.refreshToken = action.payload.refreshToken;
     },
     logout: (state) => {
-      state.user = null;
-    },
-    updateLastActivity: (state, action) => {
-      state.loginTime = action.payload;
+      state.accessToken = null;
+      state.refreshToken = null;
     },
   },
 });
 
-export const { login, logout, updateLastActivity } = authSlice.actions;
+export const { login, logout } = authSlice.actions;
 export default authSlice.reducer;

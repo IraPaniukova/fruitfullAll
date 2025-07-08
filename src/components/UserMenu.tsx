@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Menu, MenuItem, IconButton, ListItemText } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { Link, useLocation } from 'react-router-dom';
+import { logoutThunk } from "../features/auth/authThunks";
+import { useAppDispatch, useAppSelector } from '../store/typeHooks';
+
+
 
 const pages = [
     { name: 'Dashboard', path: '/' },
@@ -14,12 +18,14 @@ export const UserMenu = () => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
+
     const handleOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
     const handleClose = () => setAnchorEl(null);
+    const dispatch = useAppDispatch();
+    const refreshToken = useAppSelector(state => state.auth.refreshToken);
 
     const handleLogout = () => {
-        //  logout logic 
-        console.log('Logging out');
+        dispatch(logoutThunk(refreshToken!));
         handleClose();
     };
 

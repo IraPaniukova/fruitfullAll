@@ -1,9 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { themeMode } from "../TEMP-DATA/TEMP_DATA";
 
 const themeSlice = createSlice({
   name: "theme",
-  initialState: themeMode, // default to light mode
+  initialState: "light", // default to light mode
   reducers: {
     toggleTheme: (state) => {
       return state === "light" ? "dark" : "light";

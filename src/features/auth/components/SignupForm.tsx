@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { Stack, TextField, Button, Typography, Box } from '@mui/material';
+import { registerEmailUser } from "../../../api/userApi";
+import { loginThunk } from "../authThunks";
+import { useAppDispatch } from "../../../store/typeHooks";
 
 export const SignupForm = () => {
     const [email, setEmail] = useState('');
@@ -7,12 +10,13 @@ export const SignupForm = () => {
     const [errors, setErrors] = useState({ email: '', password: '' });
 
     const validateEmail = (email: string) =>
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email);
 
     const validatePassword = (password: string) =>
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^\s]).{8,}$/.test(password);
 
-    const handleSubmit = () => {
+    const dispatch = useAppDispatch();
+    const handleSubmit = async () => {
         const emailError = !validateEmail(email) ? 'Enter a valid email' : '';
         const passwordError = !validatePassword(password)
             ? 'At least 1 uppercase, 1 lowercase, 1 symbol, 8 characters'
@@ -21,7 +25,14 @@ export const SignupForm = () => {
         setErrors({ email: emailError, password: passwordError });
 
         if (!emailError && !passwordError) {
-            // submit logic here
+
+            try {
+                await registerEmailUser({ email, password });
+                dispatch(loginThunk(email, password));
+            } catch (err) {
+                console.error("Failed to register:", err);
+            }
+
         }
     };
 
