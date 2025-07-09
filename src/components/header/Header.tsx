@@ -64,9 +64,15 @@ export const Header: React.FC<HeaderProps> = ({ loggedIn }) => {
     const hideHeader = location === '/auth' || (location === '/' && !loggedIn);
 
     return (
+        <StyledAppBar
+            position="sticky"
+            sx={{
+                display: hideHeader ? 'none' : 'flex', mb: 2,
+                top: 0,
+                zIndex: (theme) => theme.zIndex.appBar,
+                backgroundColor: 'background.paper',
+            }}>
 
-        <StyledAppBar position="static"
-            sx={{ display: hideHeader ? 'none' : 'flex', mb: 2 }}>
             <Toolbar variant="dense" >
                 <Box pt={1}>
                     <Link to="/"

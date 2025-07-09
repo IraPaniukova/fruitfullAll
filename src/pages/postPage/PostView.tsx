@@ -1,64 +1,35 @@
 import { useEffect, useState } from 'react';
-import { Box, Chip, Stack, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
-
-type Post = {
-    questions: string;
-    company: string;
-    industry: string;
-    year: number | '';
-    country: string;
-    stressLevel: string;
-    questionType: string;
-    interviewFormat: string;
-    opinion?: string;
-    tags?: string[];
-};
+import { Stack, Typography } from '@mui/material';
+import { PostTags } from '../../components/PostTags';
+import type { PostOutputDto } from '../../utils/interfaces';
+import { getPostById } from '../../api/postApi';
 
 type Props = {
-    postId: string;
+    postId: number;
 };
 
 export const PostView = ({ postId }: Props) => {
-    const [post, setPost] = useState<Post | null>(null);
-
-
-    //TODO: clear the mockup later:
-
+    const [post, setPost] = useState<PostOutputDto | null>(null);
     useEffect(() => {
-        //TODO: fetch post details by postId (replace with your API)
-        async function fetchPost() {
-            // mock fetch
-            const fetchedPost: Post = {
-                questions: 'Describe a time you solved a tough bug.',
-                company: 'Example Co',
-                industry: 'Video games',
-                year: 2024,
-                country: 'New Zealand',
-                stressLevel: '3',
-                questionType: 'Technical',
-                interviewFormat: 'Face to face with one',
-                opinion: 'Stay calm and explain your thought process clearly.',
-                tags: ['bugfix', 'problem solving', 'technical'],
-            };
-            setPost(fetchedPost);
+        async function fetchPosts() {
+            try {
+                const data = await getPostById(postId);
+                setPost(data);
+            } catch (error) {
+                console.error("Failed to fetch posts:", error);
+            }
         }
-        fetchPost();
+        fetchPosts();
     }, [postId]);
 
     if (!post) return <div>Loading...</div>;
 
     return (
-        <Stack spacing={2}
-            mb={4}
-            p={2}
+        <Stack spacing={2} mb={4} p={2}
             borderRadius={2}
             border="1px solid"
             borderColor="divider"
-            sx={{
-                textAlign: 'left',
-                backgroundColor: 'background.paper',
-            }}
+            sx={{ textAlign: 'left', backgroundColor: 'background.paper', }}
         >
             <Typography
                 variant="body2"
@@ -71,7 +42,7 @@ export const PostView = ({ postId }: Props) => {
             <Typography variant="button" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
                 Questions Asked:
             </Typography>
-            <Typography>{post.questions}</Typography>
+            <Typography>{post.content}</Typography>
 
             {
                 post.opinion && (
@@ -84,25 +55,7 @@ export const PostView = ({ postId }: Props) => {
                 )
             }
             {
-                post.tags && post.tags.length > 0 && (
-                    <Stack direction='row' alignItems='center' spacing={2}>
-                        <Typography variant="caption" color="text.secondary">
-                            Tags:
-                        </Typography>
-                        <Box display="flex" gap={1} flexWrap="wrap">
-                            {post.tags.map(tag => (
-                                <Chip
-                                    key={tag}
-                                    label={tag}
-                                    component={Link}
-                                    to={`/tags/${tag}`}//TODO: decide where i place the results of this search
-                                    clickable
-                                    size="small"
-                                />
-                            ))}
-                        </Box>
-                    </Stack>
-                )
+                post.tags && post.tags.length > 0 && <PostTags tags={post.tags} />
             }
 
         </Stack >

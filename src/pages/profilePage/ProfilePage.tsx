@@ -22,8 +22,12 @@ export const ProfilePage = () => {
 
     useEffect(() => {
         async function fetchUser() {
-            const data = await getUserMe();
-            setData(data);
+            try {
+                const data = await getUserMe();
+                setData(data);
+            } catch (error) {
+                console.error("Failed to fetch user:", error);
+            }
         }
         fetchUser();
     }, [refresh]);
@@ -73,7 +77,6 @@ export const ProfilePage = () => {
     const nickname = data?.nickname ?? 'Anonymus';
     const country = data?.country;
     const theme = data?.theme;
-
 
     return (
         <>
