@@ -113,8 +113,8 @@ public class UserService
         var user = await _context.Users.FindAsync(currentUserId) ?? throw new KeyNotFoundException("User not found");
         if (dto.Country != null && user.Country != dto.Country) user.Country = dto.Country;
         if (dto.Theme != null && user.Theme != dto.Theme) user.Theme = dto.Theme;
-        if (dto.Nickname != null && user.Nickname != dto.Nickname) user.Nickname = dto.Nickname;
-        if (dto.ProfileImage != null && user.ProfileImage != dto.ProfileImage) user.ProfileImage = dto.ProfileImage;
+        if ( user.Nickname != dto.Nickname) user.Nickname = dto.Nickname;  
+        if ( user.ProfileImage != dto.ProfileImage) user.ProfileImage = dto.ProfileImage; //user nickname and profile image should allow to save null
 
         try
         {
