@@ -1,4 +1,5 @@
 namespace fruitfullServer.DTO.Users;
+
 public class UserOutputDto
 {
     public int UserId { get; set; }
@@ -11,5 +12,6 @@ public class UserOutputDto
 
     public string? ProfileImage { get; set; }
     public DateTime? CreatedAt { get; set; }
+     public string? Email { get; set; } 
 
 }

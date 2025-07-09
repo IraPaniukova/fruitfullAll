@@ -11,6 +11,7 @@ public static class UserUtil
         Theme = user.Theme,
         Nickname = user.Nickname,
         ProfileImage = user.ProfileImage,
-        CreatedAt = user.CreatedAt
+        CreatedAt = user.CreatedAt,
+        Email =user.Email
     };
 }
