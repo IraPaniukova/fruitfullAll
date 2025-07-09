@@ -2,7 +2,7 @@ import { alpha, AppBar, Avatar, Box, InputBase, styled, Toolbar } from "@mui/mat
 import { Link, useLocation } from "react-router-dom";
 import SearchIcon from '@mui/icons-material/Search';
 import logo from '../../assets/fruitfull_logo.png';
-import { UserMenu } from "../UserMenu";
+import { UserMenu } from "./UserMenu";
 import { CreatePostButton } from "./CreatePostButton";
 
 interface HeaderProps {
@@ -89,7 +89,8 @@ export const Header: React.FC<HeaderProps> = ({ loggedIn }) => {
                     <CreatePostButton />
                 </Box>
                 <Link to="/profile" style={{ textDecoration: 'none' }}>
-                    <Avatar alt="User Name" src="/path/to/avatar.jpg" sx={{ ml: 1 }} />
+                    {/* <Avatar alt="User Name" src="/path/to/avatar.jpg" sx={{ ml: 1 }} /> */}
+                    <Avatar sx={{ bgcolor: 'orange', fontSize: 20 }}>ツ</Avatar>
                 </Link>
                 <UserMenu />
             </Toolbar>

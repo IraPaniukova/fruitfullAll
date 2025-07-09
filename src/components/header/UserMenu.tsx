@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Menu, MenuItem, IconButton, ListItemText } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { Link, useLocation } from 'react-router-dom';
-import { logoutThunk } from "../features/auth/authThunks";
-import { useAppDispatch, useAppSelector } from '../store/typeHooks';
+import { logoutThunk } from "../../features/auth/authThunks";
+import { useAppDispatch, useAppSelector } from '../../store/typeHooks';
 
 
 

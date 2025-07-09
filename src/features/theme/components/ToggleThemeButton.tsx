@@ -1,4 +1,4 @@
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { toggleTheme } from "../themeSlice";
 import { useAppDispatch, useAppSelector } from "../../../store/typeHooks";
 import DarkModeIcon from '@mui/icons-material/DarkMode';
@@ -21,13 +21,15 @@ export const ToggleThemeButton = () => {
     };
 
     return (
-        <IconButton onClick={handleToggle} color="inherit">
-            {mode === "dark" ? (
-                <LightModeIcon aria-label="Switch to light mode" />
-            ) : (
-                <DarkModeIcon aria-label="Switch to dark mode" />
-            )}
-        </IconButton>
+        <Tooltip title="Change theme" placement="right">
+            <IconButton onClick={handleToggle} color="inherit" aria-label="Change theme">
+                {mode === "dark" ? (
+                    <LightModeIcon aria-label="Switch to light mode" />
+                ) : (
+                    <DarkModeIcon aria-label="Switch to dark mode" />
+                )}
+            </IconButton>
+        </Tooltip>
     );
 };
 

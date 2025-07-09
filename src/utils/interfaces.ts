@@ -15,4 +15,5 @@ export interface UserOutputDto {
   nickname?: string;
   profileImage?: string;
   createdAt?: string; // Date is usually sent as ISO string
+  email: string;
 }

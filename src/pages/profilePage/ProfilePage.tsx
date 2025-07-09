@@ -1,14 +1,24 @@
-import { Box, Avatar, Typography, Paper, Stack, Grid, IconButton } from '@mui/material';
+import { Box, Avatar, Typography, Paper, Stack, Grid, TextField, Snackbar, Alert, Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useEffect, useState } from 'react';
 import { ToggleThemeButton } from '../../features/theme/components/ToggleThemeButton';
 import { ConfirmChangesButton } from './ConfirmChangesButton';
-import { getUserMe } from '../../api/userApi';
+import { getUserMe, updateUser } from '../../api/userApi';
 import type { UserOutputDto } from '../../utils/interfaces';
 
 export const ProfilePage = () => {
-    const [editIt, setEditIt] = useState(false);
+    // const [editAvatar, setEditAvatar] = useState(false);
+    const [editNickname, setEditNickname] = useState(false);
+    const [editCountry, setEditCountry] = useState(false);
+    const [newNickname, setNewNickname] = useState('');
+    const [newCountry, setNewCountry] = useState('');
+
+    const [errorOpen, setErrorOpen] = useState(false);
+
     const [data, setData] = useState<UserOutputDto | null>(null);
+
+    const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
         async function fetchUser() {
@@ -16,13 +26,43 @@ export const ProfilePage = () => {
             setData(data);
         }
         fetchUser();
-    }, []);
+    }, [refresh]);
 
-    const onEditIconClick = () => {
-        setEditIt(true);
+    // const onEditAvatarClick = () => {  //TODO: Add functionality if there is enough time
+    //     setEditAvatar(true);
+    // }
+    const onEditNicknameClick = () => {
+        setEditNickname(true);
     }
-    const onConfirmClick = () => {
-        setEditIt(false);
+    const onEditCountryClick = () => {
+        setEditCountry(true);
+    }
+    const onDeleteIconClick = async () => {
+        try {
+            await updateUser({ nickname: null });
+            setRefresh(!refresh);
+        }
+        catch (error) {
+            setErrorOpen(true);
+        }
+        setEditNickname(false);
+    }
+    const onConfirmClick = async () => {
+        try {
+            if (newNickname) {
+                await updateUser({ nickname: newNickname.trim() });
+            }
+            if (newCountry) {
+                await updateUser({ country: newCountry.trim() });
+            }
+            setRefresh(!refresh);
+        }
+        catch (error) {
+            setErrorOpen(true);
+        }
+        // setEditAvatar(false);
+        setEditNickname(false);
+        setEditCountry(false);
     }
     const createdAt = data?.createdAt
         ? new Date(data.createdAt).toLocaleString('en-US', {
@@ -33,68 +73,103 @@ export const ProfilePage = () => {
     const nickname = data?.nickname ?? 'Anonymus';
     const country = data?.country;
     const theme = data?.theme;
+
+
     return (
-        <Stack minHeight='100vh' justifyContent='center' alignItems='center'>
-            <Paper
-                elevation={3}
-                sx={{
-                    my: 2,
-                    p: 4,
-                    borderRadius: '16px',
-                    minWidth: 400,
-                }}
-            >
-                <Stack spacing={3} alignItems="center" minHeight='80vh' sx={{ position: 'relative' }}>
-                    <Box position='absolute' top={0} right={0}>
-                        {!editIt &&
-                            <IconButton onClick={onEditIconClick} aria-label="Edit">
-                                <EditIcon />
-                            </IconButton>}
-                    </Box>
-                    <Avatar
-                        sx={{ width: 100, height: 100, bgcolor: 'orange', fontSize: 40 }}
-                    >
-                        {nickname === 'Anonymus' ?
-                            'ツ' :
-                            nickname[0]?.toUpperCase() || 'ツ'}
-                    </Avatar>
-                    <Typography variant="h5" fontWeight="bold">
-                        {nickname}
-                    </Typography>
-                    <Typography>Member Since: {createdAt}</Typography>
-                    {country && <Typography>Country: {country}</Typography>}
-                    <Stack direction='row' spacing={1} height='40px' alignItems='center'>
-                        <Typography>Theme:</Typography>
-                        {editIt ?
-                            <Stack direction='row' spacing={1}>
-                                <ToggleThemeButton />
+        <>
+            <Snackbar open={errorOpen} autoHideDuration={4000} onClose={() => setErrorOpen(false)}>
+                <Alert severity="error" onClose={() => setErrorOpen(false)}>
+                    Failed to save. Please check your connection.
+                </Alert>
+            </Snackbar>
+            <Stack minHeight='100vh' justifyContent='center' alignItems='center'>
+                <Paper
+                    elevation={3}
+                    sx={{
+                        my: 2,
+                        p: 4,
+                        borderRadius: '16px',
+                        minWidth: 400,
+                    }}
+                >
+                    <Stack spacing={3} alignItems="center" minHeight='80vh' sx={{ position: 'relative' }}>
+                        <Box position='absolute' top={0} right={0}>
+                            <ToggleThemeButton />
+                        </Box>
+
+                        <Stack direction='row' alignItems='flex-end' pl={3}>
+                            <Avatar
+                                sx={{ width: 100, height: 100, bgcolor: 'orange', fontSize: 40 }}
+                            >
+                                {nickname === 'Anonymus' ?
+                                    'ツ' :
+                                    nickname[0]?.toUpperCase() || 'ツ'}
+                            </Avatar>
+                            {/* <EditIcon sx={{ fontSize: 15 }} /> */}
+                        </Stack>
+
+                        {editNickname ?
+                            <Stack direction='row' alignItems='center' spacing={3} pl={5}>
+                                <TextField
+                                    label="Enter New Nickname"
+                                    value={newNickname}
+                                    onChange={(e) => setNewNickname(e.target.value)}
+                                />
+                                <ConfirmChangesButton onConfirmClick={onConfirmClick} />
+                                <Tooltip title="Delete Nickname" placement="right">
+                                    <DeleteIcon sx={{ fontSize: 15 }}
+                                        onClick={onDeleteIconClick} aria-label="Delete Nickname" />
+                                </Tooltip>
+                            </Stack> :
+                            <Stack direction='row' alignItems='center' spacing={3} pl={5}>
+                                <Typography variant="h5" fontWeight="bold">
+                                    {nickname}
+                                </Typography>
+                                <EditIcon sx={{ fontSize: 15 }} onClick={onEditNicknameClick} />
+                            </Stack>
+                        }
+
+                        <Typography>Member Since: {createdAt}</Typography>
+
+                        {editCountry ?
+                            <Stack direction='row' alignItems='center' spacing={3} pl={5}>
+                                <TextField
+                                    label="Enter New Nickname"
+                                    value={newCountry}
+                                    onChange={(e) => setNewCountry(e.target.value)}
+                                />
                                 <ConfirmChangesButton onConfirmClick={onConfirmClick} />
                             </Stack> :
-                            <Typography>{theme}</Typography>
+                            <Stack direction='row' spacing={3} alignItems='center' pl={5}>
+                                <Typography>Country: {country ? country : 'None'}</Typography>
+                                <EditIcon sx={{ fontSize: 15 }} onClick={onEditCountryClick} />
+                            </Stack>
                         }
+
+                        <Typography>Theme: {theme}</Typography>
+
+                        <Typography variant="h6">My Interview Stories</Typography>
+                        {/* Link or list preview */}
+
+                        <Typography variant="h6">My Q&A Threads</Typography>
+                        {/* Link or list preview */}
+                        <Grid container spacing={1} justifyContent="center">
+                            <Grid size={{ xs: 12, sm: 8 }}>
+                                <Typography align="center">Total Contributions</Typography>
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 4 }}>
+                                <Typography align="center">15</Typography>
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 8 }}>
+                                <Typography align="center">Average Stress Rating: </Typography>
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 4 }}>
+                                <Typography align="center">3.2</Typography>
+                            </Grid>
+                        </Grid>
                     </Stack>
-
-                    <Typography variant="h6">My Interview Stories</Typography>
-                    {/* Link or list preview */}
-
-                    <Typography variant="h6">My Q&A Threads</Typography>
-                    {/* Link or list preview */}
-                    <Grid container spacing={1} justifyContent="center">
-                        <Grid size={{ xs: 12, sm: 8 }}>
-                            <Typography align="center">Total Contributions</Typography>
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 4 }}>
-                            <Typography align="center">15</Typography>
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 8 }}>
-                            <Typography align="center">Average Stress Rating: </Typography>
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 4 }}>
-                            <Typography align="center">3.2</Typography>
-                        </Grid>
-                    </Grid>
-                </Stack>
-            </Paper >
-        </Stack >
+                </Paper >
+            </Stack >
+        </>
     );
 };

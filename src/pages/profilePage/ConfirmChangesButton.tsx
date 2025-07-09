@@ -6,7 +6,7 @@ interface ConfirmChangesButtonProps {
 }
 export const ConfirmChangesButton: React.FC<ConfirmChangesButtonProps> = ({ onConfirmClick }) => {
     return (
-        <Tooltip title="Confirm" placement="right">
+        <Tooltip title="Confirm or Exit" placement="right">
             <IconButton onClick={onConfirmClick} aria-label="Confirm changes">
                 <DoneIcon />
             </IconButton>
