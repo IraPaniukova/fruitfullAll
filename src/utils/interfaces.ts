@@ -18,6 +18,19 @@ export interface UserOutputDto {
   email: string;
 }
 
+export interface PostInputDto {
+  content: string;
+  opinion?: string;
+  company: string;
+  industry: string;
+  year: number | null;
+  country: string;
+  stressLevel: number | null;
+  questionType: string;
+  interviewFormat: string;
+  tags: string[];
+}
+
 export interface PostOutputDto {
   postId: number;
   content?: string;

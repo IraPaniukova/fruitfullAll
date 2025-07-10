@@ -1,55 +1,59 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import { Box, TextField, Button, Typography, Grid, MenuItem, Select, FormControl, InputLabel, FormHelperText } from '@mui/material';
-import { industryOptions, countryOptions, questionTypeOptions, stressLevelOptions, interviewFormatOptions } from '../../utils/constants';
+import { industryOptions, countryOptions, questionTypeOptions, stressLevelOptions, interviewFormatOptions, yearOptions } from '../../utils/constants';
 import { TagInput } from './TagInput';
-import type { PostFormData } from '../../utils/types';
+import type { PostInputDto } from '../../utils/interfaces';
+import { createPost } from '../../api/postApi';
+import { useNavigate } from 'react-router-dom';
 
 export const CreatePostPage = () => {
-    const currentYear = new Date().getFullYear();
-    const [form, setForm] = useState<PostFormData>({
-        questions: '',
+    const initialForm: PostInputDto = {
+        content: '',
+        opinion: '',
         company: '',
         industry: '',
-        year: '',
+        year: null,
         country: '',
-        stressLevel: '',
+        stressLevel: null,
         questionType: '',
         interviewFormat: '',
-        opinion: '',
         tags: [],
-    });
+    };
+    const [form, setForm] = useState<PostInputDto>(initialForm);
 
     const [errors, setErrors] = useState<Record<string, string>>({});
     const handleSelectChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
     ) => {
         const { name, value } = e.target;
-        setForm((prev) => ({
+        setForm(prev => ({
             ...prev,
-            [name]:
-                name === 'year'
-                    ? value === ''
-                        ? ''
-                        : Math.min(Math.max(Number(value), currentYear - 1), currentYear)
-                    : value,
+            [name]: name === 'year' || name === 'stressLevel' ? Number(value) : value,
         }));
     };
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setForm((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        setForm(prev => {
+            const updated = { ...prev, [name]: value };
+            localStorage.setItem('formData', JSON.stringify(updated)); //otherwise it rerenders empty fields 
+            return updated;
+        });
     };
+    //on each mount, it will load saved in local storage:
+    useEffect(() => {
+        const saved = localStorage.getItem('formData');
+        if (saved) {
+            setForm(JSON.parse(saved));
+        }
+    }, []);
     const validTags = form.tags?.every(tag => /^[a-zA-Z]+$/.test(tag));
     const validate = () => {
         const newErrors: Record<string, string> = {};
-        if (!form.questions.trim()) newErrors.questions = 'Questions are required';
+        if (!form.content.trim()) newErrors.questions = 'Questions are required';
         if (!form.company) newErrors.company = 'Company name or type (e.g. BNZ or bank) is required';
         if (!form.industry) newErrors.industry = 'Industry is required';
-        if (form.year === '' || form.year < currentYear - 1 || form.year > currentYear)
-            newErrors.year = `Year must be between last year and ${currentYear}`;
+        if (!form.year) newErrors.year = 'Year is required';
         if (!form.country) newErrors.country = 'Country is required';
         if (!form.stressLevel) newErrors.stressLevel = 'Stress Level is required';
         if (!form.questionType) newErrors.questionType = 'Question Type is required';
@@ -58,10 +62,18 @@ export const CreatePostPage = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = () => {
+    const navigate = useNavigate();
+    const handleSubmit = async () => {
         if (!validate() || !validTags) return;
         console.log('Submitting post:', form);
-        // send to backend here
+        try {
+            const newPost = await createPost(form);
+            setForm(initialForm);
+            localStorage.removeItem('formData');
+            navigate(`/posts/${newPost.postId}`);
+        } catch (err) {
+            console.error("Failed to create post:", err);
+        }
     };
 
     return (
@@ -73,13 +85,13 @@ export const CreatePostPage = () => {
                 <Grid size={12}>
                     <TextField
                         label="Questions"
-                        name="questions"
+                        name="content"
                         fullWidth
                         required
                         multiline
                         rows={4}
-                        value={form.questions}
-                        onChange={handleSelectChange}
+                        value={form.content}
+                        onChange={handleInputChange}
                         error={!!errors.questions}
                         helperText={errors.questions}
                     />
@@ -96,7 +108,7 @@ export const CreatePostPage = () => {
                     />
                 </Grid>
                 <Grid size={12}>
-                    <TagInput setForm={setForm} error_tag={errors.tag} />
+                    <TagInput tags={form.tags} setForm={setForm} error_tag={errors.tag} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 5 }}>
                     <FormControl fullWidth required error={!!errors.industry}>
@@ -149,23 +161,24 @@ export const CreatePostPage = () => {
                     </FormControl>
                 </Grid>
                 <Grid size={{ xs: 6, sm: 2 }}>
-                    <TextField
-                        sx={{ '& .MuiInputBase-input': { textAlign: 'center', }, }}
-                        label="Year"
-                        name="year"
-                        type="number"
-                        fullWidth
-                        required
-                        value={form.year}
-                        onChange={handleSelectChange}
-                        error={!!errors.year}
-                        helperText={errors.year}
-                        slotProps={{
-                            input: {
-                                inputProps: { min: currentYear - 1, max: currentYear }
-                            }
-                        }}
-                    />
+                    <FormControl fullWidth required error={!!errors.year}>
+                        <InputLabel id="year-label">Year</InputLabel>
+                        <Select
+                            labelId="year-label"
+                            name="year"
+                            value={form.year?.toString() ?? ''}
+                            label="Year"
+                            onChange={handleSelectChange}
+                            sx={{ '& .MuiInputBase-input': { textAlign: 'center' } }}
+                        >
+                            {yearOptions.map((value) => (
+                                <MenuItem key={value} value={value}>
+                                    {value}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        <FormHelperText>{errors.year}</FormHelperText>
+                    </FormControl>
                 </Grid>
                 <Grid size={{ xs: 6, sm: 3 }}>
                     <FormControl fullWidth required error={!!errors.stressLevel}>
@@ -173,7 +186,7 @@ export const CreatePostPage = () => {
                         <Select
                             labelId="stress-label"
                             name="stressLevel"
-                            value={form.stressLevel}
+                            value={form.stressLevel?.toString() ?? ''}
                             label="Stress Level"
                             onChange={handleSelectChange}
                         >

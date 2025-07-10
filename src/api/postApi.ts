@@ -3,6 +3,7 @@ import type {
   PostOutputDto,
   PostSummaryDto,
   PostLikeDto,
+  PostInputDto,
 } from "../utils/interfaces";
 
 // GET recent posts with pagination
@@ -16,7 +17,7 @@ export const getRecentPosts = (
 
 // POST create a new post
 export const createPost = (
-  post: Partial<PostOutputDto>
+  post: Partial<PostInputDto>
 ): Promise<PostOutputDto> => API.post("/Posts", post).then((res) => res.data);
 
 // PUT update a post by ID
@@ -43,6 +44,15 @@ export const getPostsByUserId = (
   pageSize = 10
 ): Promise<PostSummaryDto[]> =>
   API.get(`/Posts/User/${userId}?page=${page}&pageSize=${pageSize}`).then(
+    (res) => res.data
+  );
+
+// GET posts by current user with pagination
+export const getMyPosts = (
+  page = 1,
+  pageSize = 10
+): Promise<PostSummaryDto[]> =>
+  API.get(`/Posts/User/me?page=${page}&pageSize=${pageSize}`).then(
     (res) => res.data
   );
 
