@@ -84,11 +84,27 @@ public class PostsController : BaseController
     }
     // GET: api/Posts/User/{userId}?page=1&pageSize=10
     [HttpGet("User/{userId}")]
-    public async Task<ActionResult<List<PostSummaryDto>>> GetPostsByUserId(int userId, int page = 1, int pageSize = 10)
+    public async Task<ActionResult<List<PostSummaryDto>>> GetMyPosts(int userId, int page = 1, int pageSize = 10)
     {
         try
         {
             var posts = await _postService.GetPostsByUserIdAsync(userId, page, pageSize);
+            return Ok(posts);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Server error: " + ex.Message });
+        }
+    }
+
+    // GET: api/Posts/User/me?page=1&pageSize=10
+    [HttpGet("User/me")]
+    public async Task<ActionResult<List<PostSummaryDto>>> GetPostsByUserId( int page = 1, int pageSize = 10)
+    {
+        try
+        {
+            var currentUserId = GetLoggedInUserId();
+            var posts = await _postService.GetPostsByUserIdAsync(currentUserId, page, pageSize);
             return Ok(posts);
         }
         catch (Exception ex)
