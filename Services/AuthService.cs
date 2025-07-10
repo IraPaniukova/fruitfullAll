@@ -102,7 +102,8 @@ public class AuthService
         {
             Token = token,
             RefreshToken = refreshToken,
-            ExpiresAt = authToken.ExpiresAt
+            ExpiresAt = authToken.ExpiresAt,
+            UserId=user.UserId
         };
     }
 

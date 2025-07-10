@@ -187,6 +187,7 @@ public class PostService
                 .Select(p => new PostSummaryDto
                 {
                     PostId = p.PostId,
+                    UserId=p.UserId,
                     CreatedAt = p.CreatedAt,
                     Content = p.Content,
                     Industry = p.Industry,
@@ -213,6 +214,7 @@ public class PostService
                 .Select(p => new PostSummaryDto
                 {
                     PostId = p.PostId,
+                    UserId=p.UserId,
                     CreatedAt = p.CreatedAt,
                     Content = p.Content,
                     Industry = p.Industry,
@@ -239,6 +241,7 @@ public class PostService
                 .Select(p => new PostSummaryDto
                 {
                     PostId = p.PostId,
+                    UserId=p.UserId,
                     CreatedAt = p.CreatedAt,
                     Content = p.Content,
                     Industry = p.Industry,
