@@ -3,11 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
+  userId: number | null;
 }
 
 const initialState: AuthState = {
   accessToken: null,
   refreshToken: null,
+  userId: null,
 };
 
 const authSlice = createSlice({
@@ -17,10 +19,12 @@ const authSlice = createSlice({
     login: (state, action) => {
       state.accessToken = action.payload.token;
       state.refreshToken = action.payload.refreshToken;
+      state.userId = action.payload.userId;
     },
     logout: (state) => {
       state.accessToken = null;
       state.refreshToken = null;
+      state.userId = null;
     },
   },
 });

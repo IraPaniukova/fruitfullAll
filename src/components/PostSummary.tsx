@@ -2,12 +2,14 @@ import { Box, Grid, Stack, Typography } from '@mui/material';
 import type { PostSummaryDto } from '../utils/interfaces';
 import { PostTags } from './PostTags';
 import { OpenPostButton } from './OpenPostButton';
+import { UpdatePostButton } from './UpdatePostButton';
 
 interface PostSummaryProps {
     posts: PostSummaryDto[];
 }
 
 export const PostSummary: React.FC<PostSummaryProps> = ({ posts }) => {
+    const userId = Number(localStorage.getItem('userId'));
 
     return (
         <Grid container spacing={2}>
@@ -39,7 +41,14 @@ export const PostSummary: React.FC<PostSummaryProps> = ({ posts }) => {
                         </Box>
 
                         {post.tags && post.tags.length > 0 && <PostTags tags={post.tags} />}
-                        <Box position='absolute' bottom={0} right={0} p={1}><OpenPostButton postId={post.postId} /></Box>
+                        <Stack direction='row' alignItems='center'
+                            position='absolute' bottom={0} right={0} p={1}>
+                            {post.userId === userId && (
+                                <UpdatePostButton postId={post.postId} />
+                            )}
+
+                            <OpenPostButton postId={post.postId} />
+                        </Stack>
                     </Stack>
                 </Grid>
 

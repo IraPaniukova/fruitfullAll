@@ -7,10 +7,12 @@ import { ProfilePage } from '../pages/profilePage/ProfilePage';
 import { Header } from '../components/header/Header';
 import { Navigate } from 'react-router-dom';
 import { PostPage } from '../pages/postPage/PostPage';
+import { UpdatePostPage } from '../pages/updatePostPage/UpdatePostPage';
 import { CreatePostPage } from '../pages/createPostPage/CreatePostPage';
 import { NotFoundPage } from '../pages/notFoundPage/NotFoundPage';
 import { useAppSelector } from '../store/typeHooks';
 import { useEffect, useState } from 'react';
+import { UserPostsPage } from '../pages/userPostsPage/UserPostsPage';
 
 
 
@@ -45,8 +47,10 @@ export const AppRouter = () => {
                 { path: '', element: loggedIn ? <DashboardPage /> : <LandingPage /> },
                 { path: 'auth', element: !loggedIn ? <AuthPage /> : < Navigate to="/" replace /> },
                 { path: 'profile', element: <PrivateRoute component={ProfilePage} /> },
-                { path: 'create', element: <PrivateRoute component={CreatePostPage} /> },
+                { path: 'posts/create', element: <PrivateRoute component={CreatePostPage} /> },
+                { path: 'posts/update/:id', element: <PrivateRoute component={UpdatePostPage} /> },
                 { path: 'posts/:id', element: <PrivateRoute component={PostPage} /> },
+                { path: 'posts/me', element: <PrivateRoute component={UserPostsPage} /> },
                 { path: '*', element: <NotFoundPage /> }
             ],
         },

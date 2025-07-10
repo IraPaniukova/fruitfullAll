@@ -2,6 +2,7 @@ import { Tooltip } from '@mui/material';
 import { Link } from 'react-router-dom';
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 
+
 interface OpenPostButtonProps {
     postId: number;
 }

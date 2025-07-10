@@ -6,6 +6,7 @@ export interface AuthResponseDto {
   token: string;
   refreshToken: string;
   expiresAt: string; // ISO date string
+  userId: number;
 }
 
 export interface UserOutputDto {
@@ -51,6 +52,7 @@ export interface PostOutputDto {
 
 export interface PostSummaryDto {
   postId: number;
+  userId: number;
   content?: string;
   industry?: string;
   stressLevel?: number;

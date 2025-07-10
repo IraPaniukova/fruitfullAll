@@ -23,7 +23,7 @@ export const createPost = (
 // PUT update a post by ID
 export const updatePost = (
   id: number,
-  dto: Partial<PostOutputDto>
+  dto: Partial<PostInputDto>
 ): Promise<PostOutputDto> =>
   API.put(`/Posts/${id}`, dto).then((res) => res.data);
 

@@ -1,4 +1,5 @@
 import { orange } from "@mui/material/colors";
+import type { PostInputDto } from "./interfaces";
 
 export const mainColour = orange[500]; //#ff9800
 export const INACTIVITY_TIME = 30 * 60 * 1000; //30 minute
@@ -47,3 +48,16 @@ export const stressLevelOptions = [
 ];
 export const currentYear = new Date().getFullYear();
 export const yearOptions = [currentYear, currentYear - 1];
+
+export const initialForm: PostInputDto = {
+  content: "",
+  opinion: "",
+  company: "",
+  industry: "",
+  year: null,
+  country: "",
+  stressLevel: null,
+  questionType: "",
+  interviewFormat: "",
+  tags: [],
+};

@@ -11,10 +11,12 @@ export const loginThunk =
     try {
       const res = await loginApi({ email, password });
       dispatch(login(res));
+      console.log("Login API response:", res);
 
       // Saves tokens to localStorage
       localStorage.setItem("accessToken", res.token);
       localStorage.setItem("refreshToken", res.refreshToken);
+      localStorage.setItem("userId", res.userId.toString());
     } catch (err) {
       console.error("Login failed:", err);
     }
@@ -32,6 +34,7 @@ export const logoutThunk =
       // Clears tokens from localStorage
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      localStorage.removeItem("userId");
     }
   };
 
@@ -44,6 +47,7 @@ export const refreshTokenThunk =
       // Updates tokens in localStorage
       localStorage.setItem("accessToken", res.token);
       localStorage.setItem("refreshToken", res.refreshToken);
+      localStorage.setItem("userId", res.userId.toString());
     } catch (err) {
       console.error("Refresh token failed:", err);
     }
