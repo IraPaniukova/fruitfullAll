@@ -45,7 +45,7 @@ export const CreateUpdatePost: React.FC<CreateUpdatePostProps> = ({ form, setFor
     }, []);
 
     return (
-        <Box p={2} width={{ xs: 'auto', sm: '90%', md: '80%' }} mx='auto'>
+        <Box mx='auto'>
             <Grid container spacing={2}>
                 <Grid size={12}>
                     <TextField

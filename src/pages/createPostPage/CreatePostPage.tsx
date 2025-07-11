@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import type { PostInputDto } from '../../utils/interfaces';
 import { createPost } from '../../api/postApi';
 import { useNavigate } from 'react-router-dom';
@@ -37,14 +37,29 @@ export const CreatePostPage = () => {
             console.error("Failed to create post:", err);
         }
     };
+    const onClearClick = () => {
+        localStorage.removeItem('formData');
+        setForm(initialForm);
+    }
 
     return (
-        <Box p={2} width={{ xs: 'auto', sm: '90%', md: '80%' }} mx='auto'>
+        <Box p={2} width={{ xs: 'auto', sm: '80%', md: '60%' }} mx='auto'>
+
             <Typography variant="h6" mb={2}>
                 Create a New Post
             </Typography>
+            <Stack direction='row' justifyContent='flex-end' width='100%'>
+                <Button onClick={onClearClick} variant='text'
+                    sx={{
+                        height: '24px', width: '150px',
+                        color: 'orange', fontSize: '0.8rem', colour: 'orange',
+                        borderRadius: 5
+                    }}>
+                    Clear fields
+                </Button>
+            </Stack>
             <CreateUpdatePost form={form} setForm={setForm} errors={errors} />
-            <Button variant="contained" onClick={handleSubmit}>
+            <Button variant="contained" onClick={handleSubmit} sx={{ mt: 2 }}>
                 Submit
             </Button>
 

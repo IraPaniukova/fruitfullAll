@@ -80,16 +80,18 @@ export const UpdatePostPage = () => {
 
     return (
         <>
-            {fetchedForm && userId === postUserId && <Box p={2} width={{ xs: 'auto', sm: '90%', md: '80%' }} mx='auto'>
-                <Typography variant="h6" mb={2}>
-                    Update Post
-                </Typography>
-                <CreateUpdatePost form={form} setForm={setForm} errors={errors} />
-                <Button variant="contained" onClick={handleSubmit}>
-                    Submit
-                </Button>
+            {fetchedForm && userId === postUserId &&
+                <Box p={2} width={{ xs: 'auto', sm: '80%', md: '70%' }} mx='auto'>
 
-            </Box>}
+                    <Typography variant="h6" mb={2}>
+                        Update Post
+                    </Typography>
+                    <CreateUpdatePost form={form} setForm={setForm} errors={errors} />
+                    <Button variant="contained" onClick={handleSubmit} sx={{ mt: 2 }}>
+                        Submit
+                    </Button>
+
+                </Box>}
             <Snackbar open={message} autoHideDuration={4000} onClose={() => setMessage(false)}>
                 <Alert onClose={() => setMessage(false)}>
                     No changes were made.
