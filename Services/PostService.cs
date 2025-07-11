@@ -209,7 +209,8 @@ public class PostService
         try
         {
             return await _context.Posts
-                .Where(p => !p.IsDeleted && p.Tags.Any(t => t.Name == tagName))
+                .Where(p => !p.IsDeleted &&
+                   p.Tags.Any(t => t.Name.ToLowerInvariant() ==  tagName.Trim().ToLowerInvariant()))
                 .OrderByDescending(p => p.CreatedAt)
                 .Select(p => new PostSummaryDto
                 {

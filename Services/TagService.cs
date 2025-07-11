@@ -17,16 +17,24 @@ public class TagService
 
     public async Task<TagOutputDto> CreateOrFindTagAsync(string tag)
     {
-        var existingTag = _context.Tags.FirstOrDefault(t => t.Name == tag);
+        if (string.IsNullOrWhiteSpace(tag))
+            throw new ArgumentException("Tag cannot be empty or whitespace.");
+
+        var normalizedTag = tag.Trim().ToLowerInvariant();
+
+        var existingTag = await _context.Tags
+            .FirstOrDefaultAsync(t => t.Name.ToLowerInvariant() == normalizedTag);
+
         if (existingTag != null)
             return new TagOutputDto
             {
                 TagId = existingTag.TagId,
                 Name = existingTag.Name
             };
+
         var newTag = new Tag
         {
-            Name = tag
+            Name = normalizedTag
         };
 
         try
@@ -44,15 +52,19 @@ public class TagService
             _logger.LogError(ex, "Unexpected error.");
             throw;
         }
+
         return new TagOutputDto
         {
             TagId = newTag.TagId,
             Name = newTag.Name
         };
     }
+
     public async Task<List<TagOutputDto>> CreateTagsAsync(List<string> tags)
     {
-        if (tags == null || tags.Count == 0) throw new ArgumentException("At least one tag is required.");
+        if (tags == null || tags.Count == 0)
+            throw new ArgumentException("At least one tag is required.");
+
         try
         {
             var newTags = new List<TagOutputDto>();
@@ -69,7 +81,8 @@ public class TagService
             throw;
         }
     }
-    public async Task<List<TagOutputDto>> GetTagsAsync() //potentially to support autocomplete 
+
+    public async Task<List<TagOutputDto>> GetTagsAsync() // potentially to support autocomplete
     {
         try
         {
@@ -89,34 +102,41 @@ public class TagService
     }
 
     public async Task ConnectTagToPostAsync(int postId, string tag)
-    // Adds the tag to the post's navigation property without saving changes to the database.
     {
+        if (string.IsNullOrWhiteSpace(tag))
+            throw new ArgumentException("Tag cannot be empty or whitespace.");
+
         try
         {
-            var newTag = await CreateOrFindTagAsync(tag) ??
-            throw new ArgumentException($"Failed to create or retrieve tag.");
+            var newTag = await CreateOrFindTagAsync(tag)
+                ?? throw new ArgumentException("Failed to create or retrieve tag.");
+
             var post = await _context.Posts.Include(u => u.Tags)
                 .FirstOrDefaultAsync(u => u.PostId == postId)
                 ?? throw new ArgumentException($"There is no post '{postId}' in DB");
 
             if (post.Tags.Any(r => r.TagId == newTag.TagId))
-                throw new ArgumentException($"Tag already assigned to the post");
+                throw new ArgumentException("Tag already assigned to the post");
 
             var tagEntity = await _context.Tags.FindAsync(newTag.TagId)
                 ?? throw new ArgumentException($"Tag with ID {newTag.TagId} not found in DB.");
+
             post.Tags.Add(tagEntity);
 
-            //attention! this function doesnt save to DB
+            // Note: this method does NOT save changes to the DB. Caller must save.
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error deleting tag {tag.Name} from post {postId}", tag, postId);
+            _logger.LogError(ex, "Error assigning tag {Tag} to post {PostId}", tag, postId);
             throw;
         }
     }
+
     public virtual async Task AssignTagsToPostAsync(int postId, List<string> tags)
     {
-        if (tags == null || tags.Count == 0) throw new ArgumentException("There were no tags.");
+        if (tags == null || tags.Count == 0)
+            throw new ArgumentException("There were no tags.");
+
         try
         {
             foreach (var t in tags)
@@ -129,27 +149,27 @@ public class TagService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while creating tag list.");
+            _logger.LogError(ex, "Error occurred while assigning tag list to post.");
             throw;
         }
     }
 
     public virtual async Task DeleteAllTagsFromPostAsync(int postId)
     {
-    try
-    {
-        var post = await _context.Posts.Include(p => p.Tags)
-            .FirstOrDefaultAsync(p => p.PostId == postId)
-            ?? throw new ArgumentException($"There is no post '{postId}' in DB");
+        try
+        {
+            var post = await _context.Posts.Include(p => p.Tags)
+                .FirstOrDefaultAsync(p => p.PostId == postId)
+                ?? throw new ArgumentException($"There is no post '{postId}' in DB");
 
-        post.Tags.Clear(); // removes all tags from the post
+            post.Tags.Clear(); // removes all tags from the post
 
-        await _context.SaveChangesAsync();
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error removing all tags from post {PostId}", postId);
-        throw;
-    }
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error removing all tags from post {PostId}", postId);
+            throw;
+        }
     }
 }
