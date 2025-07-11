@@ -4,6 +4,7 @@ import type { PostInputDto } from "./interfaces";
 export const mainColour = orange[500]; //#ff9800
 export const INACTIVITY_TIME = 30 * 60 * 1000; //30 minute
 
+//should be moved to DB later
 export const industryOptions = [
   "Technology",
   "Finance",

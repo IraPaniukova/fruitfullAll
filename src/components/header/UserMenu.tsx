@@ -9,8 +9,6 @@ import { useAppDispatch, useAppSelector } from '../../store/typeHooks';
 
 const pages = [
     { name: 'Dashboard', path: '/' },
-    { name: 'Page 1', path: '/page1' },
-    { name: 'Page 2', path: '/page2' },
 ];
 
 export const UserMenu = () => {

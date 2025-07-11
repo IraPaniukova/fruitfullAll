@@ -66,6 +66,45 @@ export const lightTheme = createTheme({
         variant: "contained", // Default button style
       },
     },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          "&.Mui-focused": {
+            color: `${mainColour}cc !important`, // override blue label color on focus
+          },
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: `${mainColour}cc !important`, // override blue border on focus
+          },
+        },
+      },
+    },
+    MuiAutocomplete: {
+      styleOverrides: {
+        root: {
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: `${mainColour}cc !important`, // override blue border on autocomplete focus
+          },
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          "&.Mui-focused::before": {
+            borderBottomColor: `#FFA50033 !important`, // orange underline on focus
+          },
+          "&.Mui-focused::after": {
+            borderBottomColor: `#FFA50033 !important`, // orange underline on focus
+          },
+        },
+      },
+    },
     // MuiRadio: {
     //   styleOverrides: {
     //     root: {
