@@ -13,10 +13,10 @@ export const PostSummary: React.FC<PostSummaryProps> = ({ posts }) => {
     const userId = Number(localStorage.getItem('userId'));
     const location = useLocation().pathname;
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} mt={2}>
             {posts.map((post, i) => (
                 <Grid size={{ xs: 12, sm: 6 }} key={i}>
-                    <Stack spacing={2} p={2} height='100%' position="relative"
+                    <Stack spacing={2} p={3} height='100%' position="relative"
                         borderRadius={2}
                         border="1px solid"
                         borderColor="divider"
@@ -44,7 +44,7 @@ export const PostSummary: React.FC<PostSummaryProps> = ({ posts }) => {
                         {post.tags && post.tags.length > 0 && <PostTags tags={post.tags} />}
 
                         <Stack direction='row' alignItems='center'
-                            position='absolute' bottom={0} right={0} p={1}>
+                            position='absolute' top={-10} right={0} pr={1}>
                             {post.userId === userId && location !== '/' &&
                                 (
                                     <UpdatePostButton postId={post.postId} />
