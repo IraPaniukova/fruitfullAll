@@ -3,6 +3,7 @@ import { Box, TextField, Grid, MenuItem, Select, FormControl, InputLabel, FormHe
 import { industryOptions, countryOptions, questionTypeOptions, stressLevelOptions, interviewFormatOptions, yearOptions } from '../../utils/constants';
 import type { PostInputDto } from '../../utils/interfaces';
 import { TagInput } from './TagInput';
+import { useEffect } from 'react';
 
 interface CreateUpdatePostProps {
     form: PostInputDto;
@@ -18,10 +19,14 @@ export const CreateUpdatePost: React.FC<CreateUpdatePostProps> = ({ form, setFor
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
     ) => {
         const { name, value } = e.target;
-        setForm(prev => ({
-            ...prev,
-            [name]: name === 'year' || name === 'stressLevel' ? Number(value) : value,
-        }));
+        setForm(prev => {
+            const updated = {
+                ...prev,
+                [name]: name === 'year' || name === 'stressLevel' ? Number(value) : value,
+            };
+            localStorage.setItem('formData', JSON.stringify(updated));//otherwise it rerenders empty fields
+            return updated;
+        });
     };
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -31,13 +36,20 @@ export const CreateUpdatePost: React.FC<CreateUpdatePostProps> = ({ form, setFor
             return updated;
         });
     };
+    //on each mount, it will load saved in local storage:
+    useEffect(() => {
+        const saved = localStorage.getItem('formData');
+        if (saved) {
+            setForm(JSON.parse(saved));
+        }
+    }, []);
 
     return (
         <Box p={2} width={{ xs: 'auto', sm: '90%', md: '80%' }} mx='auto'>
             <Grid container spacing={2}>
                 <Grid size={12}>
                     <TextField
-                        label="Questions"
+                        label="Interview questions"
                         name="content"
                         fullWidth
                         required
@@ -64,7 +76,7 @@ export const CreateUpdatePost: React.FC<CreateUpdatePostProps> = ({ form, setFor
                     <TagInput tags={form.tags} setForm={setForm} error_tag={errors.tag} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 5 }}>
-                    <FormControl fullWidth required error={!!errors.industry}>
+                    <FormControl fullWidth required error={!!errors.company}>
                         <TextField
                             sx={{ '& .MuiInputBase-input': { textAlign: 'center', }, }}
                             name="company"

@@ -9,7 +9,7 @@ interface UpdatePostButtonProps {
 export const UpdatePostButton: React.FC<UpdatePostButtonProps> = ({ postId }) => (
     <Tooltip title='Update post'>
         <Link aria-label="Update post" to={`/posts/update/${postId}`}>
-            <EditIcon sx={{ fontSize: '16px', mr: 1 }} />
+            <EditIcon sx={{ fontSize: '15px', mr: 1 }} />
         </Link>
     </Tooltip>
 );

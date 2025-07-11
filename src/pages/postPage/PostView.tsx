@@ -3,6 +3,9 @@ import { Stack, Typography } from '@mui/material';
 import { PostTags } from '../../components/PostTags';
 import type { PostOutputDto } from '../../utils/interfaces';
 import { getPostById } from '../../api/postApi';
+import { UpdatePostButton } from '../../components/UpdatePostButton';
+import { useLocation } from 'react-router-dom';
+import { DeletePostButton } from '../../components/DeletePostButton';
 
 type Props = {
     postId: number;
@@ -10,6 +13,7 @@ type Props = {
 
 export const PostView = ({ postId }: Props) => {
     const [post, setPost] = useState<PostOutputDto | null>(null);
+    const location = useLocation().pathname;
     useEffect(() => {
         async function fetchPosts() {
             try {
@@ -24,13 +28,28 @@ export const PostView = ({ postId }: Props) => {
 
     if (!post) return <div>Loading...</div>;
 
+    const userId = Number(localStorage.getItem('userId'));
+
+
     return (
         <Stack spacing={2} mb={4} p={2}
             borderRadius={2}
             border="1px solid"
             borderColor="divider"
             sx={{ textAlign: 'left', backgroundColor: 'background.paper', }}
+            position='relative'
         >
+            <Stack direction='row' alignItems='center'
+                position='absolute' top={0} right={0} p={1}>
+                {post.userId === userId && location !== '/' &&
+                    (
+                        <>
+                            <UpdatePostButton postId={post.postId} />
+                            <DeletePostButton postId={post.postId} post={post} />
+                        </>
+                    )
+                }
+            </Stack>
             <Typography
                 variant="body2"
                 color="text.secondary"
@@ -40,7 +59,7 @@ export const PostView = ({ postId }: Props) => {
             </Typography>
 
             <Typography variant="button" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
-                Questions Asked:
+                Interview Questions Asked:
             </Typography>
             <Typography>{post.content}</Typography>
 

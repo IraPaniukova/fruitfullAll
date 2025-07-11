@@ -6,6 +6,7 @@ import { ToggleThemeButton } from '../../features/theme/components/ToggleThemeBu
 import { ConfirmChangesButton } from './ConfirmChangesButton';
 import { getUserMe, updateUser } from '../../api/userApi';
 import type { UserOutputDto } from '../../utils/interfaces';
+import { Link } from 'react-router-dom';
 
 export const ProfilePage = () => {
     // const [editAvatar, setEditAvatar] = useState(false);
@@ -151,11 +152,10 @@ export const ProfilePage = () => {
 
                         <Typography>Theme: {theme}</Typography>
 
-                        <Typography variant="h6">My Interview Stories</Typography>
-                        {/* Link or list preview */}
+                        <Link to="/posts/me" style={{ textDecoration: 'none' }}>
+                            <Typography >My Interview Stories</Typography>
+                        </Link>
 
-                        <Typography variant="h6">My Q&A Threads</Typography>
-                        {/* Link or list preview */}
                         <Grid container spacing={1} justifyContent="center">
                             <Grid size={{ xs: 12, sm: 8 }}>
                                 <Typography align="center">Total Contributions</Typography>

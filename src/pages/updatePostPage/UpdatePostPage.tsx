@@ -5,7 +5,6 @@ import { getPostById, updatePost } from '../../api/postApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CreateUpdatePost } from '../../components/createUpdatePost/CreateUpdatePost';
 import { initialForm } from '../../utils/constants';
-import { useAppSelector } from '../../store/typeHooks';
 
 export const UpdatePostPage = () => {
     const { id } = useParams<{ id: string }>();
@@ -43,7 +42,7 @@ export const UpdatePostPage = () => {
         }
         fetchPost();
     }, [postId]);
-    const validTags = form.tags?.every(tag => /^[a-zA-Z]+$/.test(tag));
+    const validTags = form.tags?.length > 0 && form.tags?.every(tag => /^(?!.*,,)[a-zA-Z0-9#+,]+(\.[a-zA-Z0-9#+]+)*$/.test(tag));
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [message, setMessage] = useState(false);
 
@@ -54,8 +53,9 @@ export const UpdatePostPage = () => {
         if (!form.industry) newErrors.industry = 'Industry is required';
         if (!form.year) newErrors.year = 'Year is required';
         if (!form.country) newErrors.country = 'Country is required';
-        if (!form.stressLevel) newErrors.stressLevel = 'Stress Level is required';
+        if (form.stressLevel === null) newErrors.stressLevel = 'Stress Level is required';
         if (!form.questionType) newErrors.questionType = 'Question Type is required';
+        if (!form.interviewFormat) newErrors.interviewFormat = 'Interview Format is required';
         if (!validTags) newErrors.tag = 'error';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -66,6 +66,7 @@ export const UpdatePostPage = () => {
         try {
             if (JSON.stringify(form) !== JSON.stringify(fetchedForm)) {
                 await updatePost(postId, form)
+                localStorage.removeItem('formData');
                 navigate(`/posts/${postId}`);
             }
             else { setMessage(true); }
@@ -73,6 +74,8 @@ export const UpdatePostPage = () => {
             console.error("Failed to create post:", err);
         }
     };
+
+
     const userId = Number(localStorage.getItem('userId'));
 
     return (
@@ -89,7 +92,7 @@ export const UpdatePostPage = () => {
             </Box>}
             <Snackbar open={message} autoHideDuration={4000} onClose={() => setMessage(false)}>
                 <Alert onClose={() => setMessage(false)}>
-                    No changed were made.
+                    No changes were made.
                 </Alert>
             </Snackbar>
         </>

@@ -1,4 +1,4 @@
-import { Stack, Typography, Box, Chip } from "@mui/material";
+import { Stack, Box, Chip } from "@mui/material";
 import { Link } from "react-router-dom";
 
 interface TagsProps {

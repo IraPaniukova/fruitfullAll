@@ -8,7 +8,7 @@ import { initialForm } from '../../utils/constants';
 
 export const CreatePostPage = () => {
     const [form, setForm] = useState<PostInputDto>(initialForm);
-    const validTags = form.tags?.every(tag => /^[a-zA-Z]+$/.test(tag));
+    const validTags = form.tags?.length > 0 && form.tags?.every(tag => /^(?!.*,,)[a-zA-Z0-9#+,]+(\.[a-zA-Z0-9#+]+)*$/.test(tag));
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const validate = () => {
@@ -18,8 +18,9 @@ export const CreatePostPage = () => {
         if (!form.industry) newErrors.industry = 'Industry is required';
         if (!form.year) newErrors.year = 'Year is required';
         if (!form.country) newErrors.country = 'Country is required';
-        if (!form.stressLevel) newErrors.stressLevel = 'Stress Level is required';
+        if (form.stressLevel === null) newErrors.stressLevel = 'Stress Level is required';
         if (!form.questionType) newErrors.questionType = 'Question Type is required';
+        if (!form.interviewFormat) newErrors.interviewFormat = 'Interview Format is required';
         if (!validTags) newErrors.tag = 'error';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -36,15 +37,6 @@ export const CreatePostPage = () => {
             console.error("Failed to create post:", err);
         }
     };
-
-    //on each mount, it will load saved in local storage:
-    useEffect(() => {
-        const saved = localStorage.getItem('formData');
-        if (saved) {
-            setForm(JSON.parse(saved));
-        }
-    }, []);
-
 
     return (
         <Box p={2} width={{ xs: 'auto', sm: '90%', md: '80%' }} mx='auto'>
