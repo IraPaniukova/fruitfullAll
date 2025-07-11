@@ -17,7 +17,7 @@ export const PostTags: React.FC<TagsProps> = ({ tags }) => {
                         key={tag}
                         label={tag}
                         component={Link}
-                        to={`/tags/${tag}`} // TODO: decide where to place search results
+                        to={`/posts/by-tag?tagName=${encodeURIComponent(tag)}`}
                         clickable
                         size="small"
                     />

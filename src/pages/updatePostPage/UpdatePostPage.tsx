@@ -81,7 +81,7 @@ export const UpdatePostPage = () => {
     return (
         <>
             {fetchedForm && userId === postUserId &&
-                <Box p={2} width={{ xs: 'auto', sm: '80%', md: '70%' }} mx='auto'>
+                <Box p={2} width={{ xs: 'auto', sm: '80%', md: '60%' }} mx='auto'>
 
                     <Typography variant="h6" mb={2}>
                         Update Post

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { PostSummary } from "../../components/PostSummary";
 import { getRecentPosts } from "../../api/postApi";
 import type { PostSummaryDto } from "../../utils/interfaces";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 export const DashboardPage = () => {
     const [posts, setPosts] = useState<PostSummaryDto[]>([]);
@@ -21,6 +21,7 @@ export const DashboardPage = () => {
 
     return (
         <Box p={2} mx={{ xs: 'auto', lg: '10%' }}>
+            <Typography>Check out the latest posts from the community</Typography>
             <PostSummary posts={posts} />
         </Box>
     );
