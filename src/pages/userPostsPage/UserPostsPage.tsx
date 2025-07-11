@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { PostSummary } from "../../components/PostSummary";
 import { getPostsByUserId } from "../../api/postApi";
 import type { PostSummaryDto } from "../../utils/interfaces";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Stack, type TypographyProps } from "@mui/material";
+
+const InfoText = (props: TypographyProps) => (
+    <Typography variant='caption' align='center' color='orange' {...props} />
+);
 
 export const UserPostsPage = () => {
     const [posts, setPosts] = useState<PostSummaryDto[]>([]);
@@ -19,11 +23,22 @@ export const UserPostsPage = () => {
         }
         fetchPosts();
     }, []);
+    const avg = posts.reduce((sum, p) => sum + (p.stressLevel ?? 0), 0) / posts.length;
 
 
     return (
         <Box p={2} mx={{ xs: 'auto', lg: '10%' }}>
             <Typography>Everything you've posted so far</Typography>
+            <Box ml={2}>
+                <Stack direction='row' spacing={2}>
+                    <InfoText >Total Contributions</InfoText>
+                    <InfoText >{posts.length}</InfoText>
+                </Stack>
+                <Stack direction='row' spacing={2}>
+                    <InfoText >Average Stress Rating: </InfoText>
+                    <InfoText >{avg}</InfoText>
+                </Stack>
+            </Box>
             <PostSummary posts={posts} />
         </Box>
     );

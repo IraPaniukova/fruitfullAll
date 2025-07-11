@@ -86,7 +86,7 @@ export const ProfilePage = () => {
                     Failed to save. Please check your connection.
                 </Alert>
             </Snackbar>
-            <Stack minHeight='100vh' justifyContent='center' alignItems='center'>
+            <Stack justifyContent='center' alignItems='center'>
                 <Paper
                     elevation={3}
                     sx={{
@@ -96,7 +96,7 @@ export const ProfilePage = () => {
                         minWidth: 400,
                     }}
                 >
-                    <Stack spacing={3} alignItems="center" minHeight='80vh' sx={{ position: 'relative' }}>
+                    <Stack spacing={3} alignItems="center" sx={{ position: 'relative' }}>
                         <Box position='absolute' top={0} right={0}>
                             <ToggleThemeButton />
                         </Box>
@@ -138,7 +138,7 @@ export const ProfilePage = () => {
                         {editCountry ?
                             <Stack direction='row' alignItems='center' spacing={3} pl={5}>
                                 <TextField
-                                    label="Enter New Nickname"
+                                    label="Enter New Country"
                                     value={newCountry}
                                     onChange={(e) => setNewCountry(e.target.value)}
                                 />
@@ -155,21 +155,6 @@ export const ProfilePage = () => {
                         <Link to="/posts/me" style={{ textDecoration: 'none' }}>
                             <Typography >My Interview Stories</Typography>
                         </Link>
-
-                        <Grid container spacing={1} justifyContent="center">
-                            <Grid size={{ xs: 12, sm: 8 }}>
-                                <Typography align="center">Total Contributions</Typography>
-                            </Grid>
-                            <Grid size={{ xs: 12, sm: 4 }}>
-                                <Typography align="center">15</Typography>
-                            </Grid>
-                            <Grid size={{ xs: 12, sm: 8 }}>
-                                <Typography align="center">Average Stress Rating: </Typography>
-                            </Grid>
-                            <Grid size={{ xs: 12, sm: 4 }}>
-                                <Typography align="center">3.2</Typography>
-                            </Grid>
-                        </Grid>
                     </Stack>
                 </Paper >
             </Stack >

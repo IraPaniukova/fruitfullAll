@@ -64,7 +64,6 @@ function App() {
     return () => clearInterval(intervalId);
   }, [dispatch]);
 
-
   return (
     <ThemeProvider theme={theme}>
       <>
