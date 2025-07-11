@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
+using fruitfullServer.Hubs;
 
 
 
@@ -63,6 +64,8 @@ builder.Services.AddScoped<ReportService>();
 
 builder.Services.AddScoped<IGoogleValidator, GoogleValidator>(); //added for testing pruposes
 
+builder.Services.AddSignalR();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -101,12 +104,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseRouting(); // Enables routing to match HTTP requests to controllers
 
 app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHub<CommentHub>("/hubs/comments");
 
 app.UseHttpsRedirection();
 app.MapControllers(); // Maps attribute-routed controllers to endpoints
