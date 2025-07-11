@@ -210,7 +210,7 @@ public class PostService
         {
             return await _context.Posts
                 .Where(p => !p.IsDeleted &&
-                   p.Tags.Any(t => t.Name.ToLowerInvariant() ==  tagName.Trim().ToLowerInvariant()))
+                   p.Tags.Any(t => t.Name.Equals(tagName.Trim().ToLower())))
                 .OrderByDescending(p => p.CreatedAt)
                 .Select(p => new PostSummaryDto
                 {

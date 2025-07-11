@@ -20,10 +20,10 @@ public class TagService
         if (string.IsNullOrWhiteSpace(tag))
             throw new ArgumentException("Tag cannot be empty or whitespace.");
 
-        var normalizedTag = tag.Trim().ToLowerInvariant();
+        var normalizedTag = tag.Trim().ToLower();
 
         var existingTag = await _context.Tags
-            .FirstOrDefaultAsync(t => t.Name.ToLowerInvariant() == normalizedTag);
+            .FirstOrDefaultAsync(t => t.Name.Equals(normalizedTag));
 
         if (existingTag != null)
             return new TagOutputDto
