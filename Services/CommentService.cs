@@ -75,7 +75,7 @@ public class CommentService
             await _context.SaveChangesAsync();
             return comment.ToCommentOutputDto();
         }
-         catch (DbUpdateException ex)
+        catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Failed to update comment in DB.");
             throw;
@@ -98,9 +98,9 @@ public class CommentService
         {
             await _context.SaveChangesAsync();
         }
-         catch (DbUpdateException ex)
+        catch (DbUpdateException ex)
         {
-            _logger.LogError(ex, "Failed to delet post from DB.");
+            _logger.LogError(ex, "Failed to delete comment from DB.");
             throw;
         }
         catch (Exception ex)
@@ -112,24 +112,31 @@ public class CommentService
 
     public async Task<List<CommentOutputDto>> GetCommentsByPostIdAsync(int postId)
     {
-       return await _context.Comments
-            .Where(c => !c.IsDeleted && c.PostId == postId)
-            .Include(c => c.User)
-            .Select(c => new CommentOutputDto
-            {
-                CommentId = c.CommentId,
-                UserId = c.UserId,
-                PostId = c.PostId,
-                Text = c.Text,
-                CreatedAt = c.CreatedAt,
-                UpdatedAt = c.UpdatedAt,
-                IsDeleted = c.IsDeleted,
-                LikesCount = c.LikesCount,
-                Nickname = c.User != null ? c.User.Nickname : null,
-                ProfileImage = c.User != null ? c.User.ProfileImage : null
-            })
-            .ToListAsync();
-
+        try
+        {
+            return await _context.Comments
+                .Where(c => !c.IsDeleted && c.PostId == postId)
+                .Include(c => c.User)
+                .Select(c => new CommentOutputDto
+                {
+                    CommentId = c.CommentId,
+                    UserId = c.UserId,
+                    PostId = c.PostId,
+                    Text = c.Text,
+                    CreatedAt = c.CreatedAt,
+                    UpdatedAt = c.UpdatedAt,
+                    IsDeleted = c.IsDeleted,
+                    LikesCount = c.LikesCount,
+                    Nickname = c.User != null ? c.User.Nickname : null,
+                    ProfileImage = c.User != null ? c.User.ProfileImage : null
+                })
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting comments for post {PostId}", postId);
+            throw;
+        }
     }
 
     public async Task<CommentLikeDto> ToggleLikeCommentAsync(int commentId, int userId)

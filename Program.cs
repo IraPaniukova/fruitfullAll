@@ -68,11 +68,13 @@ builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowSpecificOrigin",policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+         policy
+            .WithOrigins("http://localhost:5173", "https://fruitfull.info") // frontend origin
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();  // allow cookies/auth headers
     });
 });
 
@@ -90,7 +92,24 @@ builder.Services.AddAuthentication("Bearer")
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey =  new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+
+        // This is for SignalR:
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/comments"))
+                {
+                    context.Token = accessToken;
+                }
+
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -107,7 +126,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting(); // Enables routing to match HTTP requests to controllers
 
-app.UseCors();
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();
