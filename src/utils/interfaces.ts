@@ -69,6 +69,7 @@ export interface PostLikeDto {
 
 export interface CommentInputDto {
   postId: number;
+  userId: number;
   text: string;
 }
 
@@ -81,6 +82,8 @@ export interface CommentOutputDto {
   updatedAt?: string;
   isDeleted: boolean;
   likesCount?: number;
+  nickname?: string;
+  profileImage?: string;
 }
 
 export interface CommentLikeDto {

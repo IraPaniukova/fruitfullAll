@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Box, Button, Stack, Typography } from '@mui/material';
 import type { PostInputDto } from '../../utils/interfaces';
 import { createPost } from '../../api/postApi';
@@ -46,7 +46,7 @@ export const CreatePostPage = () => {
         <Box p={2} width={{ xs: 'auto', sm: '80%', md: '60%' }} mx='auto'>
 
             <Typography variant="h6" mb={2}>
-                Create a New Post
+                Share your interview expirience
             </Typography>
             <Stack direction='row' justifyContent='flex-end' width='100%'>
                 <Button onClick={onClearClick} variant='text'

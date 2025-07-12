@@ -46,6 +46,8 @@ function App() {
         login({
           token: accessToken,          // must be 'token'
           refreshToken: refreshToken,
+          userId: Number(localStorage.getItem("userId")) || 0,
+          expiresAt: "",
         })
       );
     }
@@ -59,7 +61,7 @@ function App() {
       if (refreshToken) {
         dispatch(refreshTokenThunk(refreshToken));
       }
-    }, 1 * 60 * 1000); // every 25 minutes
+    }, 25 * 60 * 1000); // every 25 minutes
 
     return () => clearInterval(intervalId);
   }, [dispatch]);

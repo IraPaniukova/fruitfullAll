@@ -1,80 +1,105 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography, TextField, Button } from '@mui/material';
-import { socket } from '../../sockets/fakeSocket';
-import type { CommentOutputDto } from '../../utils/interfaces';
-import { getCommentsByPostId } from '../../api/commentApi';
+import { Box, Stack, Avatar, Typography, TextField, Button } from '@mui/material';
+import type { CommentInputDto, CommentOutputDto } from '../../utils/interfaces';
+import { createComment, getCommentsByPostId } from '../../api/commentApi';
+import { connection, startConnection } from '../../signalR/commentHub';
+import { formatTimeAgo } from '../../utils/formatTimeAgo';
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState } from '../../store/store';
+import { addComment, editComment, deleteComment, likeComment } from '../../features/comments/commentsSlice';
 
 type Props = {
     postId: number;
 };
 
 export const PostComments = ({ postId }: Props) => {
+    const dispatch = useDispatch();
+    const comments = useSelector((state: RootState) => state.comments.comments);
     const [dbComments, setDbComments] = useState<CommentOutputDto[] | null>(null);
+    const [newComment, setNewComment] = useState('');
+    const currentUser = Number(localStorage.getItem("userId"));
+
     useEffect(() => {
-        async function fetchPosts() {
+        async function fetchComments() {
             try {
                 const data = await getCommentsByPostId(postId);
                 setDbComments(data);
             } catch (error) {
-                console.error("Failed to fetch posts:", error);
+                console.error("Failed to fetch comments:", error);
             }
         }
-        fetchPosts();
+        fetchComments();
     }, [postId]);
-    const [comments, setComments] = useState<CommentOutputDto[] | null>(dbComments);
-    // const [newComment, setNewComment] = useState('');
-    // const currentUser = 'You';
 
-    // // Helper to parse date safely
-    // const parseDate = (date?: string | number) => {
-    //     if (!date) return new Date();
-    //     if (typeof date === 'number') return new Date(date);
-    //     const parsed = Date.parse(date);
-    //     return isNaN(parsed) ? new Date() : new Date(parsed);
-    // };
+    useEffect(() => {
+        startConnection().catch(console.error);
 
-    // useEffect(() => {
-    //     socket.emit('joinPost', postId);
+        return () => {
+            connection?.off("CommentAdded");
+            connection?.off("CommentEdited");
+            connection?.off("CommentDeleted");
+            connection?.off("CommentLiked");
+        };
+    }, []);
 
-    //     socket.on('newComment', (comment: Comment) => {
-    //         setComments((prev) => [...prev, comment]);
-    //     });
+    useEffect(() => {
+        // When initial dbComments load, add them to Redux store if empty
+        if (dbComments && (!comments || comments.length === 0)) {
+            dbComments.forEach((c) => dispatch(addComment(c)));
+        }
+    }, [dbComments, dispatch, comments]);
 
-    //     return () => {
-    //         socket.emit('leavePost', postId);
-    //         socket.off('newComment');
-    //     };
-    // }, [postId]);
+    const handleSend = async () => {
+        if (!newComment.trim()) return;
+        const commentToSend: CommentInputDto = {
+            postId,
+            userId: currentUser,
+            text: newComment,
+        };
+        await createComment(commentToSend);
+        setNewComment("");
+    };
 
-    // const handleSend = () => {
-    //     if (!newComment.trim()) return;
-
-    //     const commentToSend: Comment = {
-    //         id: crypto.randomUUID(),
-    //         text: newComment,
-    //         user: currentUser,
-    //         createdAt: Date.now(),
-    //     };
-
-    //     setComments((prev) => [...prev, commentToSend]);
-    //     socket.emit('addComment', { postId, ...commentToSend });
-    //     setNewComment('');
-    // };
+    const sortedComments = comments
+        ?.slice()
+        .sort((a, b) => {
+            const dateA = new Date(a.createdAt ?? '').getTime();
+            const dateB = new Date(b.createdAt ?? '').getTime();
+            return dateA - dateB;
+        });
 
     return (
-        <Box>  {dbComments && dbComments[0] && <Typography>{dbComments[0].text}</Typography>}
+        <Stack spacing={2}>
+            {sortedComments?.map((c) => (
+                <Stack
+                    direction="row"
+                    spacing={2}
+                    p={2}
+                    key={c.commentId}
+                    sx={{ backgroundColor: 'background.paper', borderRadius: '5px' }}
+                >
+                    <Avatar
+                        src={c.profileImage || undefined}
+                        alt={c.nickname || 'Anonymous'}
+                        sx={{ width: 24, height: 24, fontSize: 14, fontWeight: 700, backgroundColor: 'orange' }}
+                    >
+                        {!c.profileImage && 'ツ'}
+                    </Avatar>
 
-            {/* {comments
-                .slice()
-                .sort((a, b) => parseDate(a.createdAt).getTime() - parseDate(b.createdAt).getTime())
-                .map((c) => (
-                    <Box key={c.id} mb={1} sx={{ textAlign: 'left' }}>
-                        <Typography fontWeight="bold" fontSize="0.875rem">
-                            {c.user} • {parseDate(c.createdAt).toLocaleString()}
+                    <Stack>
+                        <Typography variant="caption">
+                            {c.userId === currentUser
+                                ? 'You'
+                                : c.nickname
+                                    ? c.nickname
+                                    : `Anonymous${c.userId ? c.userId * 1234 : ''}`} •{' '}
+                            {c.createdAt ? formatTimeAgo(new Date(c.createdAt)) : ''}
                         </Typography>
                         <Typography>{c.text}</Typography>
-                    </Box>
-                ))}
+                    </Stack>
+                </Stack>
+            ))}
+
             <TextField
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
@@ -84,7 +109,9 @@ export const PostComments = ({ postId }: Props) => {
                 placeholder="Add a comment..."
                 margin="normal"
             />
-            <Button onClick={handleSend}>Send</Button> */}
-        </Box>
+            <Box>
+                <Button onClick={handleSend}>Send</Button>
+            </Box>
+        </Stack>
     );
 };
