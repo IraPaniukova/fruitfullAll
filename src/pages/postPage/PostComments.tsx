@@ -23,6 +23,8 @@ export const PostComments = ({ postId }: Props) => {
         async function fetchComments() {
             try {
                 const data = await getCommentsByPostId(postId);
+                console.log('Fetched comments from API:', data);
+
                 setDbComments(data);
             } catch (error) {
                 console.error("Failed to fetch comments:", error);
@@ -35,19 +37,25 @@ export const PostComments = ({ postId }: Props) => {
         startConnection().catch(console.error);
 
         return () => {
-            connection?.off("CommentAdded");
-            connection?.off("CommentEdited");
-            connection?.off("CommentDeleted");
-            connection?.off("CommentLiked");
+            connection?.off("commentadded");
+            connection?.off("commentedited");
+            connection?.off("commentdeleted");
+            connection?.off("commentliked");
         };
     }, []);
 
     useEffect(() => {
-        // When initial dbComments load, add them to Redux store if empty
-        if (dbComments && (!comments || comments.length === 0)) {
-            dbComments.forEach((c) => dispatch(addComment(c)));
+        if (dbComments) {
+            dbComments.forEach((c) => {
+                const exists = comments.some((existing) => existing.commentId === c.commentId);
+                if (!exists) {
+                    dispatch(addComment(c));
+                }
+            });
         }
     }, [dbComments, dispatch, comments]);
+
+
 
     const handleSend = async () => {
         if (!newComment.trim()) return;

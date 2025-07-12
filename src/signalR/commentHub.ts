@@ -35,28 +35,22 @@ export async function startConnection() {
     .withAutomaticReconnect()
     .build();
 
-  connection.onclose(() => console.log("!!!!!!SignalR connection closed"));
-  connection.onreconnecting(() => console.log("!!!!!SignalR reconnecting..."));
-  connection.onreconnected(() => console.log("!!!!!SignalR reconnected"));
-
-  connection.on("CommentAdded", (comment) => {
-    console.log("!!!!!Received CommentAdded via SignalR:", comment);
+  connection.on("commentadded", (comment) => {
     store.dispatch(addComment(comment));
   });
 
-  connection.on("CommentEdited", (comment) => {
+  connection.on("commentedited", (comment) => {
     store.dispatch(editComment(comment));
   });
-  connection.on("CommentDeleted", (id) => {
+  connection.on("commentdeleted", (id) => {
     store.dispatch(deleteComment(id));
   });
-  connection.on("CommentLiked", (like) => {
+  connection.on("commentliked", (like) => {
     store.dispatch(likeComment(like));
   });
 
   try {
     await connection.start();
-    console.log("SignalR started");
   } catch (err) {
     console.error("SignalR Connection Error: ", err);
   }

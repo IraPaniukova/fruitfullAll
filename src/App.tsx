@@ -47,24 +47,25 @@ function App() {
           token: accessToken,          // must be 'token'
           refreshToken: refreshToken,
           userId: Number(localStorage.getItem("userId")) || 0,
-          expiresAt: "",
+          expiresAt: new Date(new Date().setUTCDate(new Date().getUTCDate() + 7)).toISOString()
         })
       );
     }
   }, [dispatch]);
 
 
-  //Sets request to refresh token every 25 minutes, because the token set to 30 min in the backend
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const refreshToken = localStorage.getItem("refreshToken");
-      if (refreshToken) {
-        dispatch(refreshTokenThunk(refreshToken));
-      }
-    }, 25 * 60 * 1000); // every 25 minutes
+  // //Sets request to refresh token every 25 minutes, because the token set to 30 min in the backend
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     const refreshToken = localStorage.getItem("refreshToken");
+  //     if (refreshToken) {
+  //       dispatch(refreshTokenThunk(refreshToken));
+  //     }
+  //   }, 25 * 60 * 1000); // every 25 minutes
 
-    return () => clearInterval(intervalId);
-  }, [dispatch]);
+  //   return () => clearInterval(intervalId);
+  // }, [dispatch]);
+
 
   return (
     <ThemeProvider theme={theme}>
