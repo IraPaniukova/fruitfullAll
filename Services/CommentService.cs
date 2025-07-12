@@ -47,7 +47,10 @@ public class CommentService
     {
         try
         {
-            var comment = await _context.Comments.FindAsync(id);
+            var comment = await _context.Comments
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(c => c.CommentId == id);
+
             if (comment == null) return null;
             return comment.ToCommentOutputDto();
         }
@@ -109,8 +112,9 @@ public class CommentService
 
     public async Task<List<CommentOutputDto>> GetCommentsByPostIdAsync(int postId)
     {
-        return await _context.Comments
+       return await _context.Comments
             .Where(c => !c.IsDeleted && c.PostId == postId)
+            .Include(c => c.User)
             .Select(c => new CommentOutputDto
             {
                 CommentId = c.CommentId,
@@ -121,8 +125,11 @@ public class CommentService
                 UpdatedAt = c.UpdatedAt,
                 IsDeleted = c.IsDeleted,
                 LikesCount = c.LikesCount,
+                Nickname = c.User != null ? c.User.Nickname : null,
+                ProfileImage = c.User != null ? c.User.ProfileImage : null
             })
             .ToListAsync();
+
     }
 
     public async Task<CommentLikeDto> ToggleLikeCommentAsync(int commentId, int userId)

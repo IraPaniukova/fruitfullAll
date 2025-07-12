@@ -33,7 +33,7 @@ public class CommentsController : BaseController
         {
             var currentUserId = GetLoggedInUserId();
             var _comment = await _commentService.CreateCommentAsync(comment,currentUserId);
-            await _hubContext.Clients.All.SendAsync("CommentAdded", comment);
+            await _hubContext.Clients.All.SendAsync("CommentAdded", _comment);
 
             return CreatedAtAction(nameof(GetComment), new { id = _comment.CommentId }, _comment);
         }
@@ -55,7 +55,7 @@ public class CommentsController : BaseController
         {
             var currentUserId = GetLoggedInUserId();
             var updated = await _commentService.UpdateCommentAsync(id, dto,currentUserId);
-            await _hubContext.Clients.All.SendAsync("CommentEdited", id);
+            await _hubContext.Clients.All.SendAsync("CommentEdited", updated);
 
             return Ok(updated);
         }

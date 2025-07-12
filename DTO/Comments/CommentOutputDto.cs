@@ -10,4 +10,6 @@ public class CommentOutputDto
     public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }
     public int? LikesCount { get; set; }
+    public string? Nickname { get; set; }
+    public string? ProfileImage { get; set; }
 }

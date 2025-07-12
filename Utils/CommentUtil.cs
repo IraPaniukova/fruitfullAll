@@ -15,5 +15,7 @@ public static class CommentUtil
         UpdatedAt = comment.UpdatedAt,
         IsDeleted = comment.IsDeleted,
         LikesCount = comment.LikesCount,
+        Nickname = comment.User?.Nickname,         
+        ProfileImage = comment.User?.ProfileImage,  
     };
 }
