@@ -33,7 +33,7 @@ public class CommentsController : BaseController
         {
             var currentUserId = GetLoggedInUserId();
             var _comment = await _commentService.CreateCommentAsync(comment,currentUserId);
-            await _hubContext.Clients.All.SendAsync("CommentAdded", _comment);
+            await _hubContext.Clients.All.SendAsync("commentadded", _comment);
 
             return CreatedAtAction(nameof(GetComment), new { id = _comment.CommentId }, _comment);
         }
@@ -55,9 +55,9 @@ public class CommentsController : BaseController
         {
             var currentUserId = GetLoggedInUserId();
             var updated = await _commentService.UpdateCommentAsync(id, dto,currentUserId);
-            await _hubContext.Clients.All.SendAsync("CommentEdited", updated);
+            await _hubContext.Clients.All.SendAsync("commentedited", updated);
 
-            return Ok(updated);
+            return Ok(updated); 
         }
         catch (KeyNotFoundException)
         {
@@ -101,7 +101,7 @@ public class CommentsController : BaseController
         {
             var currentUserId = GetLoggedInUserId();
             await _commentService.DeleteCommentAsync(id,currentUserId);
-            await _hubContext.Clients.All.SendAsync("CommentDeleted", id);
+            await _hubContext.Clients.All.SendAsync("commentdeleted", id);
 
             return NoContent();
         }
@@ -122,7 +122,7 @@ public class CommentsController : BaseController
         {
             var currentUserId = GetLoggedInUserId();
             var updated = await _commentService.ToggleLikeCommentAsync(commentId, currentUserId);
-            await _hubContext.Clients.All.SendAsync("CommentLiked", updated);
+            await _hubContext.Clients.All.SendAsync("commentliked", updated);
 
             return Ok(updated);
         }
