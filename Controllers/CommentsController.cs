@@ -5,6 +5,8 @@ using fruitfullServer.Services;
 using fruitfullServer.DTO.Comments;
 using Microsoft.AspNetCore.Authorization;
 using fruitfullServer.DTO.JoinEntities;
+using Microsoft.AspNetCore.SignalR;
+using fruitfullServer.Hubs;
 
 namespace fruitfullServer.Controllers;
 
@@ -15,10 +17,12 @@ public class CommentsController : BaseController
 {
     private readonly FruitfullDbContext _context;
     private readonly CommentService _commentService;
-    public CommentsController(FruitfullDbContext context, CommentService commentService)
+    private readonly IHubContext<CommentHub> _hubContext;
+    public CommentsController(FruitfullDbContext context, CommentService commentService, IHubContext<CommentHub> hubContext)
     {
         _context = context;
         _commentService = commentService;
+        _hubContext = hubContext;
     }
 
     // POST: api/Comments
@@ -29,6 +33,8 @@ public class CommentsController : BaseController
         {
             var currentUserId = GetLoggedInUserId();
             var _comment = await _commentService.CreateCommentAsync(comment,currentUserId);
+            await _hubContext.Clients.All.SendAsync("CommentAdded", comment);
+
             return CreatedAtAction(nameof(GetComment), new { id = _comment.CommentId }, _comment);
         }
         catch (DbUpdateException ex)
@@ -49,6 +55,8 @@ public class CommentsController : BaseController
         {
             var currentUserId = GetLoggedInUserId();
             var updated = await _commentService.UpdateCommentAsync(id, dto,currentUserId);
+            await _hubContext.Clients.All.SendAsync("CommentEdited", id);
+
             return Ok(updated);
         }
         catch (KeyNotFoundException)
@@ -93,6 +101,8 @@ public class CommentsController : BaseController
         {
             var currentUserId = GetLoggedInUserId();
             await _commentService.DeleteCommentAsync(id,currentUserId);
+            await _hubContext.Clients.All.SendAsync("CommentDeleted", id);
+
             return NoContent();
         }
         catch (KeyNotFoundException)
@@ -112,6 +122,8 @@ public class CommentsController : BaseController
         {
             var currentUserId = GetLoggedInUserId();
             var updated = await _commentService.ToggleLikeCommentAsync(commentId, currentUserId);
+            await _hubContext.Clients.All.SendAsync("CommentLiked", updated);
+
             return Ok(updated);
         }
         catch (KeyNotFoundException)
