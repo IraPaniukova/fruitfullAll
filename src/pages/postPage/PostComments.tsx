@@ -77,7 +77,7 @@ export const PostComments = ({ postId }: Props) => {
         });
 
     return (
-        <Stack spacing={2}>
+        <Stack spacing={2} >
             {sortedComments?.map((c) => (
                 <Stack
                     direction="row"
@@ -95,15 +95,15 @@ export const PostComments = ({ postId }: Props) => {
                     </Avatar>
 
                     <Stack>
-                        <Typography variant="caption">
+                        <Typography variant='caption' align='left' >
                             {c.userId === currentUser
                                 ? 'You'
-                                : c.nickname
-                                    ? c.nickname
-                                    : `Anonymous${c.userId ? c.userId * 1234 : ''}`} •{' '}
+                                : `Anonymous${c.userId ? c.userId * 1234 : ''}`} •{' '}
                             {c.createdAt ? formatTimeAgo(new Date(c.createdAt)) : ''}
                         </Typography>
-                        <Typography>{c.text}</Typography>
+                        <Typography align='justify'
+
+                        >{c.text}</Typography>
                     </Stack>
                 </Stack>
             ))}
