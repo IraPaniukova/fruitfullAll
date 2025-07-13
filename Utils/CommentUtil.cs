@@ -5,7 +5,7 @@ namespace fruitfullServer.Utils;
 
 public static class CommentUtil
 {
-    public static CommentOutputDto ToCommentOutputDto(this Comment comment) => new()
+    public static CommentOutputDto ToCommentOutputDto(this Comment comment,int currentUserId) => new()
     {
         CommentId = comment.CommentId,
         UserId = comment.UserId,
@@ -15,7 +15,9 @@ public static class CommentUtil
         UpdatedAt = comment.UpdatedAt,
         IsDeleted = comment.IsDeleted,
         LikesCount = comment.LikesCount,
-        Nickname = comment.User?.Nickname,         
+        Nickname = comment.User?.Nickname,
         ProfileImage = comment.User?.ProfileImage,  
+        IsLikedByCurrentUser = comment.Users.Any(u => u.UserId == currentUserId)
+
     };
 }

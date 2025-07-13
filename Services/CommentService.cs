@@ -40,7 +40,7 @@ public class CommentService
             _logger.LogError(ex, "Unexpected error.");
             throw;
         }
-        return comment.ToCommentOutputDto();
+        return comment.ToCommentOutputDto(currentUserId);
     }
 
     public async Task<CommentOutputDto?> GetCommentByIdAsync(int id)
@@ -52,7 +52,19 @@ public class CommentService
                 .FirstOrDefaultAsync(c => c.CommentId == id);
 
             if (comment == null) return null;
-            return comment.ToCommentOutputDto();
+             return new CommentOutputDto {               
+                CommentId = comment.CommentId,
+                UserId = comment.UserId,
+                PostId = comment.PostId,
+                Text = comment.Text,
+                CreatedAt = comment.CreatedAt,
+                UpdatedAt = comment.UpdatedAt,
+                IsDeleted = comment.IsDeleted,
+                LikesCount = comment.LikesCount,
+                Nickname = comment.User?.Nickname,
+                ProfileImage = comment.User?.ProfileImage
+
+              };
         }
         catch (Exception ex)
         {
@@ -73,7 +85,7 @@ public class CommentService
         try
         {
             await _context.SaveChangesAsync();
-            return comment.ToCommentOutputDto();
+            return comment.ToCommentOutputDto(currentUserId);
         }
         catch (DbUpdateException ex)
         {
@@ -110,7 +122,7 @@ public class CommentService
         }
     }
 
-    public async Task<List<CommentOutputDto>> GetCommentsByPostIdAsync(int postId)
+    public async Task<List<CommentOutputDto>> GetCommentsByPostIdAsync(int postId, int currentUserId)
     {
         try
         {
@@ -128,7 +140,8 @@ public class CommentService
                     IsDeleted = c.IsDeleted,
                     LikesCount = c.LikesCount,
                     Nickname = c.User != null ? c.User.Nickname : null,
-                    ProfileImage = c.User != null ? c.User.ProfileImage : null
+                    ProfileImage = c.User != null ? c.User.ProfileImage : null,
+                    IsLikedByCurrentUser = c.Users.Any(u => u.UserId == currentUserId)
                 })
                 .ToListAsync();
         }

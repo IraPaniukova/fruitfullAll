@@ -12,4 +12,5 @@ public class CommentOutputDto
     public int? LikesCount { get; set; }
     public string? Nickname { get; set; }
     public string? ProfileImage { get; set; }
+    public bool IsLikedByCurrentUser { get; set; }
 }

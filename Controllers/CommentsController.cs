@@ -84,7 +84,8 @@ public class CommentsController : BaseController
     {
         try
         {
-            var comments = await _commentService.GetCommentsByPostIdAsync(postId);
+             var currentUserId = GetLoggedInUserId();
+            var comments = await _commentService.GetCommentsByPostIdAsync(postId,currentUserId);
             return Ok(comments);
         }
         catch (Exception ex)
