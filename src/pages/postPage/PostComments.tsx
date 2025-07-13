@@ -138,9 +138,12 @@ export const PostComments = ({ postId }: Props) => {
 
                     <Stack sx={{ flexGrow: 1 }}>
                         <Typography variant='caption' align='left' >
-                            {c.userId === currentUser
-                                ? 'You'
-                                : `Anonymous${c.userId ? c.userId * 1234 : ''}`} •{' '}
+                            {c.nickname && c.nickname.trim() !== ''
+                                ? c.nickname
+                                : c.userId === currentUser
+                                    ? 'You'
+                                    : `Anonymous${c.userId ? c.userId * 1234 : ''}`
+                            } •{' '}
                             {c.createdAt ? formatTimeAgo(new Date(c.createdAt)) : ''}
                         </Typography>
                         {editingtId === c.commentId ? (
