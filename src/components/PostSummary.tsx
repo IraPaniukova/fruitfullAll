@@ -2,7 +2,7 @@ import { Box, Grid, Stack, Typography } from '@mui/material';
 import type { PostSummaryDto } from '../utils/interfaces';
 import { PostTags } from './PostTags';
 import { OpenPostButton } from './OpenPostButton';
-import { UpdatePostButton } from './UpdatePostButton';
+import { UpdatePostButton } from '../pages/postPage/UpdatePostButton';
 import { useLocation } from 'react-router-dom';
 
 interface PostSummaryProps {

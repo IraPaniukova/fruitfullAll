@@ -3,9 +3,9 @@ import { Stack, Typography } from '@mui/material';
 import { PostTags } from '../../components/PostTags';
 import type { PostOutputDto } from '../../utils/interfaces';
 import { getPostById } from '../../api/postApi';
-import { UpdatePostButton } from '../../components/UpdatePostButton';
+import { UpdatePostButton } from './UpdatePostButton';
 import { useLocation } from 'react-router-dom';
-import { DeletePostButton } from '../../components/DeletePostButton';
+import { DeletePostButton } from './DeletePostButton';
 
 type Props = {
     postId: number;
@@ -39,8 +39,8 @@ export const PostView = ({ postId }: Props) => {
             sx={{ textAlign: 'left', backgroundColor: 'background.paper', }}
             position='relative'
         >
-            <Stack direction='row' alignItems='center'
-                position='absolute' top={0} right={0} p={1}>
+            <Stack direction='row' alignItems='center' spacing={1}
+                position='absolute' top={0} right={10} >
                 {post.userId === userId && location !== '/' &&
                     (
                         <>
@@ -58,7 +58,7 @@ export const PostView = ({ postId }: Props) => {
                 {post.company} • Industry: {post.industry} • {post.year} • {post.country} • {post.questionType} • {post.interviewFormat} • Stress: {post.stressLevel}
             </Typography>
 
-            <Typography variant="button" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
+            <Typography align='justify' variant="button" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
                 Interview Questions Asked:
             </Typography>
             <Typography>{post.content}</Typography>

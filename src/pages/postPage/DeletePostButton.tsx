@@ -1,8 +1,8 @@
-import { Button, Dialog, DialogActions, DialogTitle, Tooltip } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogTitle, IconButton, Tooltip } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { PostOutputDto } from '../utils/interfaces';
-import { deletePost } from '../api/postApi';
+import type { PostOutputDto } from '../../utils/interfaces';
+import { deletePost } from '../../api/postApi';
 import { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -38,7 +38,7 @@ export const DeletePostButton: React.FC<DeletePostButtonProps> = ({ postId, post
         <>{post.userId === userId && location !== '/' &&
             <>
                 <Tooltip title='Delete post'>
-                    <DeleteIcon sx={{ fontSize: '16px', mr: 1, mb: 0.5, color: 'orange' }} onClick={handleClickOpen} />
+                    <DeleteIcon sx={{ fontSize: '16px', color: 'orange' }} onClick={handleClickOpen} />
                 </Tooltip><Dialog
                     open={open}
                     onClose={handleClose}
@@ -54,10 +54,10 @@ export const DeletePostButton: React.FC<DeletePostButtonProps> = ({ postId, post
                             onClick={onDeletePost}>
                             Ok
                         </Button>
-                        <Button variant='text' sx={{ color: 'orange', fontSize: '1.5rem' }}
+                        <IconButton sx={{ color: 'orange', fontSize: '1.5rem' }}
                             onClick={handleClose} aria-label='Close dialog'>
                             <CloseIcon />
-                        </Button>
+                        </IconButton>
                     </DialogActions>
                 </Dialog>
             </>

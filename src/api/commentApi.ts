@@ -23,14 +23,14 @@ export const createComment = (
   API.post("/Comments", commentData).then((res) => res.data);
 
 // PUT update comment by id
-export const updateComment = (
+export const updateCommentById = (
   id: number,
   commentData: CommentUpdateDto
 ): Promise<CommentOutputDto> =>
   API.put(`/Comments/${id}`, commentData).then((res) => res.data);
 
 // DELETE comment by id
-export const deleteComment = (id: number): Promise<void> =>
+export const deleteCommentById = (id: number): Promise<void> =>
   API.delete(`/Comments/${id}`).then((res) => res.data);
 
 // PATCH toggle like on comment

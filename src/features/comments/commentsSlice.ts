@@ -33,9 +33,17 @@ const commentsSlice = createSlice({
       );
       if (comment) comment.likesCount = action.payload.likesCount;
     },
+    setComments(state, action: PayloadAction<CommentOutputDto[]>) {
+      state.comments = action.payload;
+    },
   },
 });
 
-export const { addComment, editComment, deleteComment, likeComment } =
-  commentsSlice.actions;
+export const {
+  addComment,
+  editComment,
+  deleteComment,
+  likeComment,
+  setComments,
+} = commentsSlice.actions;
 export default commentsSlice.reducer;
