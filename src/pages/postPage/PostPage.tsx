@@ -7,9 +7,7 @@ export const PostPage = () => {
     const { id } = useParams<{ id: string }>();
 
     if (!id) return <div>Post not found</div>;
-
     const postIdNum = Number(id);
-
     if (isNaN(postIdNum)) return <div>Invalid post ID</div>;
 
     return (
