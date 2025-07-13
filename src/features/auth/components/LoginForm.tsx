@@ -7,11 +7,19 @@ import { useAppDispatch } from "../../../store/typeHooks";
 export const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+
     const dispatch = useAppDispatch();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        dispatch(loginThunk(email, password));
+        try {
+            await dispatch(loginThunk(email, password));
+            setError('');
+        } catch {
+            setError('Invalid email or password');
+        }
+
     };
 
     return (
@@ -32,6 +40,11 @@ export const LoginForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 fullWidth
             />
+            {error && (
+                <Typography color="error" fontSize="0.9rem">
+                    {error}
+                </Typography>
+            )}
             <Box>
                 <Button onClick={(e) => handleSubmit(e)}>
                     Login

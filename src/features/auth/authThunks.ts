@@ -11,7 +11,6 @@ export const loginThunk =
     try {
       const res = await loginApi({ email, password });
       dispatch(login(res));
-      console.log("Login API response:", res);
 
       // Saves tokens to localStorage
       localStorage.setItem("accessToken", res.token);
@@ -19,6 +18,7 @@ export const loginThunk =
       localStorage.setItem("userId", res.userId.toString());
     } catch (err) {
       console.error("Login failed:", err);
+      throw err;
     }
   };
 
