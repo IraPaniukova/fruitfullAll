@@ -121,7 +121,7 @@ export const PostComments = ({ postId }: Props) => {
     return (
         <Stack spacing={2} >
             {sortedComments?.map((c) => (
-                <Stack
+                <Stack position='relative'
                     direction="row"
                     spacing={2}
                     p={2}
