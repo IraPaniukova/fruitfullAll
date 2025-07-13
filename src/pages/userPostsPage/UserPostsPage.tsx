@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PostSummary } from "../../components/PostSummary";
 import { getPostsByUserId } from "../../api/postApi";
 import type { PostSummaryDto } from "../../utils/interfaces";
-import { Box, Typography, Stack, type TypographyProps } from "@mui/material";
+import { Box, Typography, Stack, type TypographyProps, CircularProgress } from "@mui/material";
+import { usePostScroll } from "../../utils/usePostScroll";
 
 const InfoText = (props: TypographyProps) => (
     <Typography variant='caption' align='center' color='orange' {...props} />
@@ -12,17 +13,10 @@ export const UserPostsPage = () => {
     const [posts, setPosts] = useState<PostSummaryDto[]>([]);
     const userId = Number(localStorage.getItem('userId'));
 
-    useEffect(() => {
-        async function fetchPosts() {
-            try {
-                const data = await getPostsByUserId(userId);
-                setPosts(data);
-            } catch (error) {
-                console.error("Failed to fetch posts:", error);
-            }
-        }
-        fetchPosts();
-    }, []);
+    const fetchPostsByUser = (page: number, pageSize: number) =>
+        getPostsByUserId(userId, page, pageSize);
+    const { observerTarget, loading, hasMore } = usePostScroll(fetchPostsByUser, { setPosts });
+
     const avg = posts.reduce((sum, p) => sum + (p.stressLevel ?? 0), 0) / posts.length;
 
 
@@ -39,7 +33,26 @@ export const UserPostsPage = () => {
                     <InfoText >{avg}</InfoText>
                 </Stack>
             </Box>
-            <PostSummary posts={posts} />
+
+            {posts.length > 0 ? (
+                <PostSummary posts={posts} />
+            ) : (
+                !loading && <Typography>No posts found.</Typography>
+            )}
+
+            {/*When 10% of this box becomes visible, it loads one more page - set in  threshold: 0.1 in usePostScroll.ts*/}
+            {hasMore && (
+                <Box ref={observerTarget} sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                    {loading && <CircularProgress />}
+                </Box>
+            )}
+
+            {!hasMore && !loading && posts.length > 0 && (
+                <Typography variant="body2" color="text.secondary" align="center" mt={4}>
+                    You've reached the end of the posts.
+                </Typography>
+            )}
         </Box>
+
     );
 }
