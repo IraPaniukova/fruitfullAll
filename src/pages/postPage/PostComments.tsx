@@ -12,6 +12,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import DoneIcon from '@mui/icons-material/Done';
 import { LikeToggle } from './LikeToggle';
+import { DeleteCommentButton } from './DeleteCommentButton';
 
 
 type Props = {
@@ -74,13 +75,6 @@ export const PostComments = ({ postId }: Props) => {
             setNewComment("");
         } catch (error) {
             console.error("Failed to send comment:", error);
-        }
-    };
-    const handleDelete = async (commentId: number) => {
-        try {
-            await deleteCommentById(commentId);
-        } catch (error) {
-            console.error(`Failed to delete comment ${commentId}:`, error);
         }
     };
 
@@ -191,9 +185,9 @@ export const PostComments = ({ postId }: Props) => {
                                     <IconButton size="small" onClick={() => handleEditClick(c)}>
                                         <EditIcon sx={{ fontSize: 15, color: 'orange' }} />
                                     </IconButton>
-                                    <IconButton size="small" onClick={() => c.commentId && handleDelete(c.commentId)}>
-                                        <DeleteIcon sx={{ fontSize: 15, color: 'orange' }} />
-                                    </IconButton>
+                                    {c.commentId !== null && c.commentId !== undefined && (
+                                        <DeleteCommentButton commentId={c.commentId} comment={c} />
+                                    )}
                                 </>
                             )}
                         </Stack>}
