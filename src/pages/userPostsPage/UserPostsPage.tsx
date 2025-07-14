@@ -17,8 +17,7 @@ export const UserPostsPage = () => {
         getPostsByUserId(userId, page, pageSize);
     const { observerTarget, loading, hasMore } = usePostScroll(fetchPostsByUser, { setPosts });
 
-    const avg = posts.reduce((sum, p) => sum + (p.stressLevel ?? 0), 0) / posts.length;
-
+    const avg = posts.reduce((sum, p) => sum + (p.stressLevel ?? 0), 0) / (posts.length || 1);
 
     return (
         <Box p={2} mx={{ xs: 'auto', lg: '10%' }}>
@@ -30,7 +29,7 @@ export const UserPostsPage = () => {
                 </Stack>
                 <Stack direction='row' spacing={2}>
                     <InfoText >Average Stress Rating: </InfoText>
-                    <InfoText >{avg}</InfoText>
+                    <InfoText >{avg.toFixed(2)}</InfoText>
                 </Stack>
             </Box>
 
