@@ -44,7 +44,7 @@ export const ProfilePage = () => {
     }
     const onDeleteIconClick = async () => {
         try {
-            await updateUser({ nickname: null });
+            await updateUser({ nickname: '' });
             setRefresh(!refresh);
         }
         catch (error) {
