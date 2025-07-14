@@ -5,21 +5,23 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 interface LikeToggleProps {
     liked: boolean;
     likeCount: number;
-    onToggle: () => void;
+    ToggleLike: () => void;
 }
 
-export const LikeToggle = ({ liked, likeCount, onToggle }: LikeToggleProps) => (
-    <Stack
+export const LikeToggle = ({ liked, likeCount, ToggleLike }: LikeToggleProps) => (
+    <Stack position='absolute' bottom={0} right={6}
         direction="row"
-        spacing={1}
     >
+        <Typography color="text.secondary" sx={{ fontSize: 15 }}>{likeCount}</Typography>
         <IconButton
-            onClick={onToggle}
-            sx={{ color: 'orange', padding: '2px', fontSize: '15px' }}
+            onClick={ToggleLike}
+            sx={{
+                color: 'orange', padding: '0 0 2px 3px', fontSize: '15px'
+            }}
             aria-label={liked ? 'Unlike' : 'Like'}
         >
-            {liked ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
+            {liked ? <FavoriteIcon sx={{ fontSize: '15px' }} /> : <FavoriteBorderIcon sx={{ fontSize: '15px' }} />}
         </IconButton>
-        <Typography sx={{ fontSize: 15 }}>{likeCount}</Typography>
+
     </Stack>
 );

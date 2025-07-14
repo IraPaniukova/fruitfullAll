@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Box, Stack, Avatar, Typography, TextField, Button, IconButton } from '@mui/material';
 import type { CommentInputDto, CommentLikeDto, CommentOutputDto, CommentUpdateDto } from '../../utils/interfaces';
-import { createComment, deleteCommentById, getCommentsByPostId, updateCommentById } from '../../api/commentApi';
+import { createComment, deleteCommentById, getCommentsByPostId, toggleLikeComment, updateCommentById } from '../../api/commentApi';
 import { connection, startConnection } from '../../signalR/commentHub';
 import { formatTimeAgo } from '../../utils/formatTimeAgo';
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import DoneIcon from '@mui/icons-material/Done';
+import { LikeToggle } from './LikeToggle';
 
 
 type Props = {
@@ -25,6 +26,8 @@ export const PostComments = ({ postId }: Props) => {
 
     const [editingtId, setEditingtId] = useState<number | null>(null);
     const [editedText, setEditedText] = useState<string>('');
+
+    const [liked, setLiked] = useState(false);
 
     useEffect(() => {
         async function fetchComments() {
@@ -108,6 +111,15 @@ export const PostComments = ({ postId }: Props) => {
         setEditedText('');
     };
 
+    const ToggleLike = async (commentId: number) => {
+        try {
+            await toggleLikeComment(commentId);
+        } catch (error) {
+            console.error(`Failed to toggle like on comment ${commentId}:`, error);
+        }
+
+    }
+
     const sortedComments = comments.filter(c => c.postId === postId)
         ?.slice()
         .sort((a, b) => {
@@ -128,6 +140,7 @@ export const PostComments = ({ postId }: Props) => {
                     key={c.commentId}
                     sx={{ backgroundColor: 'background.paper', borderRadius: '5px' }}
                 >
+
                     <Avatar
                         src={c.profileImage || undefined}
                         alt={c.nickname || 'Anonymous'}
@@ -136,8 +149,8 @@ export const PostComments = ({ postId }: Props) => {
                         {!c.profileImage && 'ツ'}
                     </Avatar>
 
-                    <Stack sx={{ flexGrow: 1 }}>
-                        <Typography variant='caption' align='left' >
+                    <Stack >
+                        <Typography variant='caption' align='left' color="text.secondary">
                             {c.nickname && c.nickname.trim() !== ''
                                 ? c.nickname
                                 : c.userId === currentUser
@@ -159,10 +172,10 @@ export const PostComments = ({ postId }: Props) => {
                             <Typography align='justify'>{c.text}</Typography>
                         )}
                     </Stack>
-                    {c.userId === userId &&
 
+                    {c.userId === userId &&
                         <Stack direction='row' alignItems='center' spacing={1}
-                        // position='absolute' top={0} right={0} p={1}
+                            position='absolute' top={0} right={0}
                         >
                             {(editingtId === c.commentId ?
                                 <>
@@ -183,9 +196,12 @@ export const PostComments = ({ postId }: Props) => {
                                     </IconButton>
                                 </>
                             )}
-                        </Stack>
-                    }
-
+                        </Stack>}
+                    <LikeToggle
+                        liked={c.isLikedByCurrentUser || false}
+                        likeCount={c.likesCount ?? 0}
+                        ToggleLike={() => c.commentId !== null && c.commentId !== undefined && ToggleLike(c.commentId)}
+                    />
                 </Stack>
             ))}
 

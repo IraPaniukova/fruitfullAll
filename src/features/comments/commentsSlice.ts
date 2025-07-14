@@ -31,7 +31,12 @@ const commentsSlice = createSlice({
       const comment = state.comments.find(
         (c) => c.commentId === action.payload.commentId
       );
-      if (comment) comment.likesCount = action.payload.likesCount;
+      if (comment) {
+        comment.likesCount = action.payload.likesCount;
+        if (action.payload.isLikedByCurrentUser !== undefined) {
+          comment.isLikedByCurrentUser = action.payload.isLikedByCurrentUser;
+        }
+      }
     },
     setComments(state, action: PayloadAction<CommentOutputDto[]>) {
       state.comments = action.payload;

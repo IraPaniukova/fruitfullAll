@@ -84,12 +84,14 @@ export interface CommentOutputDto {
   likesCount?: number;
   nickname?: string;
   profileImage?: string;
+  isLikedByCurrentUser: boolean;
 }
 
 export interface CommentLikeDto {
   userId: number;
   commentId: number;
   likesCount?: number;
+  isLikedByCurrentUser: boolean;
 }
 
 export interface CommentUpdateDto {
