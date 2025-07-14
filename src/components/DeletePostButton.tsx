@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import type { PostOutputDto } from '../../utils/interfaces';
-import { deletePost } from '../../api/postApi';
-import { DeleteDialog } from '../../components/DeleteDialog';
+import type { PostOutputDto } from '../utils/interfaces';
+import { deletePost } from '../api/postApi';
+import { DeleteDialog } from './DeleteDialog';
 
 
 interface DeletePostButtonProps {

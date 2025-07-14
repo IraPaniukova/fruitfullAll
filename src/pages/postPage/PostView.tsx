@@ -3,9 +3,9 @@ import { Stack, Typography } from '@mui/material';
 import { PostTags } from '../../components/PostTags';
 import type { PostOutputDto } from '../../utils/interfaces';
 import { getPostById } from '../../api/postApi';
-import { UpdatePostButton } from './UpdatePostButton';
+import { UpdatePostButton } from '../../components/UpdatePostButton';
 import { useLocation } from 'react-router-dom';
-import { DeletePostButton } from './DeletePostButton';
+import { DeletePostButton } from '../../components/DeletePostButton';
 
 type Props = {
     postId: number;
@@ -39,8 +39,8 @@ export const PostView = ({ postId }: Props) => {
             sx={{ textAlign: 'left', backgroundColor: 'background.paper', }}
             position='relative'
         >
-            <Stack direction='row' alignItems='center' spacing={1}
-                position='absolute' top={0} right={10} >
+            <Stack direction='row' spacing={1}
+                position='absolute' top={10} right={10} >
                 {post.userId === userId && location !== '/' &&
                     (
                         <>

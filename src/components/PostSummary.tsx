@@ -2,7 +2,7 @@ import { Box, Grid, Stack, Typography } from '@mui/material';
 import type { PostSummaryDto } from '../utils/interfaces';
 import { PostTags } from './PostTags';
 import { OpenPostButton } from './OpenPostButton';
-import { UpdatePostButton } from '../pages/postPage/UpdatePostButton';
+import { UpdatePostButton } from './UpdatePostButton';
 import { useLocation } from 'react-router-dom';
 
 interface PostSummaryProps {
@@ -43,14 +43,15 @@ export const PostSummary: React.FC<PostSummaryProps> = ({ posts }) => {
 
                         {post.tags && post.tags.length > 0 && <PostTags tags={post.tags} />}
 
-                        <Stack direction='row' alignItems='center'
-                            position='absolute' top={-10} right={0} pr={1}>
-                            {post.userId === userId && location !== '/' &&
+                        <Stack direction='row' alignItems='center' spacing={1}
+                            position='absolute' top={-10} right={0} pr={1}
+                        >
+                            <OpenPostButton postId={post.postId} />
+                            {/* {post.userId === userId && location !== '/' &&
                                 (
                                     <UpdatePostButton postId={post.postId} />
-                                )}
-
-                            <OpenPostButton postId={post.postId} />
+                                )
+                            } */}
                         </Stack>
                     </Stack>
                 </Grid>
