@@ -43,11 +43,6 @@ export const usePostScroll = (
     [loading, hasMore]
   );
 
-  // Initial fetch when component mounts
-  useEffect(() => {
-    fetchPosts(1);
-  }, []);
-
   // Intersection Observer setup
   useEffect(() => {
     const currentObserverTarget = observerTarget.current;
