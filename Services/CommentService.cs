@@ -63,7 +63,7 @@ public class CommentService
                 LikesCount = comment.LikesCount,
                 Nickname = comment.User?.Nickname,
                 ProfileImage = comment.User?.ProfileImage
-
+//this method will be used for report only and doesnt need  IsLikedByCurrentUser 
               };
         }
         catch (Exception ex)
@@ -154,7 +154,9 @@ public class CommentService
 
     public async Task<CommentLikeDto> ToggleLikeCommentAsync(int commentId, int userId)
     {
-        var comment = await _context.Comments.FindAsync(commentId)
+        var comment = await _context.Comments
+            .Include(c => c.Users) 
+            .FirstOrDefaultAsync(c => c.CommentId == commentId)
             ?? throw new KeyNotFoundException($"Comment with ID {commentId} not found.");
         var user = await _context.Users.FindAsync(userId)
             ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
@@ -162,6 +164,7 @@ public class CommentService
 
         try
         {
+            bool isLikedAfterToggle;
             var likeEntry = await commentLikes
                 .FirstOrDefaultAsync(cl => (int)cl["UserId"] == userId && (int)cl["CommentId"] == commentId);
 
@@ -173,11 +176,13 @@ public class CommentService
                     ["UserId"] = userId,
                     ["CommentId"] = commentId
                 });
+                isLikedAfterToggle = true;
             }
             else
             {
                 comment.LikesCount -= 1;
                 commentLikes.Remove(likeEntry);
+                isLikedAfterToggle = false;
             }
 
             await _context.SaveChangesAsync();
@@ -187,7 +192,8 @@ public class CommentService
             {
                 UserId = userId,
                 CommentId = comment.CommentId,
-                LikesCount = comment.LikesCount
+                LikesCount = comment.LikesCount,
+                IsLikedByCurrentUser=isLikedAfterToggle 
             };
         }
         catch (Exception ex)
