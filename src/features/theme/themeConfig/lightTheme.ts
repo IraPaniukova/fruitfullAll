@@ -42,7 +42,7 @@ export const lightTheme = createTheme({
         root: {
           borderRadius: "50%", // Round edges
           aspectRatio: "1 / 1",
-          minWidth: "80px",
+          // minWidth: "80px",
           color: "white",
           WebkitTapHighlightColor: "transparent",
           userSelect: "none",
@@ -51,7 +51,6 @@ export const lightTheme = createTheme({
             boxShadow: "none",
             border: "none",
           },
-          // border: "5px solid #1b5e20",
         },
         containedPrimary: {
           backgroundColor: mainColour,
@@ -59,6 +58,14 @@ export const lightTheme = createTheme({
             backgroundColor: " #ff8c00",
             boxShadow: "0 4px 4px rgba(27, 94, 32, 1) !important", // #1b5e20
           },
+        },
+        text: {
+          // height: "24px",
+          color: "orange",
+          fontSize: "0.8rem",
+          borderRadius: "5px",
+          aspectRatio: "auto",
+          minWidth: "auto",
         },
       },
       defaultProps: {

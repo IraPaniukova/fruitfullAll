@@ -46,7 +46,7 @@ export const LoginForm = () => {
                 </Typography>
             )}
             <Box>
-                <Button onClick={(e) => handleSubmit(e)}>
+                <Button onClick={(e) => handleSubmit(e)} sx={{ width: '80px' }}>
                     Login
                 </Button>
             </Box>

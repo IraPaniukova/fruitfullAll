@@ -1041,6 +1041,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-oauth/google@npm:^0.12.2":
+  version: 0.12.2
+  resolution: "@react-oauth/google@npm:0.12.2"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 10c0/659c0d703339ca98df5ddb05c6c78868a291ddefa9ded995acb1e6eeed1e83bc05da4720420f868ecebbef242faac44a48a8dae86487da008521a0678e03edeb
+  languageName: node
+  linkType: hard
+
 "@reduxjs/toolkit@npm:^2.8.2":
   version: 2.8.2
   resolution: "@reduxjs/toolkit@npm:2.8.2"
@@ -2726,6 +2736,7 @@ __metadata:
     "@microsoft/signalr": "npm:^8.0.7"
     "@mui/icons-material": "npm:^7.1.1"
     "@mui/material": "npm:^7.1.1"
+    "@react-oauth/google": "npm:^0.12.2"
     "@reduxjs/toolkit": "npm:^2.8.2"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"

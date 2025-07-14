@@ -7,7 +7,7 @@ export const login = (data: {
 }): Promise<AuthResponseDto> =>
   API.post<AuthResponseDto>("/Auth/login", data).then((res) => res.data);
 
-export const loginWithGoogle = (idToken: string): Promise<AuthResponseDto> =>
+export const authWithGoogle = (idToken: string): Promise<AuthResponseDto> =>
   API.post<AuthResponseDto>("/Auth/login/google", { idToken }).then(
     (res) => res.data
   );

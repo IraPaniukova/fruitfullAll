@@ -49,12 +49,13 @@ export const CreatePostPage = () => {
                 Share your interview expirience
             </Typography>
             <Stack direction='row' justifyContent='flex-end' width='100%'>
-                <Button onClick={onClearClick} variant='text'
-                    sx={{
-                        height: '24px', width: '150px',
-                        color: 'orange', fontSize: '0.8rem', colour: 'orange',
-                        borderRadius: 5
-                    }}>
+                <Button variant='text' onClick={onClearClick}
+                // sx={{
+                //     height: '24px', width: '150px',
+                //     color: 'orange', fontSize: '0.8rem', colour: 'orange',
+                //     borderRadius: 5
+                // }}
+                >
                     Clear fields
                 </Button>
             </Stack>

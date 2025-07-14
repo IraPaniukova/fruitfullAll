@@ -59,7 +59,7 @@ export const SignupForm = () => {
                 fullWidth
             />
             <Box>
-                <Button onClick={handleSubmit}>
+                <Button onClick={handleSubmit} sx={{ width: '80px' }}>
                     Join
                 </Button>
             </Box>

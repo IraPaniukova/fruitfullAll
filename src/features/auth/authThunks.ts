@@ -4,6 +4,7 @@ import {
   login as loginApi,
   refreshToken as refreshTokenApi,
   logout as logoutApi,
+  authWithGoogle as authWithGoogleApi,
 } from "../../api/authApi";
 
 export const loginThunk =
@@ -18,6 +19,22 @@ export const loginThunk =
       localStorage.setItem("userId", res.userId.toString());
     } catch (err) {
       console.error("Login failed:", err);
+      throw err;
+    }
+  };
+export const googleAuthThunk =
+  (idToken: string) => async (dispatch: AppDispatch) => {
+    try {
+      const res = await authWithGoogleApi(idToken);
+      dispatch(login(res));
+      localStorage.setItem("accessToken", res.token);
+      localStorage.setItem("refreshToken", res.refreshToken);
+      localStorage.setItem("userId", res.userId.toString());
+
+      console.log("Google authentication successful!");
+      return res;
+    } catch (err) {
+      console.error("Google authentication failed in thunk:", err);
       throw err;
     }
   };
