@@ -1,12 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using fruitfullServer.DTO.Auth;
 using fruitfullServer.Services;
-using Microsoft.AspNetCore.Authorization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Collections.Generic;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 
 namespace fruitfullServer.Controllers
@@ -24,18 +18,19 @@ namespace fruitfullServer.Controllers
 
         // POST: api/Auth/login/google
         [HttpPost("login/google")]
-        public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginDto dto)
+        
+        public async Task<IActionResult> GoogleAuth([FromBody] GoogleAuthDto dto) 
         {
             try
             {
-                var authResponse = await _authService.LoginWithGoogleAsync(dto.IdToken);
+                var authResponse = await _authService.AuthenticateWithGoogleAsync(dto.IdToken);
                 return Ok(authResponse);
             }
-            catch (UnauthorizedAccessException)
+           catch (UnauthorizedAccessException)
             {
-                return Unauthorized("Invalid Google token or user not registered.");
+                return Unauthorized("Invalid email or password");
             }
-            catch (Exception)
+            catch
             {
                 return StatusCode(500, "Internal server error");
             }

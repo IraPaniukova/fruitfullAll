@@ -32,26 +32,67 @@ public class AuthService
         _config = config;
         _googleValidator = googleValidator;
     }
-    public async Task<AuthResponseDto> LoginWithGoogleAsync(string idToken)
+    public async Task<AuthResponseDto> AuthenticateWithGoogleAsync(string idToken)
     {
         try
         {
             var payload = await _googleValidator.ValidateAsync(idToken);
-            var email = payload?.Email;
-            var googleId = payload?.Subject;
+            if (payload == null)
+            {
+                _logger.LogWarning("Invalid Google ID Token provided.");
+                throw new UnauthorizedAccessException("Invalid Google ID token.");
+            }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == email && u.GoogleId == googleId && u.AuthProvider == "Google") ?? throw new UnauthorizedAccessException("Google user not registered.");
+            var email = payload.Email;
+            var googleId = payload.Subject; 
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.GoogleId == googleId && u.AuthProvider == "Google");
+
+            if (user == null)
+            {
+                var existingTraditionalUserWithEmail = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.AuthProvider == null);
+                if (existingTraditionalUserWithEmail != null)
+                {
+                    _logger.LogWarning($"Google sign-up attempted for email '{email}' which already exists as a traditional user.");
+                    throw new InvalidOperationException("An account with this email already exists using email and password. Please log in with your existing method or use a different Google account.");
+                }
+
+                user = new User
+                {
+                    Email = email,
+                    AuthProvider = "Google", 
+                    GoogleId = googleId,     
+                    PasswordHash = null     
+                };
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation($"New Google user registered and authenticated: {email} (UserId: {user.UserId})");
+            }
+            else
+            {
+                // If a user exists, it logs the user in
+                _logger.LogInformation("Existing Google user authenticated: {Email} (UserId: {UserId})", email, user.UserId);
+            }
+
             return await GenerateTokensAsync(user);
         }
         catch (InvalidJwtException ex)
         {
-            _logger.LogError(ex, "Invalid Google token");
-            throw new UnauthorizedAccessException("Invalid Google token");
+            _logger.LogError(ex, "Invalid Google token during authentication.");
+            throw new UnauthorizedAccessException("Invalid Google token provided.");
+        }
+        catch (InvalidOperationException ex) 
+        {
+            _logger.LogWarning(ex, "Google authentication failed due to an existing account conflict.");
+            throw; 
+        }
+        catch (UnauthorizedAccessException ex) 
+        {
+            _logger.LogError(ex, "Google authentication failed due to unauthorized access.");
+            throw;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Google login failed");
+            _logger.LogError(ex, "Unexpected error during Google authentication.");
             throw;
         }
     }

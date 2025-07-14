@@ -1,6 +1,6 @@
 namespace fruitfullServer.DTO.Auth;
 
-public class GoogleLoginDto
+public class GoogleAuthDto
 {
     public string IdToken { get; set; } = null!;
 }

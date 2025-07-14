@@ -15,12 +15,10 @@ namespace fruitfullServer.Controllers;
 [ApiController]
 public class CommentsController : BaseController
 {
-    private readonly FruitfullDbContext _context;
     private readonly CommentService _commentService;
     private readonly IHubContext<CommentHub> _hubContext;
-    public CommentsController(FruitfullDbContext context, CommentService commentService, IHubContext<CommentHub> hubContext)
+    public CommentsController(CommentService commentService, IHubContext<CommentHub> hubContext)
     {
-        _context = context;
         _commentService = commentService;
         _hubContext = hubContext;
     }

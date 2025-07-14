@@ -10,43 +10,36 @@ public class UserService
     private readonly FruitfullDbContext _context;
     private readonly IPasswordHasher<User> _passwordHasher;
     private readonly ILogger<UserService> _logger;
-    private readonly IGoogleValidator _googleValidator;
 
 
     public UserService
-    (FruitfullDbContext context, IPasswordHasher<User> passwordHasher, ILogger<UserService> logger, IGoogleValidator googleValidator)
+    (FruitfullDbContext context, IPasswordHasher<User> passwordHasher, ILogger<UserService> logger)
     {
         _context = context;
         _passwordHasher = passwordHasher;
         _logger = logger;
-        _googleValidator = googleValidator;
     }
 
     public async Task<UserOutputDto> CreateUserAsync(UserInputDto dto)
     {
+        if (string.IsNullOrEmpty(dto.Email))
+            {
+                throw new ArgumentException("Email is required for traditional user registration.");
+            }
+        if (string.IsNullOrEmpty(dto.Password))
+            {
+                throw new ArgumentException("Password is required for traditional user registration.");
+            }
         
         try
         {
-            var payload = !string.IsNullOrEmpty(dto.IdToken) ?
-                 await _googleValidator.ValidateAsync(dto.IdToken) : null;
-            var email = payload?.Email;
-            var googleId = payload?.Subject;
-
             User user = new()
             {
-                Email = email ?? dto.Email,
-                AuthProvider = googleId != null ? "Google" : null,
-                GoogleId = googleId
+                Email = dto.Email,
+                AuthProvider =  null,
+                GoogleId = null
             };
-            if (googleId!=null)
-            {
-                user.PasswordHash = null; // Google users don't use password
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(dto.Password)) throw new ArgumentException("Password cannot be null or empty.");
-                user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
-            }
+           user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return user.ToUserOutputDto();  //from utils
