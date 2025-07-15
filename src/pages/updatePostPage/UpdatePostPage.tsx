@@ -5,6 +5,7 @@ import { getPostById, updatePost } from '../../api/postApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CreateUpdatePost } from '../../components/createUpdatePost/CreateUpdatePost';
 import { initialForm } from '../../utils/constants';
+import { useAppSelector } from '../../store/typeHooks';
 
 export const UpdatePostPage = () => {
     const { id } = useParams<{ id: string }>();
@@ -12,9 +13,10 @@ export const UpdatePostPage = () => {
     const [form, setForm] = useState<PostInputDto>(initialForm);
     const [fetchedForm, setFetchedForm] = useState<PostInputDto>();
     const [postUserId, setPostUserId] = useState(-1);
-
+    const loggedIn = useAppSelector(state => !!state.auth.accessToken);
     useEffect(() => {
-        async function fetchPost() {
+        if (!loggedIn) return;
+        const fetchPost = async () => {
             try {
                 const data = await getPostById(postId);
                 const fetched = {

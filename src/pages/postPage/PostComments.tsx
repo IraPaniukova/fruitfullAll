@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Box, Stack, Avatar, Typography, TextField, Button, IconButton } from '@mui/material';
 import type { CommentInputDto, CommentLikeDto, CommentOutputDto, CommentUpdateDto } from '../../utils/interfaces';
-import { createComment, deleteCommentById, getCommentsByPostId, toggleLikeComment, updateCommentById } from '../../api/commentApi';
+import { createComment, getCommentsByPostId, toggleLikeComment, updateCommentById } from '../../api/commentApi';
 import { connection, startConnection } from '../../signalR/commentHub';
 import { formatTimeAgo } from '../../utils/formatTimeAgo';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { addComment, editComment, deleteComment, likeComment, setComments } from '../../features/comments/commentsSlice';
-import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import DoneIcon from '@mui/icons-material/Done';
 import { LikeToggle } from './LikeToggle';
 import { DeleteCommentButton } from './DeleteCommentButton';
+import { useAppSelector } from '../../store/typeHooks';
 
 
 type Props = {
@@ -28,10 +28,11 @@ export const PostComments = ({ postId }: Props) => {
     const [editingtId, setEditingtId] = useState<number | null>(null);
     const [editedText, setEditedText] = useState<string>('');
 
-    const [liked, setLiked] = useState(false);
+    const loggedIn = useAppSelector(state => !!state.auth.accessToken);
 
     useEffect(() => {
-        async function fetchComments() {
+        if (!loggedIn) return;
+        const fetchComments = async () => {
             try {
                 const data = await getCommentsByPostId(postId);
                 console.log('Fetched comments from API:', data);

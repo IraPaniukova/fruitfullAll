@@ -30,7 +30,7 @@ export const AboutPage = () => {
             {!loggedIn &&
                 <Box zIndex={1} position='absolute' top={0} left={0} pl={2} >
                     <Button onClick={() => { navigate('/') }} variant='text' sx={{ color: 'text.secondary' }}>
-                        Back to login
+                        Back
                     </Button>
                 </Box>}
         </Stack>

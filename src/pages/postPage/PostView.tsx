@@ -6,6 +6,7 @@ import { getPostById } from '../../api/postApi';
 import { UpdatePostButton } from '../../components/UpdatePostButton';
 import { useLocation } from 'react-router-dom';
 import { DeletePostButton } from '../../components/DeletePostButton';
+import { useAppSelector } from '../../store/typeHooks';
 
 type Props = {
     postId: number;
@@ -14,8 +15,10 @@ type Props = {
 export const PostView = ({ postId }: Props) => {
     const [post, setPost] = useState<PostOutputDto | null>(null);
     const location = useLocation().pathname;
+    const loggedIn = useAppSelector(state => !!state.auth.accessToken);
     useEffect(() => {
-        async function fetchPosts() {
+        if (!loggedIn) return;
+        const fetchPosts = async () => {
             try {
                 const data = await getPostById(postId);
                 setPost(data);

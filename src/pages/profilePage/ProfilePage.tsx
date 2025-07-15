@@ -7,6 +7,7 @@ import { ConfirmChangesButton } from './ConfirmChangesButton';
 import { getUserMe, updateUser } from '../../api/userApi';
 import type { UserOutputDto } from '../../utils/interfaces';
 import { Link } from 'react-router-dom';
+import { useAppSelector } from '../../store/typeHooks';
 
 export const ProfilePage = () => {
     // const [editAvatar, setEditAvatar] = useState(false);
@@ -21,8 +22,10 @@ export const ProfilePage = () => {
 
     const [refresh, setRefresh] = useState(false);
 
+    const loggedIn = useAppSelector(state => !!state.auth.accessToken);
     useEffect(() => {
-        async function fetchUser() {
+        if (!loggedIn) return;
+        const fetchUser = async () => {
             try {
                 const data = await getUserMe();
                 setData(data);

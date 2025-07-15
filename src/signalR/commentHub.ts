@@ -16,7 +16,7 @@ const hubUrl = `${import.meta.env.VITE_API_URL}hubs/comments`;
 
 export let connection: HubConnection | null = null;
 
-export async function startConnection() {
+export const startConnection = async () => {
   if (connection) {
     if (connection.state === HubConnectionState.Connected) {
       // Already connected, no need to start again
@@ -54,4 +54,4 @@ export async function startConnection() {
   } catch (err) {
     console.error("SignalR Connection Error: ", err);
   }
-}
+};

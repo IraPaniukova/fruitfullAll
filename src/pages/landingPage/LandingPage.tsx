@@ -1,4 +1,4 @@
-import { Button, Typography, Stack, IconButton } from '@mui/material';
+import { Button, Typography, Stack, IconButton, Tooltip } from '@mui/material';
 import logo from '../../assets/fruitfull_logo_name.png'
 import { GridBox } from '../../components/GridBox';
 import { ChequeredTiles } from '../../components/ChequeredTiles';
@@ -26,9 +26,11 @@ export const LandingPage = () => {
             </ContentStack>
             <Stack zIndex={1} position='absolute' top={0} left={0} direction='row' >
                 <ToggleThemeButton />
-                <IconButton onClick={() => { navigate('/about') }}>
-                    <HelpOutlineIcon />
-                </IconButton>
+                <Tooltip title='About us' placement="right">
+                    <IconButton onClick={() => { navigate('/about') }} aria-label='Go to About page'>
+                        <HelpOutlineIcon />
+                    </IconButton>
+                </Tooltip>
             </Stack>
 
         </GridBox >

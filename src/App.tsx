@@ -19,9 +19,10 @@ function App() {
   const theme = createTheme(mode === "light" ? lightTheme : darkTheme);
   const dispatch = useAppDispatch();
   const accessToken = useAppSelector(state => state.auth.accessToken);
-
+  const loggedIn = useAppSelector(state => !!state.auth.accessToken);
   useEffect(() => {
-    async function fetchTheme() {
+    if (!loggedIn) return;
+    const fetchTheme = async () => {
       try {
         const userData = await getUserMe();
         if (userData?.theme) {
