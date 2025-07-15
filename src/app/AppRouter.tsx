@@ -14,6 +14,7 @@ import { useAppSelector } from '../store/typeHooks';
 import { useEffect, useState } from 'react';
 import { UserPostsPage } from '../pages/userPostsPage/UserPostsPage';
 import { TagPostsPage } from '../pages/tagPostsPage/TagPostsPage';
+import { AboutPage } from '../pages/aboutPage/AboutPage';
 
 
 
@@ -39,7 +40,7 @@ export const AppRouter = () => {
             path: '/',
             element: (
                 <Stack>
-                    <Header loggedIn={loggedIn} />
+                    {loggedIn && <Header loggedIn={loggedIn} />}
                     <Outlet />
                     <ScrollRestoration />
                 </Stack>
@@ -47,11 +48,12 @@ export const AppRouter = () => {
             children: [
                 { path: '', element: loggedIn ? <DashboardPage /> : <LandingPage /> },
                 { path: 'auth', element: !loggedIn ? <AuthPage /> : < Navigate to="/" replace /> },
+                { path: 'about', element: <AboutPage /> },
                 { path: 'profile', element: <PrivateRoute component={ProfilePage} /> },
                 { path: 'posts/create', element: <PrivateRoute component={CreatePostPage} /> },
                 { path: 'posts/update/:id', element: <PrivateRoute component={UpdatePostPage} /> },
                 { path: 'posts/:id', element: <PrivateRoute component={PostPage} /> },
-                { path: '/posts/by-tag', element: <PrivateRoute component={TagPostsPage} /> },
+                { path: 'posts/by-tag', element: <PrivateRoute component={TagPostsPage} /> },
                 { path: 'posts/me', element: <PrivateRoute component={UserPostsPage} /> },
                 { path: '*', element: <NotFoundPage /> }
             ],
