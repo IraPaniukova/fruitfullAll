@@ -50,16 +50,34 @@ public class CommentServiceTests
         Assert.NotNull(dbComment);
     }
 
-    [Fact]
+  [Fact]
     public async Task GetCommentByIdAsync_ReturnsComment_WhenExists()
     {
-        var comment = MockExistingComment();
-        _context.Comments.Add(comment);
+        var testUser = new User
+        {
+            UserId = 1,
+            Nickname = "TestUserNick",
+            Email = "test@example.com",
+            ProfileImage = "test_profile.jpg"
+        };
+        await _context.Users.AddAsync(testUser);
+        await _context.SaveChangesAsync();
+
+        var comment = MockExistingComment(userId: testUser.UserId); 
+        await _context.Comments.AddAsync(comment);
         await _context.SaveChangesAsync();
 
         var result = await _service.GetCommentByIdAsync(comment.CommentId);
+
         Assert.NotNull(result);
         Assert.Equal(comment.Text, result!.Text);
+        Assert.Equal(comment.CommentId, result.CommentId);
+        Assert.Equal(comment.PostId, result.PostId);
+        Assert.Equal(comment.UserId, result.UserId);
+        Assert.Equal(testUser.Nickname, result.Nickname); 
+        Assert.Equal(testUser.ProfileImage, result.ProfileImage); 
+        Assert.False(result.IsDeleted); 
+        Assert.Equal(comment.LikesCount, result.LikesCount);
     }
 
     [Fact]
@@ -73,7 +91,7 @@ public class CommentServiceTests
     public async Task UpdateCommentAsync_UpdatesText_WhenAuthorized()
     {
         var comment = MockExistingComment(userId: 1);
-        _context.Comments.Add(comment);
+        await _context.Comments.AddAsync(comment);
         await _context.SaveChangesAsync();
 
         var dto = new CommentUpdateDto { Text = "Updated text" };
@@ -90,7 +108,7 @@ public class CommentServiceTests
     public async Task UpdateCommentAsync_ThrowsUnauthorized_WhenUserMismatch()
     {
         var comment = MockExistingComment(userId: 1);
-        _context.Comments.Add(comment);
+        await _context.Comments.AddAsync(comment);
         await _context.SaveChangesAsync();
 
         var dto = new CommentUpdateDto { Text = "Updated text" };
@@ -111,7 +129,7 @@ public class CommentServiceTests
     public async Task DeleteCommentAsync_SetsIsDeleted_WhenAuthorized()
     {
         var comment = MockExistingComment(userId: 1);
-        _context.Comments.Add(comment);
+        await _context.Comments.AddAsync(comment);
         await _context.SaveChangesAsync();
 
         await _service.DeleteCommentAsync(comment.CommentId, 1);
@@ -124,7 +142,7 @@ public class CommentServiceTests
     public async Task DeleteCommentAsync_ThrowsUnauthorized_WhenUserMismatch()
     {
         var comment = MockExistingComment(userId: 1);
-        _context.Comments.Add(comment);
+        await _context.Comments.AddAsync(comment);
         await _context.SaveChangesAsync();
 
         await Assert.ThrowsAsync<UnauthorizedAccessException>(() =>
@@ -141,18 +159,32 @@ public class CommentServiceTests
     [Fact]
     public async Task GetCommentsByPostIdAsync_ReturnsNonDeletedCommentsOnly()
     {
-        var comment1 = MockExistingComment(postId: 1);
-        var comment2 = MockExistingComment(postId: 1);
-        comment2.IsDeleted = true;
-        var comment3 = MockExistingComment(postId: 2);
+        var testUser = new User
+        {
+            UserId = 1,
+            Nickname = "TestUserNick",
+            Email = "test@example.com",
+            ProfileImage = "test_profile.jpg"
+        };
+        await _context.Users.AddAsync(testUser);
+        await _context.SaveChangesAsync(); 
 
-        _context.Comments.AddRange(comment1, comment2, comment3);
+        var comment1 = MockExistingComment(postId: 1, userId: testUser.UserId);
+        var comment2 = MockExistingComment(postId: 1, userId: testUser.UserId);
+        comment2.IsDeleted = true; 
+        var comment3 = MockExistingComment(postId: 2, userId: testUser.UserId);
+
+        await _context.Comments.AddRangeAsync(comment1, comment2, comment3);
         await _context.SaveChangesAsync();
 
-        var results = await _service.GetCommentsByPostIdAsync(1);
+        var results = await _service.GetCommentsByPostIdAsync(1, testUser.UserId);
 
-        Assert.Single(results);
+        Assert.Single(results); 
         Assert.Equal(comment1.Text, results[0].Text);
+        Assert.Equal(comment1.CommentId, results[0].CommentId);
+        Assert.Equal(testUser.Nickname, results[0].Nickname);
+        Assert.False(results[0].IsDeleted); 
+        Assert.False(results[0].IsLikedByCurrentUser);
     }
 
     [Fact]
@@ -160,8 +192,8 @@ public class CommentServiceTests
     {
         var comment = MockExistingComment();
         var user = new User { UserId = 1, Email = "test@example.com" };
-        _context.Comments.Add(comment);
-        _context.Users.Add(user);
+        await _context.Comments.AddAsync(comment);
+        await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
         var result = await _service.ToggleLikeCommentAsync(comment.CommentId, user.UserId);
@@ -176,8 +208,8 @@ public class CommentServiceTests
     {
         var comment = MockExistingComment();
         var user = new User { UserId = 1, Email = "test@example.com" };
-        _context.Comments.Add(comment);
-        _context.Users.Add(user);
+        await _context.Comments.AddAsync(comment);
+        await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
         var commentLikes = _context.Set<Dictionary<string, object>>("CommentLike");
@@ -198,7 +230,7 @@ public class CommentServiceTests
     public async Task ToggleLikeCommentAsync_ThrowsKeyNotFound_WhenCommentMissing()
     {
         var user = new User { UserId = 1, Email = "test@example.com" };
-        _context.Users.Add(user);
+        await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() =>
@@ -209,7 +241,7 @@ public class CommentServiceTests
     public async Task ToggleLikeCommentAsync_ThrowsKeyNotFound_WhenUserMissing()
     {
         var comment = MockExistingComment();
-        _context.Comments.Add(comment);
+        await _context.Comments.AddAsync(comment);
         await _context.SaveChangesAsync();
 
         await Assert.ThrowsAsync<KeyNotFoundException>(() =>

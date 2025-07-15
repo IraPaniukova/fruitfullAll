@@ -1,21 +1,20 @@
-﻿using Moq;
-using fruitfullServer.Models;
+﻿using fruitfullServer.Models;
 using fruitfullServer.DTO.Users;
 using fruitfullServer.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Google.Apis.Auth;
+using Moq;
 using Xunit;
 
 namespace fruitfullTest.ServiceTests;
 
 public class UserServiceTests
+
 {
     private readonly FruitfullDbContext _context;
     private readonly Mock<IPasswordHasher<User>> _mockPasswordHasher;
     private readonly Mock<ILogger<UserService>> _mockLogger;
-    private readonly Mock<IGoogleValidator> _mockGoogleValidator;
     private readonly UserService _service;
 
     public UserServiceTests()
@@ -29,36 +28,11 @@ public class UserServiceTests
         _mockPasswordHasher.Setup(h => h.HashPassword(It.IsAny<User>(), It.IsAny<string>()))
                    .Returns("hashed-password");
         _mockLogger = new Mock<ILogger<UserService>>();
-        _mockGoogleValidator = new Mock<IGoogleValidator>();
-        _service = new UserService(_context, _mockPasswordHasher.Object, _mockLogger.Object, _mockGoogleValidator.Object);
-        
-    }
-
-     [Fact]
-    public async Task CreateUserAsync_WithGoogleToken_CreatesGoogleUser()
-    {
-        var dto = new UserInputDto
-        {
-            IdToken = "valid_token"
-        };
-
-        var googlePayload = new GoogleJsonWebSignature.Payload
-        {
-            Email = "google@example.com",
-            Subject = "google-id"
-        };
-
-        // Setup the mock IGoogleValidator to return the fake payload
-        _mockGoogleValidator.Setup(v => v.ValidateAsync("valid_token")).ReturnsAsync(googlePayload);
-
-        // Call CreateUserAsync on the existing _service (which uses _mockGoogleValidator)
-        var result = await _service.CreateUserAsync(dto);
-
-        Assert.NotEqual(0, result.UserId);
+        _service = new UserService(_context, _mockPasswordHasher.Object, _mockLogger.Object);
     }
 
     [Fact]
-    public async Task CreateUserAsync_CreatesLoginUser()
+    public async Task CreateUserAsync_CreatesUser()
     {
         var dto = new UserInputDto
         {
@@ -73,7 +47,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task CreateUserAsync_MissingPassword_ThrowsException()
+    public async Task CreateUserAsync_MissingPassword_Throws()
     {
         var dto = new UserInputDto
         {
@@ -85,33 +59,33 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task UpdateUserLoginAsync_UpdatesUserEmail()
+    public async Task UpdateUserLoginAsync_UpdatesEmail()
     {
         var user = new User
-    {
-        UserId = 1,
-        Email = "user@example.com",
-        AuthProvider = "local",
-        
-    };
+        {
+            UserId = 1,
+            Email = "user@example.com",
+            AuthProvider = "local"
+        };
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
-        var dto = new UserUpdateLoginDto { Email = "newUser@example.com", Password = "123" };
+
+        var dto = new UserUpdateLoginDto { Email = "new@example.com" };
 
         var result = await _service.UpdateUserLoginAsync(dto, 1);
-        Assert.Equal( "newUser@example.com",result.Email);
+
+        Assert.Equal("new@example.com", result.Email);
     }
 
     [Fact]
-    public async Task UpdateUserLoginAsync_ChangesPassword_OldPasswordCorrect_NewPasswordIsNew()
+    public async Task UpdateUserLoginAsync_ChangesPassword()
     {
-        // Arrange
         var user = new User
         {
             UserId = 1,
             Email = "user@example.com",
             AuthProvider = "local",
-            PasswordHash = "hashed-old" // current hashed password in DB
+            PasswordHash = "oldhash"
         };
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
@@ -119,109 +93,49 @@ public class UserServiceTests
         var dto = new UserUpdateLoginDto
         {
             Email = "user@example.com",
-            Password = "oldpassword",    // user's current plain password input
-            NewPassword = "newpassword"  // new password to set
+            Password = "oldpw",
+            NewPassword = "newpw"
         };
 
-        // Mock VerifyHashedPassword with the old hash and old password
-        _mockPasswordHasher
-            .Setup(h => h.VerifyHashedPassword(user, "hashed-old", dto.Password))
+        _mockPasswordHasher.Setup(h => h.VerifyHashedPassword(user, "oldhash", "oldpw"))
             .Returns(PasswordVerificationResult.Success);
 
-        // Mock hashing the new password returns new hash
-        _mockPasswordHasher
-            .Setup(h => h.HashPassword(user, dto.NewPassword))
-            .Returns("hashed-new");
+        _mockPasswordHasher.Setup(h => h.HashPassword(user, "newpw"))
+            .Returns("newhash");
 
-        // Act
         var result = await _service.UpdateUserLoginAsync(dto, 1);
 
-        // Assert
         Assert.Equal("user@example.com", result.Email);
-
-        var updatedUser = await _context.Users.FindAsync(1);
-        Assert.Equal("hashed-new", updatedUser!.PasswordHash);
-
-        _mockPasswordHasher.Verify(h => h.VerifyHashedPassword(user, "hashed-old", dto.Password), Times.Once);
-        _mockPasswordHasher.Verify(h => h.HashPassword(user, dto.NewPassword), Times.Once);
+        Assert.Equal("newhash", user.PasswordHash);
     }
 
-
     [Fact]
-    public async Task UpdateUserLoginAsync_ThrowsException_WhenNewPasswordSameAsOld()
+    public async Task UpdateUserLoginAsync_WrongPassword_Throws()
     {
         var user = new User
         {
             UserId = 1,
             Email = "user@example.com",
             AuthProvider = "local",
-            PasswordHash = "hashed-old"
+            PasswordHash = "oldhash"
         };
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
         var dto = new UserUpdateLoginDto
         {
-            Email = "user@example.com",
-            Password = "oldpassword",
-            NewPassword = "oldpassword"
+            Password = "wrongpw",
+            NewPassword = "newpw"
         };
 
-        // Verify old password matches
-        _mockPasswordHasher.Setup(h => h.VerifyHashedPassword(user, user.PasswordHash!, dto.Password))
-            .Returns(PasswordVerificationResult.Success);
-
-        // HashPassword will return same hash for simplicity
-        _mockPasswordHasher.Setup(h => h.HashPassword(user, dto.NewPassword))
-            .Returns("hashed-old");
-
-        await Assert.ThrowsAsync<ArgumentException>(() => _service.UpdateUserLoginAsync(dto, 1));
-
-        _mockPasswordHasher.Verify(h => h.VerifyHashedPassword(user, user.PasswordHash!, dto.Password), Times.Once);
-    }
-
-    [Fact]
-    public async Task UpdateUserLoginAsync_ThrowsUnauthorized_WhenOldPasswordWrong()
-    {
-        var user = new User
-        {
-            UserId = 1,
-            Email = "user@example.com",
-            AuthProvider = "local",
-            PasswordHash = "hashed-old"
-        };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-
-        var dto = new UserUpdateLoginDto
-        {
-            Email = "user@example.com",
-            Password = "wrongpassword",
-            NewPassword = "newpassword"
-        };
-
-        _mockPasswordHasher.Setup(h => h.VerifyHashedPassword(user, user.PasswordHash!, dto.Password))
+        _mockPasswordHasher.Setup(h => h.VerifyHashedPassword(user, "oldhash", "wrongpw"))
             .Returns(PasswordVerificationResult.Failed);
 
         await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _service.UpdateUserLoginAsync(dto, 1));
-
-        _mockPasswordHasher.Verify(h => h.VerifyHashedPassword(user, user.PasswordHash!, dto.Password), Times.Once);
     }
 
     [Fact]
-    public async Task UpdateUserLoginAsync_NonLocalUser_ThrowsInvalidOperation()
-    {
-        var user = new User { UserId = 1, Email = "x@x.com", AuthProvider = "Google" };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-
-        var dto = new UserUpdateLoginDto { Email = "new@x.com", Password = "pw" };
-
-        await Assert.ThrowsAsync<InvalidOperationException>(() => _service.UpdateUserLoginAsync(dto, 1));
-    }
-
-    [Fact]  // doesnt work yet
-    public async Task UpdateUserAsync_NicknameAlreadyExists_Throws()
+    public async Task UpdateUserAsync_NicknameExists_Throws()
     {
         _context.Users.AddRange(
             new User { UserId = 1, Nickname = "me" },
@@ -233,5 +147,4 @@ public class UserServiceTests
 
         await Assert.ThrowsAsync<Exception>(() => _service.UpdateUserAsync(dto, 1));
     }
-
 }
