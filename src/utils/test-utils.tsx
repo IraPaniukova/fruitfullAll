@@ -1,68 +1,87 @@
-import React, { type JSX, type PropsWithChildren } from 'react';
-import { render, type RenderOptions } from '@testing-library/react';
+import React, { type PropsWithChildren, type Reducer } from 'react';
+import { render as rtlRender, type RenderOptions, type RenderResult } from '@testing-library/react';
+import { configureStore, type UnknownAction } from "@reduxjs/toolkit";
 import { Provider } from 'react-redux';
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { ThemeProvider } from '@mui/material/styles';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { MemoryRouter } from 'react-router-dom';
 
+import { lightTheme } from '../features/theme/themeConfig/lightTheme';
+import { darkTheme } from '../features/theme/themeConfig/darkTheme';
+
 import themeReducer from '../features/theme/themeSlice';
-import authReducer from '../features/auth/authSlice';
-import commentsReducer from '../features/comments/commentsSlice';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import authReducer, { type AuthState } from '../features/auth/authSlice';
+import commentsReducer, { type CommentsState } from '../features/comments/commentsSlice';
+import type { RootState } from '../store/store';
 
-// Combined reducer map that directly mirrors the 'reducer' objects in actual store.ts:
-const testReducer = combineReducers({
-  theme: themeReducer,
-  auth: authReducer,
-  comments: commentsReducer,
-});
+import { useAppDispatch, useAppSelector } from '../store/typeHooks';
 
-// For type inference: A temporary store matching app's main store structure:
-const tempTestStore = configureStore({
-  reducer: testReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
-});
+import { AppRouter } from '../app/AppRouter';
 
-// Make sure that test store matches app's store for correct type checking:
-export type TestRootState = ReturnType<typeof tempTestStore.getState>;
-export type TestAppDispatch = typeof tempTestStore.dispatch;
+export const setupStore = (preloadedState?: Partial<RootState>) => {
+  return configureStore({
+    reducer: {
+      theme: themeReducer as Reducer<string | undefined, UnknownAction>,
+      auth: authReducer as Reducer<AuthState | undefined, UnknownAction>,
+      comments: commentsReducer as Reducer<CommentsState | undefined, UnknownAction>,
+    },
+    preloadedState,
+  });
+};
 
-
-// Sets the custom initial Redux state and store for specific tests:
-interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
-  preloadedState?: Partial<TestRootState>; // For starting the Redux store with specific data.
-  store?: typeof tempTestStore; // Or, gives your own Redux store for the test.
+interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+  preloadedState?: Partial<RootState>;
+  store?: ReturnType<typeof setupStore>;
+  initialEntries?: string[];
+  initialIndex?: number;
+  route?: string;
+  themeMode?: 'light' | 'dark';
 }
 
-export const renderWithProviders = (
+export function render(
   ui: React.ReactElement,
   {
-    preloadedState = {},
-    // Creates a new store instance for each test run by default, matching your app's setup
-    store = configureStore({
-      reducer: testReducer, // Uses combined reducer
-      preloadedState,
-      middleware: (getDefaultMiddleware) => getDefaultMiddleware(), // Ensures middleware setup
-    }),
+    preloadedState,
+    store = setupStore(preloadedState),
+    initialEntries = ['/'],
+    initialIndex = 0,
+    route,
+    themeMode = 'light',
     ...renderOptions
-  }: ExtendedRenderOptions = {}
-) => {
-  // Wrapper component that includes the Google,  Redux Provider and React Router's MemoryRouter
-  const Wrapper = ({ children }: PropsWithChildren<{}>): JSX.Element => {
+  }: CustomRenderOptions = {}
+): RenderResult & { store: ReturnType<typeof setupStore> } {
+  if (route) {
+    initialEntries = [route];
+  }
+
+  const currentTheme = themeMode === 'light' ? lightTheme : darkTheme;
+
+  const GOOGLE_CLIENT_ID_DUMMY = 'dummy-client-id-for-tests.apps.googleusercontent.com';
+
+
+
+
+  const AllProviders = ({ children }: PropsWithChildren) => {
     return (
-      <GoogleOAuthProvider clientId="test">
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID_DUMMY}>
         <Provider store={store}>
-          <MemoryRouter>{children}</MemoryRouter>
+          <ThemeProvider theme={currentTheme}>
+            <MemoryRouter initialEntries={initialEntries} initialIndex={initialIndex}>
+              {children}
+            </MemoryRouter>
+          </ThemeProvider>
         </Provider>
       </GoogleOAuthProvider>
     );
   };
 
-  // Returns the store instance along with all of React Testing Library's query functions
-  return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
-};
+  const result = rtlRender(ui, { wrapper: AllProviders, ...renderOptions });
 
-// Re-export everything from @testing-library/react so you can import them from this file
+  return { ...result, store };
+}
+
 export * from '@testing-library/react';
 
-// Override the default render export with your custom renderWithProviders function
-export { renderWithProviders as render };
+export { useAppDispatch, useAppSelector };
+
+export { AppRouter };

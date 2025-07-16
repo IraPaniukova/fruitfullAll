@@ -12,6 +12,20 @@ export const industryOptions = [
   "Education",
   "Manufacturing",
   "Retail",
+  "Energy",
+  "Telecommunications",
+  "Transportation",
+  "Government",
+  "Real Estate",
+  "Media & Entertainment",
+  "Hospitality",
+  "Pharmaceuticals",
+  "Consulting",
+  "Automotive",
+  "Agriculture",
+  "Non-Profit",
+  "Insurance",
+  "Construction",
 ];
 
 export const countryOptions = [

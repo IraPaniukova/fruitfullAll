@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { CommentOutputDto, CommentLikeDto } from "../../utils/interfaces";
 
-interface CommentsState {
+export interface CommentsState {
   comments: CommentOutputDto[];
 }
 

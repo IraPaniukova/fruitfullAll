@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import logo from '../../assets/fruitfull_logo.png';
 import { UserMenu } from "./UserMenu";
 import { CreatePostButton } from "./CreatePostButton";
-import { Search } from "./Search";
 
 interface HeaderProps {
     loggedIn: boolean;
@@ -35,7 +34,6 @@ export const Header: React.FC<HeaderProps> = ({ loggedIn }) => {
                         <img src={logo} alt="logo" height='50' />
                     </Link>
                 </Box>
-                <Search />
                 <Box sx={{ flexGrow: 1, ml: 1 }} >
                     <CreatePostButton />
                 </Box>

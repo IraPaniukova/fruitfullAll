@@ -2,16 +2,12 @@ import { Box, Grid, Stack, Typography } from '@mui/material';
 import type { PostSummaryDto } from '../utils/interfaces';
 import { PostTags } from './PostTags';
 import { OpenPostButton } from './OpenPostButton';
-import { UpdatePostButton } from './UpdatePostButton';
-import { useLocation } from 'react-router-dom';
 
 interface PostSummaryProps {
     posts: PostSummaryDto[];
 }
 
 export const PostSummary: React.FC<PostSummaryProps> = ({ posts }) => {
-    const userId = Number(localStorage.getItem('userId'));
-    const location = useLocation().pathname;
     return (
         <Grid container spacing={2} mt={2}>
             {posts.map((post, i) => (
@@ -47,11 +43,6 @@ export const PostSummary: React.FC<PostSummaryProps> = ({ posts }) => {
                             position='absolute' top={-10} right={0} pr={1}
                         >
                             <OpenPostButton postId={post.postId} />
-                            {/* {post.userId === userId && location !== '/' &&
-                                (
-                                    <UpdatePostButton postId={post.postId} />
-                                )
-                            } */}
                         </Stack>
                     </Stack>
                 </Grid>

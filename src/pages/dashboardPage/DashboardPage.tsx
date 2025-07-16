@@ -4,18 +4,29 @@ import { getRecentPosts } from "../../api/postApi";
 import type { PostSummaryDto } from "../../utils/interfaces";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { usePostScroll } from "../../utils/usePostScroll";
+import { FilterByIndustry } from "../../components/FilterByIndustry";
 
 
 export const DashboardPage = () => {
     const [posts, setPosts] = useState<PostSummaryDto[]>([]);
+    const [industry, setIndustry] = useState('');
+
     const { observerTarget, loading, hasMore } = usePostScroll(getRecentPosts, { setPosts });
+
+    const filteredPosts = industry
+        ? posts.filter(p => p.industry === industry)
+        : posts;
+
 
     return (
         <Box p={2} mx={{ xs: 'auto', lg: '10%' }}>
             <Typography variant="h5" gutterBottom>Check out the latest posts from the community</Typography>
 
             {posts.length > 0 ? (
-                <PostSummary posts={posts} />
+                <>
+                    <FilterByIndustry industry={industry} onSelect={setIndustry} />
+                    <PostSummary posts={filteredPosts} />
+                </>
             ) : (
                 !loading && <Typography>No posts found.</Typography>
             )}
