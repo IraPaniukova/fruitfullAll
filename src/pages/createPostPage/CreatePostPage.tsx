@@ -8,7 +8,7 @@ import { initialForm } from '../../utils/constants';
 
 export const CreatePostPage = () => {
     const [form, setForm] = useState<PostInputDto>(initialForm);
-    const validTags = form.tags?.length > 0 && form.tags?.every(tag => /^(?!.*,,)[a-zA-Z0-9#+,]+(\.[a-zA-Z0-9#+]+)*$/.test(tag));
+    const validTags = form.tags?.length > 0 && form.tags?.every(tag => /^(?!.*,,)[a-zA-Z0-9#+,\-]+(\.[a-zA-Z0-9#+,\-]+)*$/.test(tag));
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const validate = () => {

@@ -18,7 +18,7 @@ export const TagInput: React.FC<TagInputProp> = ({ tags, setForm, error_tag }) =
     const validateTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         // setTagsInput(value);
-        const isValid = /^(?!.*,,)[a-zA-Z0-9#+,]+(\.[a-zA-Z0-9#+]+)*$/.test(value);
+        const isValid = /^(?!.*,,)[a-zA-Z0-9#+,\-]+(\.[a-zA-Z0-9#+,\-]+)*$/.test(value);
         if (isValid) { setTagError([text, 'default']); }
         else {
             if (theme.palette.mode === "light") {

@@ -42,7 +42,15 @@ export const questionTypeOptions = [
   "Behavioral",
   "Situational",
   "Case Study",
+  "Logical Reasoning",
+  "Verbal Reasoning",
+  "Numerical Reasoning",
+  "Abstract Reasoning",
+  "Cognitive Ability",
+  "Psychometric",
+  "Mixed Assessment",
 ];
+
 export const interviewFormatOptions = [
   "Face to face with one",
   "Face to face with group",
@@ -51,6 +59,10 @@ export const interviewFormatOptions = [
   "Video recording",
   "Timed online test",
   "Take home task",
+  "Phone interview",
+  "Panel interview",
+  "Assessment center",
+  "Live coding session",
 ];
 
 export const stressLevelOptions = [

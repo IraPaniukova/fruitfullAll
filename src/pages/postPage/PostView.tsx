@@ -64,7 +64,7 @@ export const PostView = ({ postId }: Props) => {
             <Typography align='justify' variant="button" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
                 Interview Questions Asked:
             </Typography>
-            <Typography>{post.content}</Typography>
+            <Typography sx={{ whiteSpace: 'pre-wrap' }}>{post.content}</Typography>
 
             {
                 post.opinion && (
@@ -72,7 +72,7 @@ export const PostView = ({ postId }: Props) => {
                         <Typography variant="button" color="text.secondary" sx={{ fontSize: '0.8rem' }} >
                             Opinion:
                         </Typography>
-                        <Typography>{post.opinion}</Typography>
+                        <Typography sx={{ whiteSpace: 'pre-wrap' }}>{post.opinion}</Typography>
                     </>
                 )
             }

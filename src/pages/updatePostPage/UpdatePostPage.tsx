@@ -44,7 +44,7 @@ export const UpdatePostPage = () => {
         }
         fetchPost();
     }, [postId]);
-    const validTags = form.tags?.length > 0 && form.tags?.every(tag => /^(?!.*,,)[a-zA-Z0-9#+,]+(\.[a-zA-Z0-9#+]+)*$/.test(tag));
+    const validTags = form.tags?.length > 0 && form.tags?.every(tag => /^(?!.*,,)[a-zA-Z0-9#+,\-]+(\.[a-zA-Z0-9#+,\-]+)*$/.test(tag));
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [message, setMessage] = useState(false);
 
