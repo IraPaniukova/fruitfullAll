@@ -8,22 +8,23 @@ namespace fruitfullServer.Hubs;
 [Authorize(Policy = "LoginPolicy")]
 public class CommentHub : Hub
 {
-    public async Task SendComment(CommentOutputDto comment)
+    public Task SendComment(CommentOutputDto comment)
     {
-        await Clients.All.SendAsync("commentadded", comment);
-    }
-    public async Task EditComment(CommentOutputDto comment)
-    {
-        await Clients.All.SendAsync("commentedited", comment);
+        return Clients.All.SendAsync("commentadded", comment);
     }
 
-    public async Task DeleteComment(int commentId)
+    public Task EditComment(CommentOutputDto comment)
     {
-        await Clients.All.SendAsync("commentdeleted", commentId);
+        return Clients.All.SendAsync("commentedited", comment);
     }
 
-    public async Task LikeComment(CommentLikeDto like)
+    public Task DeleteComment(int commentId)
     {
-        await Clients.All.SendAsync("commentliked", like);
+        return Clients.All.SendAsync("commentdeleted", commentId);
+    }
+
+    public Task LikeComment(CommentLikeDto like)
+    {
+        return Clients.All.SendAsync("commentliked", like);
     }
 }
