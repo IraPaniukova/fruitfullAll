@@ -35,7 +35,6 @@ export const PostComments = ({ postId }: Props) => {
         const fetchComments = async () => {
             try {
                 const data = await getCommentsByPostId(postId);
-                console.log('Fetched comments from API:', data);
                 dispatch(setComments(data));
             } catch (error) {
                 console.error("Failed to fetch comments:", error);
@@ -114,8 +113,9 @@ export const PostComments = ({ postId }: Props) => {
         }
 
     }
+    const uniqueComments = Array.from(new Map(comments.map(c => [c.commentId, c])).values());
 
-    const sortedComments = comments.filter(c => c.postId === postId)
+    const sortedComments = uniqueComments.filter(c => c.postId === postId)
         ?.slice()
         .sort((a, b) => {
             const dateA = new Date(a.createdAt ?? '').getTime();
@@ -144,7 +144,7 @@ export const PostComments = ({ postId }: Props) => {
                         {!c.profileImage && 'ツ'}
                     </Avatar>
 
-                    <Stack >
+                    <Stack sx={{ flexGrow: 0.9 }}>
                         <Typography variant='caption' align='left' color="text.secondary">
                             {c.nickname && c.nickname.trim() !== ''
                                 ? c.nickname
@@ -174,16 +174,17 @@ export const PostComments = ({ postId }: Props) => {
                         >
                             {(editingtId === c.commentId ?
                                 <>
-                                    <IconButton size="small" onClick={() => handleSaveEdit(c.commentId!)}>
+                                    <IconButton aria-label="Confirm comment edit" size="small" onClick={() => handleSaveEdit(c.commentId!)}>
                                         <DoneIcon sx={{ fontSize: 20, color: 'orange' }} />
                                     </IconButton>
-                                    <IconButton size="small" onClick={handleCancelEdit}>
+                                    <IconButton aria-label="Cancel edit"
+                                        size="small" onClick={handleCancelEdit}>
                                         <CloseIcon sx={{ fontSize: 20, color: 'red' }} />
                                     </IconButton>
                                 </>
                                 :
                                 <>
-                                    <IconButton size="small" onClick={() => handleEditClick(c)}>
+                                    <IconButton aria-label="Edit comment" size="small" onClick={() => handleEditClick(c)}>
                                         <EditIcon sx={{ fontSize: 15, color: 'orange' }} />
                                     </IconButton>
                                     {c.commentId !== null && c.commentId !== undefined && (

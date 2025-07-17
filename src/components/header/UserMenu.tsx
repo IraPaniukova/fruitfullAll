@@ -38,6 +38,7 @@ export const UserMenu = () => {
                 aria-controls={open ? 'user-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
+                aria-label="Open user menu"
                 sx={{ pt: 4 }}
             >
                 <ArrowDropDownIcon />
