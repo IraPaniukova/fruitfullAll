@@ -5,13 +5,12 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { lightTheme } from './features/theme/themeConfig/lightTheme';
 import { darkTheme } from './features/theme/themeConfig/darkTheme';
 import { useAppDispatch, useAppSelector } from './store/typeHooks';
-import { Box } from '@mui/material';
-import { AppRouter } from './app/AppRouter';
-import { refreshTokenThunk } from "./features/auth/authThunks";
-import { useEffect } from 'react';
 import { login } from "./features/auth/authSlice";
 import { getUserMe } from './api/userApi';
 import { setTheme } from './features/theme/themeSlice';
+import { AppRouter } from './app/AppRouter';
+import { useEffect } from 'react';
+
 
 
 function App() {
@@ -45,7 +44,7 @@ function App() {
     if (accessToken && refreshToken) {
       dispatch(
         login({
-          token: accessToken,          // must be 'token'
+          token: accessToken,
           refreshToken: refreshToken,
           userId: Number(localStorage.getItem("userId")) || 0,
           expiresAt: new Date(new Date().setUTCDate(new Date().getUTCDate() + 7)).toISOString()
