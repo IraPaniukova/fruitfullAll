@@ -31,7 +31,6 @@ export const googleAuthThunk =
       localStorage.setItem("refreshToken", res.refreshToken);
       localStorage.setItem("userId", res.userId.toString());
 
-      console.log("Google authentication successful!");
       return res;
     } catch (err) {
       console.error("Google authentication failed in thunk:", err);

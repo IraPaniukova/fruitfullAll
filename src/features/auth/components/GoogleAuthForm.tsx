@@ -12,9 +12,6 @@ export const GoogleAuthForm: React.FC = () => {
         try {
             if (credentialResponse.credential) {
                 await dispatch(googleAuthThunk(credentialResponse.credential));
-
-                console.log('Google authentication successful!');
-                alert('You have successfully signed in with Google!');
             } else {
                 console.error("Google authentication failed: No credential received from Google.");
                 alert("Google sign-in failed: No valid credential received.");
