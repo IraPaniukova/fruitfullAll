@@ -61,7 +61,15 @@ Fruitfull fits the Networking theme by connecting mainly entry-level job seekers
 
 ## Notes
 
-For backend JWT authentication, set these environment variables (example values):
-export JWT_SECRET_KEY="a-jwt-key-4f7d9a8c3b2e1f6d0c5a7e9bD8jC0Rx"
-export JWT_ISSUER="fruitfullServer"
-Also, VITE_API_URL=https://backend-server-url/ in .env
+- JWT_SECRET_KEY - Set as an environment variable in Azure.
+  Example for local testing: export JWT_SECRET_KEY="a-jwt-key-4f7d9a8c3b2e1f6d0c5a7e9bD8jC0Rx"
+
+- JWT_ISSUER - Set as an environment variable in Azure.
+  Example used locally: export JWT_ISSUER="fruitfullServer"
+
+- Connection String - Fully set in Azure (including password). In my code, the password is represented as a placeholder named DB_PASSWORD.
+
+- VITE_API_URL – Set as an environment variable in Azure, pointing to the Azure backend.
+  Example used locally in .env: VITE_API_URL=http://localhost:5193/
+
+Two test users are set up in the database with the password 1: user@me.com and u@u.com
