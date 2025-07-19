@@ -46,7 +46,7 @@ jobs:
           github_id_token: ${{ steps.idtoken.outputs.result }}
           ###### End of Repository/Build Configurations ######
         env:
-          VITE_API_URL: "https://fruitfull-server-f8a7a7fxcteebuas.australiaeast-01.azurewebsites.net/api/" # Make sure this is your correct backend URL
+          VITE_API_URL: "https://fruitfull-server-f8a7a7fxcteebuas.australiaeast-01.azurewebsites.net/" # Make sure this is your correct backend URL
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
