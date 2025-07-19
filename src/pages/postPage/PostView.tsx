@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Stack, Typography } from '@mui/material';
+import { Avatar, Stack, Typography } from '@mui/material';
 import { PostTags } from '../../components/PostTags';
 import type { PostOutputDto } from '../../utils/interfaces';
 import { getPostById } from '../../api/postApi';
@@ -53,6 +53,20 @@ export const PostView = ({ postId }: Props) => {
                     )
                 }
             </Stack>
+            <Stack direction="row" spacing={1} alignItems="center" mb={1}>
+                {post.profileImage ? (
+                    <Avatar alt={post.nickname || "Anonymous"} src={post.profileImage}
+                        sx={{ width: 30, height: 30, bgcolor: 'orange' }} />
+                ) : (
+                    <Avatar sx={{ width: 30, height: 30, bgcolor: 'orange' }}>
+                        {(post.nickname?.charAt(0).toUpperCase()) || "ツ"}
+                    </Avatar>
+                )}
+                <Typography variant="subtitle1" fontWeight="bold" ml={1}>
+                    {post.nickname || "Anonymous"}
+                </Typography>
+            </Stack>
+
             <Typography
                 variant="body2"
                 color="text.secondary"

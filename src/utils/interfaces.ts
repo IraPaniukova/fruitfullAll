@@ -47,6 +47,8 @@ export interface PostOutputDto {
   createdAt?: string; // ISO date string
   isDeleted?: boolean;
   likesCount?: number;
+  nickname?: string;
+  profileImage?: string;
   tags: string[];
 }
 
