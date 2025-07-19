@@ -3,6 +3,9 @@ namespace fruitfullServer.DTO.Posts;
 public class PostOutputDto
 {
     public int PostId { get; set; }
+    
+    public string? Nickname { get; set; }
+    public string? ProfileImage { get; set; }
     public string? Content { get; set; }
     public string? Opinion { get; set; }
     public string? Company { get; set; }

@@ -69,8 +69,9 @@ public class PostService
     {
     try
     {
-        var post = await _context.Posts
+         var post = await _context.Posts
             .Include(p => p.Tags)
+            .Include(p => p.User) 
             .FirstOrDefaultAsync(p => p.PostId == id);
         if (post == null) return null;
         return post.ToPostOutputDto();

@@ -122,7 +122,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseHttpsRedirection();
 
 app.UseRouting(); // Enables routing to match HTTP requests to controllers
 
@@ -133,7 +133,6 @@ app.UseAuthorization();
 
 app.MapHub<CommentHub>("/hubs/comments");
 
-app.UseHttpsRedirection();
 app.MapControllers(); // Maps attribute-routed controllers to endpoints
 
 app.Run();

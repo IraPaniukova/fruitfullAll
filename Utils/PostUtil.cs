@@ -21,6 +21,8 @@ public static class PostUtil
     CreatedAt = post.CreatedAt,
     IsDeleted = post.IsDeleted,
     LikesCount = post.LikesCount,
-    Tags = [.. post.Tags.Select(t => t.Name)]
+    Tags = post.Tags.Select(t => t.Name).ToList(),
+    Nickname = post.User?.Nickname,
+    ProfileImage = post.User?.ProfileImage
     };
 }
