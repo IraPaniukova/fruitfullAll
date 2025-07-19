@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import { UserPostsPage } from '../pages/userPostsPage/UserPostsPage';
 import { TagPostsPage } from '../pages/tagPostsPage/TagPostsPage';
 import { AboutPage } from '../pages/aboutPage/AboutPage';
+import { PrivacyPolicyPage } from '../pages/privacyPolicyPage/PrivacyPolicyPage';
 
 
 
@@ -49,6 +50,7 @@ export const AppRouter = () => {
                 { path: '', element: loggedIn ? <DashboardPage /> : <LandingPage /> },
                 { path: 'auth', element: !loggedIn ? <AuthPage /> : < Navigate to="/" replace /> },
                 { path: 'about', element: <AboutPage /> },
+                { path: 'privacy-policy', element: <PrivacyPolicyPage /> },
                 { path: 'profile', element: <PrivateRoute component={ProfilePage} /> },
                 { path: 'posts/create', element: <PrivateRoute component={CreatePostPage} /> },
                 { path: 'posts/update/:id', element: <PrivateRoute component={UpdatePostPage} /> },
