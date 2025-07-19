@@ -75,7 +75,11 @@ public class PostServiceTests
     [Fact]
     public async Task UpdatePostAsync_UpdatesFields()
     {
+
         var post = MockExistingPost();
+        var user = new User { UserId = post.UserId, Nickname = "TestUser" };
+        _context.Users.Add(user);
+        post.User = user;  // assign the navigation property
         _context.Posts.Add(post);
         await _context.SaveChangesAsync();
 
@@ -92,6 +96,7 @@ public class PostServiceTests
 
         Assert.Equal("new", updated.Content);
     }
+
 
     [Fact]
     public async Task DeletePostAsync_MarksDeleted()
@@ -122,4 +127,36 @@ public class PostServiceTests
         var unlike = await _service.ToggleLikePostAsync(post.PostId, user.UserId);
         Assert.Equal(0, unlike.LikesCount);
     }
+    [Fact]
+    public async Task GetPostByIdAsync_ReturnsPostWithUserInfo()
+    {
+        
+        var user = new User { UserId = 1, Nickname = "TestUser", ProfileImage = "image.png" };
+        var post = new Post
+        {
+            PostId = 1,
+            Content = "Test content",
+            UserId = 1,
+            User = user,
+            Tags = new List<Tag> { new Tag { Name = "test" } },
+            Company = "TestCompany",
+            Country = "TestCountry",
+            Industry = "TestIndustry",
+            InterviewFormat = "TestFormat",
+            QuestionType = "TestQuestion"
+        };
+
+
+        _context.Users.Add(user);
+        _context.Posts.Add(post);
+        await _context.SaveChangesAsync();
+
+        var result = await _service.GetPostByIdAsync(1);
+
+        Assert.NotNull(result);
+        Assert.Equal("TestUser", result.Nickname);
+        Assert.Equal("image.png", result.ProfileImage);
+        Assert.Contains("test", result.Tags);
+    }
+
 }
