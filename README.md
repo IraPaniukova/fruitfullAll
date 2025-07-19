@@ -73,3 +73,10 @@ Fruitfull fits the Networking theme by connecting mainly entry-level job seekers
   Example used locally in .env: VITE_API_URL=http://localhost:5193/
 
 Two test users are set up in the database with the password 1: user@me.com and u@u.com
+
+## Scope
+
+Tested on:
+
+- Windows (Google Chrome, Opera)
+- Mobile (Android, Chrome)

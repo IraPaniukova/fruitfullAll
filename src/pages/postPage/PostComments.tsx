@@ -146,12 +146,12 @@ export const PostComments = ({ postId }: Props) => {
 
                     <Stack sx={{ flexGrow: 0.9 }}>
                         <Typography variant='caption' align='left' color="text.secondary">
-                            {c.nickname && c.nickname.trim() !== ''
-                                ? c.nickname
-                                : c.userId === currentUser
-                                    ? 'You'
-                                    : `Anonymous${c.userId ? c.userId * 1234 : ''}`
-                            } •{' '}
+                            {c.userId === currentUser
+                                ? 'You'
+                                : c.nickname && c.nickname.trim() !== ''
+                                    ? c.nickname
+                                    : `Anonymous${c.userId ? c.userId * 1234 : 'Anonymous'}`}
+                            •{' '}
                             {c.createdAt ? formatTimeAgo(new Date(c.createdAt)) : ''}
                         </Typography>
                         {editingtId === c.commentId ? (

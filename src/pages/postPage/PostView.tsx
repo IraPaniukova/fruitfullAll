@@ -63,7 +63,7 @@ export const PostView = ({ postId }: Props) => {
                     </Avatar>
                 )}
                 <Typography variant="subtitle1" fontWeight="bold" ml={1}>
-                    {post.nickname || "Anonymous"}
+                    {post.nickname || `Anonymous${post.userId ? post.userId * 1234 : 'Anonymous'}`}
                 </Typography>
             </Stack>
 
