@@ -39,7 +39,8 @@ Real-time comments help users get fresh updates and practical advice. Future pla
 - **Profiles**: Users can set a nickname, country, app theme (light or dark), year they are members since, and view their total posts and average stress level.
 - **Post Management**: Users can create, edit, and delete their own interview posts.
 - **Comment Management**: Users can comment on posts, edit or delete their own comments, like/unlike comments, and view like counts.
-- **Dashboard**: Shows recent posts with infinite scroll; filter posts by industry.
+- **Dashboard**: Shows recent posts with infinite scroll.
+- **Filtering**: Users can filter posts by industry or by clicking on relevant tags directly within posts.
 - **Post Details**: View full post with related comments and interaction options.
 - **About Page**: Short app description.
 - **Dark/Light Mode**: Users can switch between light and dark mode; preference is saved in their profile.
