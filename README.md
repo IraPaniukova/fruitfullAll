@@ -18,6 +18,14 @@ An about page introduces the app and its purpose, while the platform encourages 
 
 Fruitfull fits the Networking theme by connecting mainly entry-level job seekers and interns to share interview experiences and advice, with a focus on preparing for QA and related roles. It creates a supportive community for career starters to learn, reduce stress, and grow through shared knowledge and practical tips.
 
+## What Makes Fruitfull Unique?
+
+Fruitfull is a unique resource for today’s tough job market, especially for graduates, interns, and entry-level job seekers. Unlike general career sites, Fruitfull focuses only on real, anonymised interview experiences. This encourages honest sharing without fear of judgement or consequences.
+
+Its clean focus means users are not distracted by unrelated content and can fully concentrate on preparing for interviews. The structured data — including stress levels, question types, and industries — allows users to easily find the most relevant information for their situation.
+
+Real-time comments help users get fresh updates and practical advice. Future plans include adding more filters and building a dedicated hub for interview articles and resources, making Fruitfull even more useful for the community.
+
 ## Technologies
 
 - **Frontend**: React + TypeScript, MUI (Material UI), Redux, React Router, Axios, SignalR (WebSockets)
@@ -40,10 +48,10 @@ Fruitfull fits the Networking theme by connecting mainly entry-level job seekers
 
 ## Advanced Requirements Implemented
 
-- Unit testing components (partly)
 - Use a state management library (Redux).
 - Support theme switching (light/dark mode).
 - Implement WebSockets (SygnalR).
+- Unit testing components (partly)
 
 ## Database Structure
 
