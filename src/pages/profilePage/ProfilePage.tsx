@@ -8,6 +8,8 @@ import { getUserMe, updateUser } from '../../api/userApi';
 import type { UserOutputDto } from '../../utils/interfaces';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from '../../store/typeHooks';
+import CloseIcon from '@mui/icons-material/Close';
+
 
 export const ProfilePage = () => {
     // const [editAvatar, setEditAvatar] = useState(false);
@@ -28,6 +30,8 @@ export const ProfilePage = () => {
         const fetchUser = async () => {
             try {
                 const data = await getUserMe();
+                setNewNickname(data.nickname ?? '');
+                setNewCountry(data.country ?? '');
                 setData(data);
             } catch (error) {
                 console.error("Failed to fetch user:", error);
@@ -70,6 +74,15 @@ export const ProfilePage = () => {
         }
         // setEditAvatar(false);
         setEditNickname(false);
+        setEditCountry(false);
+    }
+    // const onCancelAvatarEdit = () => {
+    //     setEditAvatar(false);
+    // }
+    const onCancelNicknameEdit = () => {
+        setEditNickname(false);
+    }
+    const onCancelCountryEdit = () => {
         setEditCountry(false);
     }
     const createdAt = data?.createdAt
@@ -118,15 +131,20 @@ export const ProfilePage = () => {
                         </Stack>
 
                         {editNickname ?
-                            <Stack direction='row' alignItems='center' spacing={3} pl={5}>
+                            <Stack direction='row' alignItems='center' spacing={2} pl={5}>
                                 <TextField
                                     label="Enter New Nickname"
                                     value={newNickname}
                                     onChange={(e) => setNewNickname(e.target.value)}
                                 />
                                 <ConfirmChangesButton onConfirmClick={onConfirmClick} />
+                                <Tooltip title="Cancel edit" placement="right">
+                                    <CloseIcon sx={{ fontSize: 20 }}
+                                        aria-label="Cancel edit" onClick={onCancelNicknameEdit}
+                                    />
+                                </Tooltip>
                                 <Tooltip title="Delete Nickname" placement="right">
-                                    <DeleteIcon sx={{ fontSize: 15 }}
+                                    <DeleteIcon sx={{ fontSize: 16 }}
                                         onClick={onDeleteIconClick} aria-label="Delete Nickname" />
                                 </Tooltip>
                             </Stack> :
@@ -141,14 +159,21 @@ export const ProfilePage = () => {
                         <Typography>Member Since: {createdAt}</Typography>
 
                         {editCountry ?
-                            <Stack direction='row' alignItems='center' spacing={3} pl={5}>
+                            <Stack direction='row' alignItems='center' spacing={2} pl={5}>
                                 <TextField
                                     label="Enter New Country"
                                     value={newCountry}
                                     onChange={(e) => setNewCountry(e.target.value)}
                                 />
                                 <ConfirmChangesButton onConfirmClick={onConfirmClick} />
-                            </Stack> :
+                                <Tooltip title="Cancel edit" placement="right">
+                                    <CloseIcon sx={{ fontSize: 20 }}
+                                        aria-label="Cancel edit" onClick={onCancelCountryEdit}
+                                    />
+                                </Tooltip>
+                            </Stack>
+
+                            :
                             <Stack direction='row' spacing={3} alignItems='center' pl={5}>
                                 <Typography>Country: {country ? country : 'None'}</Typography>
                                 <EditIcon sx={{ fontSize: 15 }} onClick={onEditCountryClick} />
