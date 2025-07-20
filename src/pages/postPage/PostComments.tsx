@@ -151,7 +151,7 @@ export const PostComments = ({ postId }: Props) => {
                                 : c.nickname && c.nickname.trim() !== ''
                                     ? c.nickname
                                     : `Anonymous${c.userId ? c.userId * 1234 : 'Anonymous'}`}
-                            •{' '}
+                            {' '}•{' '}
                             {c.createdAt ? formatTimeAgo(new Date(c.createdAt)) : ''}
                         </Typography>
                         {editingtId === c.commentId ? (
