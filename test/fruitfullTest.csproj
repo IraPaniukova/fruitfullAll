@@ -17,9 +17,6 @@
   </ItemGroup>
 
    <ItemGroup>
-    <ProjectReference Include="..\fruitfullServer\fruitfullServer.csproj" />
+    <ProjectReference Include="..\backend\fruitfullServer.csproj" />
   </ItemGroup>
-
-
-
 </Project>
