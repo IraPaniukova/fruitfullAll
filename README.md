@@ -1,4 +1,4 @@
-# Fruitfull - Career Networking App
+# Fruitfull - Career Networking App https://fruitfull.info
 
 This README describes the current state of Fruitfull. Some planned features are still in progress due to time constraints.
 
