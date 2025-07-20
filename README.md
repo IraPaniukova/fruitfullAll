@@ -22,7 +22,7 @@ Fruitfull fits the Networking theme by connecting mainly entry-level job seekers
 
 - **Frontend**: React + TypeScript, MUI (Material UI), Redux, React Router, Axios, SignalR (WebSockets)
 - **Backend**: C# with .NET 9, EF Core, ASP.Net, T-SQL Database (SSMS, moved to Azure), SignalR
-- **Testing**: Xunit (backend - implemented only for services), Viest (frontend - only 1 working test)
+- **Testing**: Xunit (backend - implemented only for services), Vitest (frontend - only 1 working test)
 - **Deployment**: Azure
 
 ## Implemented Features
@@ -47,32 +47,36 @@ Fruitfull fits the Networking theme by connecting mainly entry-level job seekers
 
 ## Database Structure
 
-- Users: UserId, Email, PasswordHash (optional), Country (optional), Theme (light/dark), Nickname (optional), ProfileImage (optional), AuthProvider (local/google), GoogleId (optional), CreatedAt
-- Roles: RoleId, RoleName
+- Users: UserId, Email (unique), PasswordHash (optional), Country (optional), Theme (light/dark, default light), Nickname (optional), ProfileImage (optional), AuthProvider (local/google, default local), GoogleId (optional), CreatedAt (default GETDATE)
+- Roles: RoleId, RoleName (unique)
 - UserRoles: UserId (FK), RoleId (FK)
-- Posts: PostId, Content, Opinion (optional), Company, Industry, Year, Country, StressLevel (0-5), QuestionType, InterviewFormat, UserId (FK, optional), CreatedAt, UpdatedAt (optional), IsDeleted (soft delete), LikesCount
-- Comments: CommentId, PostId (FK), UserId (FK), Text, CreatedAt, UpdatedAt (optional), IsDeleted (soft delete), EditCount, LikesCount
+- Posts: PostId, Content, Opinion (optional), Company, Industry, Year, Country, StressLevel (0–5), QuestionType, InterviewFormat, UserId (FK, required), CreatedAt (default GETDATE), UpdatedAt (optional), IsDeleted (default 0), LikesCount (default 0)
+- Comments: CommentId, PostId (FK), UserId (FK), Text, CreatedAt (default GETDATE), UpdatedAt (optional), IsDeleted (default 0), LikesCount (default 0)
 - PostLikes: UserId (FK), PostId (FK)
 - CommentLikes: UserId (FK), CommentId (FK)
-- Tags: TagId, Name
+- Tags: TagId, Name (unique)
 - PostTags: PostId (FK), TagId (FK)
-- Reports: ReportId, UserId (FK), PostId (FK, optional), CommentId (FK, optional), Reason, CreatedAt
-- AuthTokens: Id, UserId (FK), RefreshToken, ExpiresAt, CreatedAt, RevokedAt (optional)
+- Reports: ReportId, UserId (FK), PostId (FK, optional), CommentId (FK, optional), Reason (optional), CreatedAt (default GETDATE)
+- AuthTokens: AuthTokenId (PK), UserId (FK), RefreshToken, ExpiresAt, CreatedAt (default SYSUTCDATETIME), RevokedAt (optional)
 
-## Notes
+## Notes. Local Development Setup
 
-- JWT_SECRET_KEY - Set as an environment variable in Azure.
-  Example for local testing: export JWT_SECRET_KEY="a-jwt-key-4f7d9a8c3b2e1f6d0c5a7e9bD8jC0Rx"
+- - For local backend and frontend:
+- Replace password in DB_PASSWORD in connection string to the real one or to "Server=localhost;Database=UserTasks;Trusted_Connection=True;encrypt=true;trustservercertificate=true" for local DB
+- Run backend:
+  cd backend/
+  export JWT_SECRET_KEY="q1r0%sDf#9vN8@xZpLm4WtB&\*YkE23HsX7mZ9qLp3SvN6rTkB1wYeHuAfD8jC0Rx"
+  export JWT_ISSUER="fruitfullServer"
+  dotnet run
+- Run Frontend: Open new terminal (You need to add a .env file with VITE_API_URL=http://localhost:5193/ in your frontend/ directory. Check if your backend URL is the same.)
+  cd frontend/
+  yarn install
+  yarn dev
 
-- JWT_ISSUER - Set as an environment variable in Azure.
-  Example used locally: export JWT_ISSUER="fruitfullServer"
+Two test users are set up in the database, both with with the password 1: user@me.com and u@u.com
 
-- Connection String - Fully set in Azure (including password). In my code, the password is represented as a placeholder named DB_PASSWORD.
-
-- VITE_API_URL – Set as an environment variable in Azure, pointing to the Azure backend.
-  Example used locally in .env: VITE_API_URL=http://localhost:5193/
-
-Two test users are set up in the database with the password 1: user@me.com and u@u.com
+- - For locals DB:
+- The database schema is defined in backend/Database/schema.sql. Please execute this script using SSMS or your preferred SQL client to create the FruitfullDB database.
 
 ## Scope
 
