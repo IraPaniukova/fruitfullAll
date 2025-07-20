@@ -94,7 +94,9 @@ export const UpdatePostPage = () => {
                     </Button>
 
                 </Box>}
-            <Snackbar open={message} autoHideDuration={4000} onClose={() => setMessage(false)}>
+            <Snackbar open={message} autoHideDuration={4000} onClose={() => setMessage(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
                 <Alert onClose={() => setMessage(false)}>
                     No changes were made.
                 </Alert>

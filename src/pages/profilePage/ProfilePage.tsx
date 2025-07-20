@@ -84,7 +84,9 @@ export const ProfilePage = () => {
 
     return (
         <>
-            <Snackbar open={errorOpen} autoHideDuration={4000} onClose={() => setErrorOpen(false)}>
+            <Snackbar open={errorOpen} autoHideDuration={4000} onClose={() => setErrorOpen(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
                 <Alert severity="error" onClose={() => setErrorOpen(false)}>
                     Failed to save. Please check your connection.
                 </Alert>

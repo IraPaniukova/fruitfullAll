@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Stack, TextField, Button, Typography, Box } from '@mui/material';
+import { Stack, TextField, Button, Typography, Box, Snackbar, Alert } from '@mui/material';
 import { registerEmailUser } from "../../../api/userApi";
 import { loginThunk } from "../authThunks";
 import { useAppDispatch } from "../../../store/typeHooks";
@@ -8,6 +8,8 @@ export const SignupForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({ email: '', password: '' });
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+
 
     const validateEmail = (email: string) =>
         /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email);
@@ -31,6 +33,7 @@ export const SignupForm = () => {
                 dispatch(loginThunk(email, password));
             } catch (err) {
                 console.error("Failed to register:", err);
+                setSnackbarOpen(true);
             }
 
         }
@@ -63,6 +66,14 @@ export const SignupForm = () => {
                     Join
                 </Button>
             </Box>
+            <Snackbar open={snackbarOpen} autoHideDuration={4000}
+                onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert severity="error" onClose={() => setSnackbarOpen(false)}>
+                    Email already exists.
+                </Alert>
+            </Snackbar>
         </Stack>
     );
 };
